@@ -1,0 +1,254 @@
+---
+title: "MSc Thesis"
+output: 
+  html_notebook:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+This notebook is written in order to reproduce the results of my [MSc thesis](http://pietstam.nl/mscthesis/). 
+
+# 2.1 ARMA models
+
+## Helper functions
+
+```{r}
+figure2 <- function(nobs,modelchoice,pos_corr) {
+  par(mfrow = c(4, 2))
+  layout(matrix(c(1,2,3,4,5,5,6,6), 4, 2, byrow = TRUE))
+
+  #https://stackoverflow.com/questions/21893165/assigning-names-in-a-list-using-variables
+  model1 <- list(); model1[[modelchoice]] <- pos_corr*0.1
+  model2 <- list(); model2[[modelchoice]] <- pos_corr*0.5
+  model3 <- list(); model3[[modelchoice]] <- pos_corr*0.9
+  
+  sim1 <- arima.sim(n=nobs,model1)
+  sim2 <- arima.sim(n=nobs,model2)
+  sim3 <- arima.sim(n=nobs,model3)
+  
+  plot(sim1,main=paste0(toupper(modelchoice),'(1) (T=',nobs,', param=',pos_corr*0.1,')'),xlab="time",ylab="")
+  plot(sim2,main=paste0(toupper(modelchoice),'(1) (T=',nobs,', param=',pos_corr*0.5,')'),xlab="time",ylab="")
+  plot(sim3,main=paste0(toupper(modelchoice),'(1) (T=',nobs,', param=',pos_corr*0.9,')'),xlab="time",ylab="")
+  plot.new()
+  
+  plot(ARMAacf(eval(parse(text = paste0(modelchoice,'=',0.1))), lag.max = 100),type="l",main='Theoretical autocorrelation functions',xlab="lags",ylab="",ylim=c(-1,1));
+  lines(ARMAacf(eval(parse(text = paste0(modelchoice,'=',0.5))), lag.max = 100),type="l",lty="dashed");
+  lines(ARMAacf(eval(parse(text = paste0(modelchoice,'=',0.9))), lag.max = 100),type="l",lty="dotted");
+  legend("topright",legend=c(expression(alpha ~ "=0.9 "),expression(alpha ~ "=0.5 "),expression(alpha ~ "=0.1 ")),
+        lty=c("dotted","dashed","solid"), bty = "n")
+  
+  library("TSA")
+  sd1 <- ARMAspec(model=model1, plot = FALSE)
+  sd2 <- ARMAspec(model=model2, plot = FALSE)
+  sd3 <- ARMAspec(model=model3, plot = FALSE)
+  detach(package:TSA)
+
+  plot(sd1$freq,sd1$spec,type="l",main='Spectral densities',xlab=expression("fractions of" ~ 2*pi),ylab="",
+       ylim=c(0,10))
+  lines(sd2$freq,sd2$spec,type="l",lty="dashed");
+  lines(sd3$freq,sd3$spec,type="l",lty="dotted");
+  legend("topright",legend=c(expression(alpha ~ "=0.9 "),expression(alpha ~ "=0.5 "),expression(alpha ~ "=0.1 ")),
+         lty=c("dotted","dashed","solid"), bty = "n")
+  par(mfrow = c(1, 1))
+}
+
+fit_arima <- function(y,p,intindx,q) {
+  npar=intindx+p+q+1
+
+  fit <- arima(y, c(p, intindx, q), include.mean=TRUE)
+  print(coef(fit))
+  
+  return(fit)
+}
+
+fit_arfima1 <- function(y,p,intindx,q) {
+  library("arfima")
+  fit <- arfima(y, order = c(p,intindx,q), dmean=FALSE, back=TRUE)
+  print(coef(fit))
+  detach(package:arfima)
+  
+  return(fit)
+}
+
+fit_arfima2 <- function(y,p,q) {
+  library("fracdiff")
+  fit <- fracdiff(y, nar = p, nma = q)
+  print(coef(fit))
+  detach(package:fracdiff)
+  
+  return(fit)
+}
+
+est_stats <- function(fit,loglik,npar) {
+  print(paste("2lnL             = ",2*loglik))
+  print(paste("2lnL - 2k/T      = ",2*loglik-2*(npar-1))) #fit_dy$aic (npar+1)
+  print(paste("2lnL - lnT * k/T = ",2*loglik-(npar-1)*log(length(y)))) #AIC(fit_dy,k = log(length(dy))) (npar+1)
+}
+```
+
+## Figure 2.1
+
+```{r}
+figure2(300,'ar',1)
+```
+
+## Figure 2.2
+
+```{r}
+figure2(300,'ar',-1)
+```
+
+## Figure 2.3
+
+```{r}
+figure2(300,'ma',1)
+```
+
+## Figure 2.4
+
+```{r}
+figure2(300,'ma',-1)
+```
+# 4.3 Annual Trier Oak Tree Ring Widths
+
+## Load data
+
+```{r}
+library(readr)
+OAKV21 <- read_csv("C:/DOS/scriptie_diskette2/DATA/OAKV21.DAT",col_names = c("y"))
+y <- OAKV21$y
+t <- seq(822,1964,1)
+dy <- diff(y, differences = 1)
+dt <- seq(823,1964,1)
+```
+## Data exploration
+
+### Figure 4.14 (p. 95)
+
+```{r}
+library("TSA")
+par(mfrow = c(4, 2))
+plot(t,y,type='l',main='Trier Oak Tree Ring Widths',xlab="time",ylab="");
+legend("topright",legend=c(bquote(mean: .(round(mean(y),4))),bquote(variance: .(round(var(y),4)))), bty = "n")
+acf(y,lag.max=20,type="correlation",main="Autocorrelation Coefficients",xlab="lags 1-20",ylab="")
+periodogram(y,main="Periodogram",xlab=expression("Fractions of" ~ 2*pi),ylab="");  abline(h=0)
+acf(y,lag.max=20,type="partial",main="Partial Autocorrelation Coefficients",xlab="lags 1-20",ylab="")
+
+plot(dt,dy,type='l',main='First Differences',xlab="time",ylab="");
+legend("topright",legend=c(bquote(mean: .(round(mean(dy),4))),bquote(variance: .(round(var(dy),4)))), bty = "n")
+acf(dy,lag.max=20,type="correlation",main="Autocorrelation Coefficients",xlab="lags 1-20",ylab="")
+periodogram(dy,main="Periodogram",xlab=expression("Fractions of" ~ 2*pi),ylab="");  abline(h=0)
+acf(dy,lag.max=20,type="partial",main="Partial Autocorrelation Coefficients",xlab="lags 1-20",ylab="")
+par(mfrow = c(1, 1))
+```
+
+### Augmented Dickey-Fuller tests (p. 96)
+
+We perform an ADF test of the levels and first differences and observe in case of the latter that the null hypothesis of stationarity can not be rejected for any of the lags up to 50.
+
+```{r}
+library("aTSA")
+adf_y <- adf.test(y, nlag = 51, output = TRUE)$type3
+plot(adf_y[,1],adf_y[,2],main="ADF t statistic",xlab="lags",ylab="",type="l",ylim=c(min(adf_y[,2]),0)); abline(h=-3.41, col = "gray60")
+adf_dy <- adf.test(dy, nlag = 51, output = TRUE)$type3
+plot(adf_dy[,1],adf_dy[,2],main="ADF t statistic",xlab="lags",ylab="",type="l",ylim=c(min(adf_y[,2]),0)); abline(h=-3.41, col = "gray60")
+```
+
+## Standardize data
+
+```{r}
+#y <- (y-mean(y))/sd(y)
+#dy <- diff(y, differences = 1)
+```
+
+## ARIMA models
+
+### Model estimation - ARIMA models estimated by ML (p. 96)
+
+```{r}
+fit_dy <- fit_arima(dy,2,0,1)
+est_stats(fit_dy,logLik(fit_dy),length(fit_dy$coef))
+```
+
+The performance measures 2lnL, AIC and SIC are identical to those reported for the ARMA(2,1) model in Table 4.7 of my MSc thesis at p. 98.
+
+## ARFIMA models (arfima::arfima)
+
+### Model estimation - ARFIMA models estimated by ML, levels (p. 100)
+
+We try two different packages to estimate the ARFIMA models. The first is the package arfima.
+
+
+```{r}
+fit_y <- fit_arfima1(y,2,0,0)
+```
+
+```{r}
+est_stats(fit_y,fit_y$modes[[2]]$loglik,length(fit_y$modes[[2]]$pars))
+```
+
+Note that two sets of coefficients result if we try to estimate an ARFIMA(2,1,0) model for the levels y. The second set of coefficients resembles that in the MSc thesis on p. 101. However, the AIC and SIC deviate a lot.
+
+### Model estimation - ARFIMA models estimated by ML, first differences (p. 102)
+
+If we apply this estimation method on the first differences, then the results are as follows.
+
+```{r}
+fit_dy <- fit_arfima1(y,3,1,2)
+```
+
+```{r}
+est_stats(fit_dy$modes[[1]],fit_dy$modes[[1]]$loglik,length(fit_dy$modes[[1]]$pars))
+```
+
+## ARFIMA models (fracdiff::arfima)
+
+### Alternative model estimation - ARFIMA models estimated by ML, levels (p. 100)
+
+Fracdiff is the second package that we try.
+
+```{r}
+fit_y <- fit_arfima2(y,2,0)
+```
+
+De schattingen wijken ietwat af van die in de MSc worden genoemd (p. 101).
+
+```{r}
+est_stats(fit_y,logLik(fit_y),nrow(fit_y$covariance.dpq))
+```
+
+Now, the coefficients slightly deviate from those in the MSc thesis, but the AIC and SIC are much closer (p. 102).
+
+### Alternative model estimation - ARFIMA models estimated by ML, first differences (p. 102)
+
+```{r}
+fit_dy <- fit_arfima2(dy,3,2)
+```
+## Automatic choice of AR- and MA-orders
+
+If we want to let the computer pick the optimal model automatically, we can use the package forecast.
+
+```{r}
+library("forecast")
+fit <- arfima(y, estim = "mle")
+summary(fit)
+#tsdisplay(residuals(fit))
+
+p <- length(fit$ar)
+intindx <- length(fit$d)
+q <- length(fit$ar)
+npar=intindx+p+q+1
+paste("2lnL             = ",2*logLik(fit)) #logLik(fit)
+paste("2lnL - 2k/T      = ",2*logLik(fit)-2*(npar-1)) #AIC(fit) (npar+1)
+paste("2lnL - lnT * k/T = ",2*logLik(fit)-(npar-1)*log(length(y))) #BIC(fit) (npar+1)
+detach(package:forecast)
+```
+
+# TO DO
+
+* 2.4.1 Generating a realization from some process 
+library(fracdiff)
+x <- fracdiff.sim( 100, ma=-.4, d=.3)$series
+* fft computes the fast fourier transform: https://stat.ethz.ch/R-manual/R-patched/library/stats/html/fft.html
+* spec.pgram computes the periodogram using fft:  https://stat.ethz.ch/R-manual/R-patched/library/stats/html/spec.pgram.html
