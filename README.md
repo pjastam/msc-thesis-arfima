@@ -1,3 +1,3 @@
-# msc-thesis-arfima
+# Univariate Fractionally Integrated Time Series Modeling
 
-This notebook is written in order to facilitate (myself and others) to replicate the results of my [MSc thesis](http://pietstam.nl/mscthesis/) on fractionally integrated time series modeling. Back in 1992/1993, the calculations were done in Fortran and Matlab, we now use R for ease of replication.
+This repository facilitates the replication of my 1993 [MSc thesis](http://pietstam.nl/mscthesis/) on fractionally integrated time series modeling. Fortran and Matlab were my preferred programming languages back then, for ease of replication I will translate the code to R. The current status of [this book](https://pietstam.nl/msc-thesis-arfima/) is work-in-progress.
