@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>2 Conclusions | Univariate Fractionally Integrated Time Series Modeling</title>
+  <meta name="description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="2 Conclusions | Univariate Fractionally Integrated Time Series Modeling" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
+  <meta name="github-repo" content="pjastam/msc-thesis-arfima" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="2 Conclusions | Univariate Fractionally Integrated Time Series Modeling" />
+  
+  <meta name="twitter:description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
+  
+
+<meta name="author" content="Piet Stam" />
+
+
+<meta name="date" content="2022-02-23" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="intro.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i>Acknowledgements</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>2</b> Conclusions</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Univariate Fractionally Integrated Time Series Modeling</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="conclusions" class="section level1">
+<h1><span class="header-section-number">2</span> Conclusions</h1>
+<p>In this thesis the emphasis was on long memory stochastic processes. Traditional ARIMA models were generalized to allow for zero frequency fractional integration instead of zero frequency integer integration only. The fractional parameter describes the long memory behavior of a stochastic process, thereby modeling low frequency behavior more flexible than when trying to model this behavior by e.g. an autoregressive filter. The autoregressive and moving-average components can be applied to describe short-term behavior.</p>
+<p>From the simulation experiments we concluded that the estimator of the population mean of fractionally integrated series can be seriously biased. In Geweke and Porter—Hudak (1983) the population mean has been used in the simulation study on the autocorrelation function of such series. Our experiments show that computation of this function given empirical mean leads to underestimation at all autocorrelation lags. One can partially circumvent this problem by modeling first differences.</p>
+<p>Whereas (augmented) Dickey-Fuller tests are not developed for fractionally integrated processes, zero frequency unit root tests based on estimation of the parameter of fractional integration can be used in case of fracional as well as integer integrated processes. In the second example Dickey—Fuller rejects the integer unit root against lower order fractional unit root.</p>
+<p>Estimation of the fractional parameter of integration is performed by the two-stage semi-parametric Geweke and Porter-Hudak (1983) procedure. Although estimation of this parameter by frequency domain log periodogram regression is independent from the mean of the series, the influence of short-run ARMA parameters can lead to serious bias in the estimator. This bias showed up when analyzing quarterly real US GNP (s.a.). Simultaneous estimation of the long and short memory parameters according to Sowell (1992a,b) performs better in this case.</p>
+<p>From the frequency domain periodograms it appeared that imposing a zero-frequency unit root by taking first differences of realizations of some process can lead to overdifferentiation. With respect to long run forecasting taking first differences is preferred over the fractional alternatives in case of quarterly real US GNP (s.a.). Overdifferentiation is present when first differences of Trier oak tree ring widths are taken. However, there is some zero frequency unit root long memory of fractional order. As the fractional alternatives are preferred, mean reversion under the fractional alternatives is present and the series is estimated as stationary although non-stationarity cannot be excluded.</p>
+<p>The oak tree data give a very clear illustration of the applicability of time series modeling in empirical work.</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="intro.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

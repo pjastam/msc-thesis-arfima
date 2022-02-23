@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>1 Introduction | Univariate Fractionally Integrated Time Series Modeling</title>
+  <meta name="description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="1 Introduction | Univariate Fractionally Integrated Time Series Modeling" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
+  <meta name="github-repo" content="pjastam/msc-thesis-arfima" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="1 Introduction | Univariate Fractionally Integrated Time Series Modeling" />
+  
+  <meta name="twitter:description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
+  
+
+<meta name="author" content="Piet Stam" />
+
+
+<meta name="date" content="2022-02-23" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="acknowledgements.html"/>
+<link rel="next" href="conclusions.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i>Acknowledgements</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="conclusions.html"><a href="conclusions.html"><i class="fa fa-check"></i><b>2</b> Conclusions</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Univariate Fractionally Integrated Time Series Modeling</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="intro" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p><strong><em>Limits of ARMA models of long-run dynamics</em></strong></p>
+<p>The emphasis in this thesis is on the long-run dynamics of univariate data generating processes. Stationary univariate stochastic processes are traditionally described by autoregressive moving-average (ARMA) models (see e.g. Box and Jenkins 1976; Priestley 1981; Judge et al 1982; Harvey 1981). However, these models are only applicable for describing long-run behavior if the ARMA parameter values are near the boundary of the parameter space. In this case the asymptotic distributions of estimated parameters and test statistics turn out to be inadequate as approximations to the finite sample distributions thereof. Hypothesis testing based on these asymptotic distibutions is invalid then. This is for example the case if the autoregressive polynomial function contains a so-called unit-root. Models of this type are called integer integrated ARMA models (ARIMA).</p>
+<p>Furthermore, as is indicated by Sowell (1992a), an ARMA model that is designed to describe the long-run behavior is necessarily less appropriate to describe the shorter—run behavior of a process. This can be observed in the frequency domain from the spectrum which not only has power at the low frequencies associated with the long-run behavior but also at somewhat higher frequencies. Consequently, restrictions are placed on the possibilities to describe the short-run behavior of the process with a model designed for description of long-run behavior. Ideally, no restrictions are placed at other frequencies than the specific long-run frequencies.</p>
+<p>A third drawback of using ARMA models for describing long—run dynamics is the impossibility to direct the fit of the parameters to the long-run characteristics of a series. As pointed out by Cochrane (1988), maximum likelihood (asymptotically) chooses parameter values to minimize the difference of the periodogram of the realization and the spectral density of the parametric model weighted at different frequencies. Consequently, the maximum likelihood parameter estimates may have been sacrificed to obtain a better description of the short-run dynamics although our interest centers on long-run dynamics.</p>
+<p><strong><em>Fractional models</em></strong></p>
+<p>When investigating the long-run behavior of a time series, a model should be considered that allows the long-run behavior to be captured. Clearly, the ARMA models are not typically suited for modeling long—run dynamics. We therefore introduce univariate fractionally integrated ARMA models (ARFIMA), which turn out to have some desirable properties for this purpose (Granger and Joyeux 1980; Hosking 1981). ARFIMA models are a generalization of ARIMA models in that the integration parameter is not restricted to take integer values only. It turns out that processes that are integrated of an order less than a half are stationary nonetheless: we can define an autocorrelation function and a pseudo spectral density in this case. The autocorrelation function decays hyperbolically to zero and thus more slowly than autocorrelation functions of stationary ARMA processes which converge to zero exponentially. In the frequency domain we observe a generalization of the spectral density behavior near zero frequency as compared to behavior typical for ARFIMA processes. The integration parameter dictates how long shocks are felt in the system, i.e. the persistence of shocks. Furthermore, the long—run dependence given a fractional order of integration is achieved with less restrictions on the higher frequency behavior of the series than with integer order of integration. A third comparative advantage of ARFIMA models is the possibility to direct the parameter estimates for purposes one wants the model to be used for. Hosking (1981) shows that in the ARFIMA model the short-run dynamics of a process are captured by the autoregressive and moving-average parameters, whereas the fractional integration parameter captures its long-run behavior.</p>
+<p>As a measure of long-run dependence we apply the cumulative impulse response measure. Given a Wold decomposition (e.g. Box and Jenkins 1976) the value of this measure is equal to the moving-average polynomial function evaluated at frequency zero, i.e. at exp{0} = 1. Cochrane (1988) states that measures based on this quantity are the only measures of the presence of a zero frequency unit root in a finite sample.</p>
+<p>ARFIMA models appear useful for other purposes than long-run dynamics description as well. Traditionally, (augmented) Dickey—Fuller tests are applied to a realization in order to test the null hypothesis of an autoregressive unit-root against a whole class of stationary alternatives: rejection of the null hypothesis then implies stationarity. Fitting an ARFIMA model without any autoregressive and moving-average parameters to the sample allows one to determine the fractional order of integration, i.e. any real value between zero and one is allowed (Hassler 1993). Given the Dickey—Fuller test of a point-hypothesis against a whole class of points, this amounts to a more symmetrical treatment of the null and alternative hypothesis.</p>
+<p>Furthermore, it should be noted that rejection of the Dickey-Fuller null hypothesis does not rule out non-stationary behavior. Only a parameter value between zero and a half implies stationarity. If the Geweke and Porter-Hudak (1983) two-stage semi-parametric estimation procedure is applied an additional advantage of this alternative unit root testing strategy is that no model structure has to be specified preceding the estimation stage.</p>
+<p>As an example of an application of the generalization described above we note that deterministic long-run behavior of processes is modeled as a polynomial of time. Linear trends are commonly observed in econometric and economic literature. Discrimination between stochastic and deterministic trend behavior amounts to specifying a model that nests both types of long-run dynamics and subsequently testing the order of integration. Allowing for fractional integration parameter values enriches the class of admissible possibilities such that mixtures of both types are allowed as well. Compare for instance Nelson and Plosser (1982) to Sowell (1992a).</p>
+<p><strong><em>Outline of the study</em></strong></p>
+<p>In Section 2 we describe the theory underlying ARMA, ARIMA and ARFIMA modeling of univariate stochastic processes. We highlight the unit root testing strategies and the prediction theory associated with the three model types. The consequences of deterministic trend behavior for modeling the processes are treated as well.</p>
+<p>In Section 3 we present the estimation methods. In this thesis the nonfractional ARMA parameters are estimated using three estimation methods,</p>
+<p>i.e. Yule-Walker, ordinary least-squares and maximum likelihood. The fractional parameter in the ARFIMA model is estimated using two methods. The first method is the two-stage estimation procedure as proposed by Geweke and Porter-Hudak (1983) the integration parameter is estimated first by using a frequency domain property of ARFIMA processes; the ARMA parameters of the transformed process are modeled afterwards. The other method is maximum likelihood estimation as proposed by Sowell (1992b), such that the integration parameter and ARMA parameters are estimated simultaneously.</p>
+<p>In Section 4 we illustrate the theory with economic and non-economic data sequences. The economic series is quarterly real US gross national product (seasonally adjusted, 172 data points); the non-economic series is annual</p>
+<p>Trier oak tree ring widths (1143 data points). Section 5 concludes.</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="acknowledgements.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="conclusions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
