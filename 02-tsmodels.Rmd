@@ -1,0 +1,133 @@
+# Time series models {#tsmodels}
+
+In Section 2.1 we discuss the traditional so---called ARMA models. The concept of asymptotic stationarity plays a crucial role here. In Section 2.2 we present the natural extension to integrated ARMA models, where the so-called order of integration is traditionally restricted to integer values. In Section 2.3 we come to the main body of this thesis, fractionally integrated ARMA processes which allow the integration order to take any real value. These kinds of models are particularly useful to model long-term dynamics. Simulation experiments are presented in Section 2.4 in order to get a grasp of the empirical implications of the presented fractional integration theory.
+
+## ARMA models
+
+Suppose that a univariate stochastic process y with zero mean has the following AutoRegressive Moving Average model, i.e. $y \sim ARMA(p+d,q)$:
+
+$$\alpha (L) y_t = \theta (L) \epsilon _t$$
+
+where
+
+$$\alpha (L)  = 1 - \alpha_1 L - \alpha_2 L^2 - ... - \alpha_{p+d} L^{p+d}$$
+
+and
+
+$$\theta (L)  = 1 - \theta_1 L - \theta_2 L^2 - ... - \theta_{q} L^{q}$$
+
+where $y_t$ is a realization of the process $y$ ($t = 1, 2, . . . , T$), $L$ is a lag-operator such that and $\epsilon_t$ is the $t$-th observation of a covariance stationary stochastic error process.
+
+*A process* $\epsilon$ *will be called [covariance stationary]{.underline} if its first two moments exist, are finite, and are independent of time; covariances only depend on the time span between two observations of the process:*
+
+$$\mathbb{E} (\epsilon_t) = \mu_\epsilon$$
+
+$$\mathbb{E} (\epsilon_t - \mu_\epsilon)^2 = \sigma_\epsilon^2$$
+
+$$\mathbb{E} (\epsilon_t - \mu_\epsilon) (\epsilon_{t-k} - \mu_\epsilon) = \gamma_\epsilon(k)$$
+
+### Helper functions
+
+```{r}
+figure2 <- function(nobs,modelchoice,pos_corr) {
+  par(mfrow = c(4, 2))
+  layout(matrix(c(1,2,3,4,5,5,6,6), 4, 2, byrow = TRUE))
+
+  #https://stackoverflow.com/questions/21893165/assigning-names-in-a-list-using-variables
+  model1 <- list(); model1[[modelchoice]] <- pos_corr*0.1
+  model2 <- list(); model2[[modelchoice]] <- pos_corr*0.5
+  model3 <- list(); model3[[modelchoice]] <- pos_corr*0.9
+  
+  sim1 <- arima.sim(n=nobs,model1)
+  sim2 <- arima.sim(n=nobs,model2)
+  sim3 <- arima.sim(n=nobs,model3)
+  
+  plot(sim1,main=paste0(toupper(modelchoice),'(1) (T=',nobs,', param=',pos_corr*0.1,')'),xlab="time",ylab="")
+  plot(sim2,main=paste0(toupper(modelchoice),'(1) (T=',nobs,', param=',pos_corr*0.5,')'),xlab="time",ylab="")
+  plot(sim3,main=paste0(toupper(modelchoice),'(1) (T=',nobs,', param=',pos_corr*0.9,')'),xlab="time",ylab="")
+  plot.new()
+  
+  plot(ARMAacf(eval(parse(text = paste0(modelchoice,'=',0.1))), lag.max = 100),type="l",main='Theoretical autocorrelation functions',xlab="lags",ylab="",ylim=c(-1,1));
+  lines(ARMAacf(eval(parse(text = paste0(modelchoice,'=',0.5))), lag.max = 100),type="l",lty="dashed");
+  lines(ARMAacf(eval(parse(text = paste0(modelchoice,'=',0.9))), lag.max = 100),type="l",lty="dotted");
+  legend("topright",legend=c(expression(alpha ~ "=0.9 "),expression(alpha ~ "=0.5 "),expression(alpha ~ "=0.1 ")),
+        lty=c("dotted","dashed","solid"), bty = "n")
+  
+  library("TSA")
+  sd1 <- ARMAspec(model=model1, plot = FALSE)
+  sd2 <- ARMAspec(model=model2, plot = FALSE)
+  sd3 <- ARMAspec(model=model3, plot = FALSE)
+  detach(package:TSA)
+
+  plot(sd1$freq,sd1$spec,type="l",main='Spectral densities',xlab=expression("fractions of" ~ 2*pi),ylab="",
+       ylim=c(0,10))
+  lines(sd2$freq,sd2$spec,type="l",lty="dashed");
+  lines(sd3$freq,sd3$spec,type="l",lty="dotted");
+  legend("topright",legend=c(expression(alpha ~ "=0.9 "),expression(alpha ~ "=0.5 "),expression(alpha ~ "=0.1 ")),
+         lty=c("dotted","dashed","solid"), bty = "n")
+  par(mfrow = c(1, 1))
+}
+
+fit_arima <- function(y,p,intindx,q) {
+  npar=intindx+p+q+1
+
+  fit <- arima(y, c(p, intindx, q), include.mean=TRUE)
+  print(coef(fit))
+  
+  return(fit)
+}
+
+fit_arfima1 <- function(y,p,intindx,q) {
+  library("arfima")
+  fit <- arfima(y, order = c(p,intindx,q), dmean=FALSE, back=TRUE)
+  print(coef(fit))
+  detach(package:arfima)
+  
+  return(fit)
+}
+
+fit_arfima2 <- function(y,p,q) {
+  library("fracdiff")
+  fit <- fracdiff(y, nar = p, nma = q)
+  print(coef(fit))
+  detach(package:fracdiff)
+  
+  return(fit)
+}
+
+est_stats <- function(fit,loglik,npar) {
+  print(paste("2lnL             = ",2*loglik))
+  print(paste("2lnL - 2k/T      = ",2*loglik-2*(npar-1))) #fit_dy$aic (npar+1)
+  print(paste("2lnL - lnT * k/T = ",2*loglik-(npar-1)*log(length(y)))) #AIC(fit_dy,k = log(length(dy))) (npar+1)
+}
+```
+
+### Figure 2.1
+
+```{r}
+figure2(300,'ar',1)
+```
+
+### Figure 2.2
+
+```{r}
+figure2(300,'ar',-1)
+```
+
+### Figure 2.3
+
+```{r}
+figure2(300,'ma',1)
+```
+
+### Figure 2.4
+
+```{r}
+figure2(300,'ma',-1)
+```
+
+### TO DO
+
+-   2.4.1 Generating a realization from some process library(fracdiff) x \<- fracdiff.sim( 100, ma=-.4, d=.3)\$series
+-   fft computes the fast fourier transform: <https://stat.ethz.ch/R-manual/R-patched/library/stats/html/fft.html>
+-   spec.pgram computes the periodogram using fft: <https://stat.ethz.ch/R-manual/R-patched/library/stats/html/spec.pgram.html>
