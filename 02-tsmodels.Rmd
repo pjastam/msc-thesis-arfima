@@ -26,6 +26,21 @@ $$\mathbb{E} (\epsilon_t - \mu_\epsilon)^2 = \sigma_\epsilon^2$$
 
 $$\mathbb{E} (\epsilon_t - \mu_\epsilon) (\epsilon_{t-k} - \mu_\epsilon) = \gamma_\epsilon(k)$$
 
+*where* $|\mu_\epsilon| < \infty$, $\sigma_\epsilon^2 < \infty$ *and* $|\gamma_\epsilon(k)| <\infty, k=1,2,...$.
+
+A stationary process $\epsilon$ is said to be [ergodic]{.underline} if the sample mean of every function of finite observations tends to its expected value in mean square, at least when the expected value of the square of the function exists (Griliches and Intriligator 1983, p. 243, footnote 7). The following quantities are consistent estimators of the mean $\mu_\epsilon$, variance $\sigma_\epsilon^2$ and covariances $\gamma_\epsilon(k)$ respectively (Harvey 1981, except for the correction factors for the variance and covariances):
+
+$$\hat{\mu}_\epsilon = T^{-1} \sum_{t=1}^{\infty} \epsilon_t$$
+
+$$\hat{\sigma}_\epsilon^2 = (T-1)^{-1} \sum_{t=1}^{\infty} (\epsilon_t - \hat{\mu}_\epsilon)^2$$
+
+$$\hat{\gamma}_\epsilon(k) = (T-k-1)^{-1} \sum_{t=1}^{\infty} (\epsilon_t - \hat{\mu}_\epsilon) (\epsilon_{t-k} - \hat{\mu}_\epsilon)$$
+
+In this case, a single very long realization of the stationary process allows us to infer everything about the probability law generating that process, i.e. the finite sample moments converge to the infinite sample moments, which are equal to the population moments with probability one (Nerlove, Grether and Carvalho 1979). If we say that $\epsilon$ is stationary, we hereafter assume that it is ergodic as well and that it has finite moments. Furthermore, Unless stated otherwise in this thesis, $\epsilon_t$ will be assumed to be a normally distributed series of independent random shocks with zero mean and variance $\sigma_\epsilon^2$, i.e. $\epsilon_t$ \~ N(0,$\sigma_\epsilon^2$). We speak of "white noise".
+
+Given this covariance stationary process $\epsilon$, what can we say about the stochastic properties of the process $y$? To study these properties we have to investigate the properties of the lag-polynomials $\alpha(L)$ and $\theta(L)$. Because the algebra of these polynomial operators is isomorphic to the algebra of the polynomial functions $\alpha(z)$ and $\theta(z)$ (see Franses 1991 and the references therein), we can study the properties of the polynomial operator $\alpha(L)$ by looking at the polynomial functions $\alpha(z)$ and $\theta(z)$, $z$ being a complex variable. The behavior of the discrete time series $y_t$ is different as the roots of the equations $|\alpha(z)| = 0$ and $|\theta(z)| = 0$ — the zeros of the determinants of the polynomials $\alpha(z)$ and $\theta(z)$ — fall in different regions of the complex plane.
+
+
 ### Helper functions
 
 ```{r}
