@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>1 Introduction | Univariate Fractionally Integrated Time Series Modeling</title>
   <meta name="description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
-  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.27 and GitBook 2.6.7" />
 
   <meta property="og:title" content="1 Introduction | Univariate Fractionally Integrated Time Series Modeling" />
   <meta property="og:type" content="book" />
-  
   
   <meta property="og:description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
   <meta name="github-repo" content="pjastam/msc-thesis-arfima" />
@@ -24,7 +23,7 @@
 <meta name="author" content="Piet Stam" />
 
 
-<meta name="date" content="2022-02-23" />
+<meta name="date" content="2022-07-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,8 +50,9 @@
 
 
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
 
 
@@ -90,8 +90,8 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="intro" class="section level1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
+<div id="intro" class="section level1 hasAnchor">
+<h1><span class="header-section-number">1</span> Introduction<a href="intro.html#intro" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p><strong><em>Limits of ARMA models of long-run dynamics</em></strong></p>
 <p>The emphasis in this thesis is on the long-run dynamics of univariate data generating processes. Stationary univariate stochastic processes are traditionally described by autoregressive moving-average (ARMA) models (see e.g. Box and Jenkins 1976; Priestley 1981; Judge et al 1982; Harvey 1981). However, these models are only applicable for describing long-run behavior if the ARMA parameter values are near the boundary of the parameter space. In this case the asymptotic distributions of estimated parameters and test statistics turn out to be inadequate as approximations to the finite sample distributions thereof. Hypothesis testing based on these asymptotic distibutions is invalid then. This is for example the case if the autoregressive polynomial function contains a so-called unit-root. Models of this type are called integer integrated ARMA models (ARIMA).</p>
 <p>Furthermore, as is indicated by Sowell (1992a), an ARMA model that is designed to describe the long-run behavior is necessarily less appropriate to describe the shorter—run behavior of a process. This can be observed in the frequency domain from the spectrum which not only has power at the low frequencies associated with the long-run behavior but also at somewhat higher frequencies. Consequently, restrictions are placed on the possibilities to describe the short-run behavior of the process with a model designed for description of long-run behavior. Ideally, no restrictions are placed at other frequencies than the specific long-run frequencies.</p>

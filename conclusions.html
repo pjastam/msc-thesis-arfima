@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>2 Conclusions | Univariate Fractionally Integrated Time Series Modeling</title>
   <meta name="description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
-  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.27 and GitBook 2.6.7" />
 
   <meta property="og:title" content="2 Conclusions | Univariate Fractionally Integrated Time Series Modeling" />
   <meta property="og:type" content="book" />
-  
   
   <meta property="og:description" content="This is a reproducible artifact of my MSc thesis in markdown. Disclaimer: work-in-progress." />
   <meta name="github-repo" content="pjastam/msc-thesis-arfima" />
@@ -24,7 +23,7 @@
 <meta name="author" content="Piet Stam" />
 
 
-<meta name="date" content="2022-02-23" />
+<meta name="date" content="2022-07-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,8 +50,9 @@
 
 
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
 
 
@@ -90,8 +90,8 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="conclusions" class="section level1">
-<h1><span class="header-section-number">2</span> Conclusions</h1>
+<div id="conclusions" class="section level1 hasAnchor">
+<h1><span class="header-section-number">2</span> Conclusions<a href="conclusions.html#conclusions" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In this thesis the emphasis was on long memory stochastic processes. Traditional ARIMA models were generalized to allow for zero frequency fractional integration instead of zero frequency integer integration only. The fractional parameter describes the long memory behavior of a stochastic process, thereby modeling low frequency behavior more flexible than when trying to model this behavior by e.g. an autoregressive filter. The autoregressive and moving-average components can be applied to describe short-term behavior.</p>
 <p>From the simulation experiments we concluded that the estimator of the population mean of fractionally integrated series can be seriously biased. In Geweke and Porter—Hudak (1983) the population mean has been used in the simulation study on the autocorrelation function of such series. Our experiments show that computation of this function given empirical mean leads to underestimation at all autocorrelation lags. One can partially circumvent this problem by modeling first differences.</p>
 <p>Whereas (augmented) Dickey-Fuller tests are not developed for fractionally integrated processes, zero frequency unit root tests based on estimation of the parameter of fractional integration can be used in case of fracional as well as integer integrated processes. In the second example Dickey—Fuller rejects the integer unit root against lower order fractional unit root.</p>
