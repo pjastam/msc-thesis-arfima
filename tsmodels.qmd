@@ -1,0 +1,11 @@
+# Time series models
+
+In Section 2.1 we discuss the traditional so---called ARMA models. The concept of asymptotic stationarity plays a crucial role here. In Section 2.2 we present the natural extension to integrated ARMA models, where the so-called order of integration is traditionally restricted to integer values. In Section 2.3 we come to the main body of this thesis, fractionally integrated ARMA processes which allow the integration order to take any real value. These kinds of models are particularly useful to model long-term dynamics. Simulation experiments are presented in Section 2.4 in order to get a grasp of the empirical implications of the presented fractional integration theory.
+
+## _ARMA_ models
+
+## Integer integrated _ARMA_ models
+
+## Fractionally integrated _ARMA_ models
+
+## Simulation experiments
