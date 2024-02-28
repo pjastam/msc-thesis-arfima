@@ -1,0 +1,17 @@
+# Preface {.unnumbered}
+
+This book is a replica of my [MSc thesis](http://pietstam.nl/mscthesis/) on fractionally integrated time series modeling. It is written in order to facilitate (myself and) others to replicate the research results. Back in 1992/1993, the calculations were done in Fortran and Matlab, we now use R for ease of replication. The current status of this book is work-in-progress.
+
+The original version of my [MSc thesis](http://pietstam.nl/mscthesis/) was finished August, 1993. Back then, I was a master's student in the [Econometric Institute](https://www.eur.nl/en/ese/department-econometrics) at [Erasmus University Rotterdam](https://www.eur.nl/).
+
+## Acknowledgements
+
+I would like to express my deepest gratitude to my parents Rina and John, brother José and sister Karin. Each in their own way they encouraged me in good and bad times. Special thanks I owe to my girlfriend Ria. Since we met there was always this thesis to be finished, which made it difficult for me to concentrate on other things in life. She suffered from my moods when finishing this thesis and cared for me nonetheless.
+
+I am very grateful to [dr. Marius Ooms](https://www.linkedin.com/in/marius-ooms-39517815/) who took the time for reading and correcting the thesis. I appreciate his flexibility in finding time even for discussion at evenings. Furthermore, I would like to thank prof. dr. Bernard van Praag who gave me the opportunity to acquire plenty of working skills as a student-assistant.
+
+Also I would like to thank [Rob Flik](https://www.linkedin.com/in/robertfliksummittravel/), [Marcel Warnaar](https://www.linkedin.com/in/marcel-warnaar-4887494/) and [Arménio Bispo](https://www.linkedin.com/in/armeniobispo/) who created a great atmosphere to work in. Thanks as well to [John Morssink](https://www.linkedin.com/in/johnmorssink/), [Wilbert Balk](https://www.linkedin.com/in/wilbert-balk-b8701b12/) and Steven Kensenhuis with whom I lived together in Rotterdam. Finally I would like to thank all other persons who have cared for me and made it possible to reach this memorable point in my life.
+
+Thank you all very much!
+
+[Piet](https://www.linkedin.com/in/pjastam/)

@@ -1,0 +1,17 @@
+# Modeling economic and non-economic data
+
+In this section we give an empirical illustration of the theory presented in the sections before. In the section 4.1 we describe the maximum likelihood computer codes that we applied for estimation of nonfractional and fractional ARMA models. In both codes the input data is standardized initially: its estimated mean is subtracted and the result is divided by its estimated standard deviation. The value of the likelihood function is corrected for this standardization afterwards. In section 4.2 the long- and short-memory behavior of quarterly real US gross national product is investigated. In section 4.3 we determine the long- and short memory characteristics of the annual Trier oak tree ring widths series. The length of this series is large as compared to most economic series and is therefore interesting for long-memory studies.
+
+## The maximum likelihood code
+
+## Quarterly real US gross national product
+
+``` {r}
+library(alfred)
+GNPC96 <- get_alfred_series("GNPC96", "GNP82",
+                  observation_start = "1947-01-01", observation_end = "1989-12-31",
+                  realtime_start = "1990-02-28", realtime_end = "1990-02-28")
+LNGNP82 <- log(GNPC96$GNP82)
+```
+
+## Annual Trier oak tree ring widths

@@ -1,0 +1,26 @@
+project:
+  type: book
+
+book:
+  title: "Univariate Fractionally Integrated Time Series Modeling"
+  author: "Piet Stam"
+  date: "2024-02-28"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - tsmodels.qmd
+    - estimation.qmd
+    - applications.qmd
+    - conclusions.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+
+
