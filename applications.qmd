@@ -1,17 +1,872 @@
+::: {.callout-warning}
+Note that this chapter is work in progress.
+:::
+
 # Modeling economic and non-economic data
 
-In this section we give an empirical illustration of the theory presented in the sections before. In the section 4.1 we describe the maximum likelihood computer codes that we applied for estimation of nonfractional and fractional ARMA models. In both codes the input data is standardized initially: its estimated mean is subtracted and the result is divided by its estimated standard deviation. The value of the likelihood function is corrected for this standardization afterwards. In section 4.2 the long- and short-memory behavior of quarterly real US gross national product is investigated. In section 4.3 we determine the long- and short memory characteristics of the annual Trier oak tree ring widths series. The length of this series is large as compared to most economic series and is therefore interesting for long-memory studies.
-
-## The maximum likelihood code
-
-## Quarterly real US gross national product
+In this section we give an empirical illustration of the theory presented in the sections before. In the section 4.1 we describe the maximum likelihood computer codes that we applied for estimation of nonfractional and fractional $ARMA$ models. In both codes the input data is standardized initially: its estimated mean is subtracted and the result is divided by its estimated standard deviation. The value of the likelihood function is corrected for this standardization afterwards. In section 4.2 the long- and short-memory behavior of quarterly real US gross national product is investigated. In section 4.3 we determine the long- and short memory characteristics of the annual Trier oak tree ring widths series. The length of this series is large as compared to most economic series and is therefore interesting for long-memory studies.
 
 ``` {r}
-library(alfred)
-GNPC96 <- get_alfred_series("GNPC96", "GNP82",
-                  observation_start = "1947-01-01", observation_end = "1989-12-31",
-                  realtime_start = "1990-02-28", realtime_end = "1990-02-28")
-LNGNP82 <- log(GNPC96$GNP82)
+#library(alfred)
+#GNPC96 <- get_alfred_series("GNPC96", "GNP82",
+#                  observation_start = "1947-01-01", observation_end = "1989-12-31",
+#                  realtime_start = "1990-02-28", realtime_end = "1990-02-28")
+#LNGNP82 <- log(GNPC96$GNP82)
+
+# Read the (log) data from the CSV file LNGNP82.DAT in the folder data
+LNGNP82 <- read.csv("data/LNGNP82.DAT", header = FALSE)[,1]
+GNPC96 <- data.frame(date = seq(as.Date("1947-01-01"), as.Date("1989-12-31"), by = "quarter"), LNGNP82 = LNGNP82)
 ```
 
-## Annual Trier oak tree ring widths
+## THE MAXIMUM LIKELIHOOD COMPUTER CODE
+
+To evaluate the exact likelihood function of a nonfractional $ARMA$ model the autocovariances have to be expressed in the parameters of the model. The [variance-autocovariance matrix $Q$]{.underline} can be calculated from $\Psi$ by using the Yule-Walker equations corresponding to stationary nonfractional ARMA models as given by Box and Jenkins (1976) and McLeod (1975) (see Section 2.1.3), given that $y$ has a stationary $ARMA$ representation. Given an estimate of the vector of parameters $\boldsymbol{\Psi}$ we can substitute these values to obtain the variance-autocovariance matrix $Q$ corresponding to the estimated $ARMA$ model. Note that the application of the Yule-Walker equations in this way is conceptually different from its application as an estimation technique: there the parameters are unknown and the estimated autocovariances are substituted.
+
+The exact maximum likelihood procedure applied to fractionally integrated $ARMA$ processes is presented in Sowell (1992b), based on Sowell (1987). A recursion formula for the calculation of the autocovariance function of processes with an autoregressive and/or moving-average component is obtained which reduces the number of calculations substantially (see Section 2.3.2.1). If there is no $ARMA$ structure we simply employ the equation presented in Section 2.3.1.1.
+
+The Vax/VMS Fortran computer code to evaluate the likelihood function of a fractionally integrated $ARMA$ process given an estimate of the vector of parameters $\Psi$ was obtained by the author of this thesis from Sowell on request. This Vax/VMS Fortran computer code has been transformed to Convex/Unix Fortran computer code and adjusted to allow for times series of length 1200 instead of 500. Instead of the numerical maximization package GQOPT which is available from R.E. Quandt and applied by Sowell (1992b), we implemented the numerical minimization library called VARM (i.e. a variable metric or quasi-Newton sub- routine), which is IBM/DOS Fortran computer code originally and written by economists of the Econometric Department of the Erasmus University Rotterdam (EUR). Furthermore, the IMSL routine DZPLRC and the function DGAMMA are substituted by the Numerical Algorithms Group Limited routines (NAG) C02ABF and the function S14AAF, respectively. The NAG routines G13ABF and G13ADF have been applied to find initial ARMA parameter estimates along the Yule-Walker lines described by Box and Jenkins (1976) and McLeod (1975).
+
+In this thesis we adopt the iterative quasi-Newton Davidon-Fletcher-Powell (DFP) updating formula of the vector of parameters (see Judge et al 1985 and the references therein)
+
+$$
+\Psi_{n+1}=\Psi_{n}-t_{n} P_{n} \gamma_{n}
+$$
+
+where $\Psi_{n}$ denotes the vector of parameters to be estimated, $t_{n}$ is the step length and $P_{n} \gamma_{n}$ is the step direction, all in iteration $n$. The direction matrix $P_{n}$ is an approximation to the inverse Hessian matrix corresponding to the likelihood funcion and $\gamma_{n}$ denotes the first derivative of the likelihood function, both at $\Psi_{n}$. Thus $P_{n+1}=P_{n}+M_{n}$ where $M_{n}$ is the DFP correction matrix. In this thesis $\gamma_{n}$ is computed numerically. Asymptotic standard errors are based on a finite difference computation of the Hessian matrix in $\Psi_{n}^{*}$ which gives the minimum of the likelihood function.
+
+Step length $t_{n}$ is not determined by an exact line minimization method here.[^33] Instead we use an interval enclosure method. As this does not guarantee a positive definite $P_{n+1}$ even if $P_{n}$ is positive definite, an alternative updating formula is the quasi-Newton Broyden-Fletcher-Goldfarb-Shano (BFGS) formula which differs from the DFP updating formula with respect to $M_{n}$ (Van der Hoek and Kolen 1986, p.188). It is possible to apply the BFGS updating formula given the Fortran code described above. However, in this thesis we applied the DFP updating formula only.
+
+Nonfractional as well as fractional ARMA models will be estimated by maximum likelihood for the autoregressive polynomial orders $p=0,1,2,3$ and the moving-average polynomial orders $q=0,1,2,3$. When there are no moving-average parameters present, for each autoregressive order $p$ (1) the initial autoregressive parameters are estimated as the solution of the Yule-Walker equations, given an estimate of the first $p$ autocorrelations; (2) the variance of the error process is put equal to the estimated residual variance of this autoregressive model; and (3) the fractional order of integration $d$ is set to $0.01; [^34]
+
+Then for each autoregressive order $p$ the likelihood function of a model containing $0,1,2$ and 3 moving-average parameters is maximized by maximum likelihood along the lines described above. The initial moving-average parameters are set to the optimum parameter estimate of the previous model if these estimates are present - given the same $p$ - and to -0.01 otherwise.
+
+## QUARTERLY REAL US GROSS NATIONAL PRODUCT
+
+Sowell (1992a) modeled the first differences of the natural logarithm of quarterly real US gross national product (hereafter: $\log$ GNP) from 1947:I to 1989:IV (172 data points, seasonally adjusted). As the autocorrelation function of $\log$ GNP dies out slowly (see figure 4.1) modeling first differences instead of levels of log GNP is proposed by Box and Jenkins (1976). From the partial autocorrelation function an $A R(1)$ model for the first differences seems appropriate; an estimate of the first order autoregressive coefficient will be near 0.4 (see the autocorrelation function of the first differences).
+
+However, at the frequencies close to zero the shape of the periodogram of these first differences indicates overdifferentiation. Although comparison of the plots of the levels and first differences of log GNP clearly reveals that the levels are nonstationary whereas the latter are stationary, overdifferentiation indicates that an order of differencing less than one is already enough to make a nonstationary series stationary. We will illustrate this later.
+
+```{r}
+source("functions/figure4_1.R")
+```
+
+```{r}
+#| fig-cap: "Figure 4.1"
+#| fig-height: 6
+figure4_1(title = "Log Quarterly Real US GNP", LNGNP82, from = GNPC96$date[1], to = GNPC96$date[length(GNPC96$date)], by = "quarter")
+```
+
+### Augmented Dickey-Fuller tests {.unnumbered .unlisted}
+
+First we perform the ADF test by estimation of equation (2.2.4) including a constant and deterministic linear trend of order one for $\log$ GNP, denoted $ln y_{t}$ (i.e. $y_{t}$ denotes the levels of $\log$ GNP). Lagged differences are included up to order $50(p=51)$. The five percent critical value is -3.45 (Fuller 1976, table 8.5.2, $\left.\hat{\tau}_{\tau}, n=100\right)$.
+
+For $ln y_{t}$ the ADF test statistic not significantly different from zero for all lags up to 50, except at lag 11 (see figure 4.2). As the SIC criterion indicates that only one lag of first differences is appropriate the conclusion to be drawn is that the zero frequency unit root of order one hypothesis for $ln y_{t}$ cannot be rejected given a five percent significance ADF test. For the first differences of $\log$ GNP we observe from figure 4.2 that the hypothesis of a unit root in first differences is rejected at a five percent significance level, at least if we do not include lagged differences of too high order. The zero frequency unit root therefore has multiplicity one given these ADF tests results, i.e. log GNP is zero frequency integrated of order one.
+
+### Model estimation {.unnumbered .unlisted}
+
+Given the results of the ADF tests we model [first differences]{.underline} of $\log$ GNP, denoted $\Delta ln y_{t}$, by nonfractional $ARMA$ models and estimate these for $p=0,1,2,3$ and $q=0,1,2,3$ by maximum likelihood. As we have seen before from the periodogram of $\Delta ln y_{t}$ modeling this series by some fractional ARMA model seems appropriate as well. The corresponding parameter of fractional integration will be negative because of overdifferentiation. The fractional ARMA models will be estimated by maximum likelihood as well. A fractional $AR$ model for $\Delta ln y_{t}$ will be estimated following Geweke and Porter-Hudak (1983) and a nonfractional model for $\Delta ln y_{t}$ will be estimated by solving the Yule-Walker equations. A nonfractional model for the levels of $\log$ GNP will be estimated by ordinary least squares.
+
+```{r}
+source("functions/figure4_2.R")
+```
+
+```{r}
+#| fig-cap: "Figure 4.2"
+#| fig-height: 6
+figure4_2(LNGNP82, 51, trend = 1, constante = 1)
+```
+
+### Nonfractional ARMA models estimated by maximum likelihood {.unnumbered .unlisted}
+
+Fractional and nonfractional $ARMA(p, q)$ models have been estimated by maximum likelihood for $p=0,1,2,3$ and $q=0,1,2,3$. As Sowell kindly provided the data together with copies of the original computer output corresponding to the estimated fractionally integrated $\operatorname{ARMA}(p, q)$ models, we are able to check our results with respect to these models in a replicated experiment. The tables 4.1 and 4.3 presented below can be compared to tabel 1 in Sowell (1992a).
+
+For each model we present in table 4.1 two times the $\log$-likelihood value and the Akaike (AIC) and Schwartz (SIC) information criterion values at the optimal vector of parameters $\Psi$ as defined in section 3.4. In the tables 4.2 and 4.4 we present the parameter estimates of the nonfractional and fractional ARMA models, respectively. They can be compared to the tables 3 and 2 of Sowell (1992a), respectively. [^35]
+
+Table 4.1
+
+*2lnL, AIC and SIC for sixteen nonfractional $\operatorname{ARMA}(p, q)$ models of the standardized first differences of log quarterly real GNP (s.a.)*
+
+|  | **MA(0)** | **MA(1)** | **MA(2)** | **MA(3)** |
+| :---------- | :------: | :------: | :------: | :------: |
+|  | 1065.658 | 1083.242 | 1095.959 | 1097.987 |
+| **AR(0)** | 1065.658 | 1081.242 | 1091.959 | 1091.987 |
+|   | 1065.658 | 1078.100 | 1085.675 | 1082.562 |
+|   |    |    |    |    |
+|   | 1090.567 | 1092.068 | 1097.256 | 1098.003 |
+| **AR(1)** | 1088.567 | 1088.068 | 1091.256 | 1090.003 |
+|   | 1085.425 | 1081.784 | 1081.831 | 1077.436 |
+|   |    |    |    |    |
+|   | 1093.472 | 1094.964 | 1101.185 | 1102.362 |
+| **AR(2)** | 1089.472 | 1088.964 | 1093.185 | 1092.362 |
+|   | 1083.189 | 1079.539 | 1080.618 | 1076.654 |
+|   |    |    |    |    |
+|   | 1097.269 | 1098.936 | 1102.649 | 1102.674 |
+| **AR(3)** | 1091.269 | 1090.936 | 1092.649 | 1090.674 |
+|   | 1081.844 | 1078.370 | 1076.941 | 1071.824 |
+
+From table 4.1 we observe that the AIC optimal model is $ARMA(2,2)$, whereas the SIC optimal model is $ARMA(0,2)$. The parameter estimates for the sixteen models are presented in table 4.2. The two optimal models for the standardized first differences of log GNP are respectively ($t$-statistics between parentheses)
+
+$$
+(1 - \underset{(-3.91)}{0.60 L} + \underset{(3.11)}{0.49 L^{2}}) \Delta ln y_{t} = (1 - \underset{(-2.39)}{0.30 L} + \underset{(4.12)}{0.64 L^{2}}) \varepsilon_{t}
+$$
+
+and
+
+$$
+\Delta ln y_{t} = (1 + \underset{(4.07)}{0.30 L} + \underset{(3.88)}{0.27 L^{2}}) \varepsilon_{t}
+$$
+
+where the corresponding estimated residual variances are $9.3249 \times 10^{-5}$ and $9.6284 \times 10^{-5}$, respectively. A choice between the two models will be made on the basis of their forecasting performances at the end of this section.
+
+Table 4.2
+
+*Parameter estimates of sixteen nonfractional $\operatorname{ARMA}(p, q)$ models of the standardized first differences of $\log$ quarterly real GNP (s.a.); $t$-statistics between parentheses*
+
+| Model  |  $\phi_{1}$ |  $\phi_{2}$ |  $\phi_{3}$ |  $\theta_{1}$ |  $\theta_{2}$ |  $\theta_{3}$ |
+| :---:  | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(0,1)$  |    |    |    | $\underset{(4.43)}{0.27}$  |    |    |
+| $(0,2)$  |    |    |    | $\underset{(4.07)}{0.30}$  | $\underset{(3.88)}{0.27}$  |    |
+| $(0,3)$  |    |    |    | $\underset{(4.41)}{0.33}$  | $\underset{(3.97)}{0.34}$  | $\underset{(1.45)}{0.13}$  |
+| $(1,0)$  | $\underset{(5.18)}{0.37}$  |    |    |    |    |    |
+| $(1,1)$  | $\underset{(4.11)}{0.52}$  |    |    | $\underset{(-1.28)}{-0.17}$  |    |    |
+| $(1,2)$  | $\underset{(1.36)}{0.25}$  |    |    | $\underset{(0.41)}{0.07}$  | $\underset{(2.75)}{0.24}$  |    |
+| $(1,3)$  | $\underset{(-0.13)}{-0.04}$  |    |    | $\underset{(1.11)}{0.37}$  | $\underset{(2.77)}{0.35}$  | $\underset{(1.03)}{0.14}$  |
+| $(2,0)$  | $\underset{(4.23)}{0.32}$  | $\underset{(1.71)}{0.13}$  |    |    |    |    |
+| $(2,1)$  | $\underset{(-0.24)}{-0.07}$  | $\underset{(2.55)}{0.29}$  |    | $\underset{(1.34)}{0.39}$  |    |    |
+| $(2,2)$  | $\underset{(3.91)}{0.60}$  | $\underset{(-3.11)}{-0.49}$  |    | $\underset{(-2.39)}{-0.30}$  | $\underset{(4.12)}{0.64}$  |    |
+| $(2,3)$  | $\underset{(1.85)}{0.40}$  | $\underset{(-3.35)}{-0.53}$  |    | $\underset{(-0.39)}{-0.09}$  | $\underset{(6.42)}{0.71}$  | $\underset{(1.23)}{0.14}$  |
+| $(3,0)$  | $\underset{(4.50)}{0.34}$  | $\underset{(2.26)}{0.18}$  | $\underset{(-1.96)}{-0.15}$  |    |    |    |
+| $(3,1)$  | $\underset{(2.29)}{0.83}$  | $\underset{(0.15)}{0.02}$  | $\underset{(-2.89)}{-0.22}$  | $\underset{(-1.36)}{-0.50}$  |    |    |
+| $(3,2)$  | $\underset{(4.05)}{0.60}$  | $\underset{(-3.75)}{-0.67}$  | $\underset{(1.32)}{0.14}$  | $\underset{(-2.28)}{-0.28}$  | $\underset{(6.72)}{0.79}$  |    |
+| $(3,3)$  | $\underset{(1.31)}{0.68}$  | $\underset{(-2.04)}{-0.72}$  | $\underset{(0.62)}{0.18}$  | $\underset{(-0.69)}{-0.36}$  | $\underset{(4.00)}{0.82}$  | $\underset{(-0.16)}{-0.06}$  |
+
+From table 4.2 it appears that the parameter estimates of the nonfractional $ARMA(1,3)$ and $ARMA(3,3)$ models differ significantly from those presented in table 3 of Sowell (1992a): for the $ARMA(1,3)$ model the parameters estimated by Sowell are respectively 0.93,-0.64,-0.05 and -0.30; for the $ARMA(3,3)$ model the estimated parameters are respectively 1.52,-0.97,0.41,-1.26, 0.90 and -0.64 . Comparison of the corresponding $2lnL$, $AIC$ and $SIC$ values presented in table 4.1 and those presented in Sowell's table 1 reveals that the parameter estimates in our case are suboptimal. A possible explanation is that our norm of gradient convergence criterion in VARM is less strict than the one applied in GQOPT. Furthermore, different starting values could lead to different "optimal" parameter estimates for these two models.
+
+If no starting values are supplied, maximum likelihood estimation of the $ARMA(1,3)$ model in Sun/Unix TSP leads to non-convergence and estimation of the $ARMA(3,3)$ model to parameter estimates close to ours.[^36] Moreover, given the same starting values as in our Convex/Unix Fortran code - these are the same as those applied in Sowell (1992a) - the TSP parameter estimates converged to our estimates in both cases. Furthermore, the parameter estimates of Sowell (1992a) indicate common zero frequency unit roots.
+
+From table 4.1 it is observed that addition of a third moving-average parameter is redundant: for each autoregressive order the AIC and SIC values decrease as compared to the models with two moving-average parameters.[^37] Furthermore, the third moving-average parameter is not significantly different from zero in any case as can be seen in table 4.2.
+
+As the quarterly real US GNP data are seasonally adjusted it is advisable to include a fourth moving-average parameter and check for statistical significance.[^38] Fixing the third moving-average parameter value at zero and applying the same starting values strategy as described above only the $ARMA(1,4)$ model resulted in statistically significant parameter values. However, the model estimated is non-stationary and these type of models are excluded from the analysis in this thesis.
+
+### Fractional ARMA models estimated by maximum likelihood {.unnumbered .unlisted}
+
+From table 4.3 we observe that on the basis of AIC the fractionally integrated $ARMA(3,2)$ model is optimal, whereas it is an $ARMA(1,0)$ model if SIC is the chosen criterion.
+
+Table 4.3
+
+*2lnL, AIC and SIC for sixteen fractional ARMA (p,q) models of the standardized first differences of log quarterly real GNP (s.a.)*
+
+|  | **MA(0)** | **MA(1)** | **MA(2)** | **MA(3)** |
+| :---------- | :------: | :------: | :------: | :------: |
+|  | 1083.436 | 1085.865 | 1096.057 | 1100.848 |
+| **AR(0)** | 1081.436 | 1081.865 | 1090.057 | 1092.848 |
+|  | 1078.294 | 1075.582 | 1080.632 | 1080.281 |
+|  | 1095.024 | 1095.198 | 1100.911 | 1102.092 |
+| **AR(1)** | 1091.024 | 1089.198 | 1092.911 | 1092.092 |
+|  | 1084.741 | 1079.773 | 1080.345 | 1076.384 |
+|  | 1095.468 | 1097.328 | 1101.748 | 1103.053 |
+| **AR(2)** | 1089.468 | 1089.328 | 1091.748 | 1091.053 |
+|  | 1080.043 | 1076.761 | 1076.039 | 1072.203 |
+|  | 1100.406 | 1100.467 | 1105.695 | 1105.721 |
+| **AR(3)** | 1092.406 | 1090.467 | 1093.695 | 1091.721 |
+|  | 1079.839 | 1074.759 | 1074.845 | 1069.730 |
+
+From table 4.4 it appears that the estimated parameters of the fractional $ARMA$ model are almost all identical to the corresponding ones in Sowell (1992a).[^39] The standard deviations reveal more differences, though never significant. For the optimal models $d=-0.59$ and $d=-0.45$, i.e. $\log$ quarterly real US GNP is zero frequency integrated of order 0.41 or 0.55 , respectively. Thus, according to the former model $\log$ GNP has a long memory stationary model representation whereas it is non-stationary according to the latter model.
+
+and
+
+$$
+\begin{aligned}
+(1 - \underset{(-3.01)}{1.18} L + \underset{(2.94)}{0.93} L^{2} - \underset{(-2.60)}{0.51} L^{3})(1 - L)\underset{(-1.73)}{^{-0.59}} \Delta ln y_{t} \\
+=(1 - \underset{(-2.23)}{0.29} L + \underset{(7.20)}{0.81} L^{2}) \varepsilon_{t} \\
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+& (1 - \underset{(-6.44)}{0.77} L)(1-L)\underset{(-2.86)}{^{-0.45}} \Delta ln y_{t}=\varepsilon_{t}
+\end{aligned}
+$$
+
+where the estimates of the residual variance corresponding to the two nonfractional ARMA optimal models are $9.0253 \times 10^{-5}$ and $9.6508 \times 10^{-5}$, respectively. A choice between the two models will be made on the basis of their forecasting performances at the end of this section.
+
+Table 4.4
+
+*Parameter estimates of sixteen fractional $\operatorname{ARMA}(p, q)$ models of the standardized first differences of log quarterly real GNP (s.a.); $t$-statistics between parentheses*
+
+| Model |   $d$ |   $\phi_{1}$ |   $\phi_{2}$ |   $\phi_{3}$ |   $\theta_{1}$ |   $\theta_{2}$ |   $\theta_{3}$ |
+| :---:  | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(0, d, 0)$ | $\underset{3.98}{(0.29)}$ |    |    |    |    |    |    |
+| $(0, d, 1)$ | $\underset{1.52}{(0.16)}$ |    |    |    | $\underset{1.65}{(0.16)}$ |    |    |
+| $(0, d, 2)$ | $\underset{-0.32}{(-0.03)}$ |    |    |    | $\underset{2.99}{(0.33)}$ | $\underset{3.67}{(0.28)}$ |    |
+| $(0, d, 3)$ | $\underset{-1.92}{(-0.20)}$ |    |    |    | $\underset{4.66}{(0.48)}$ | $\underset{4.70}{(0.46)}$ | $\underset{2.37}{(0.25)}$ |
+| $(1, d, 0)$ | $\underset{-2.86}{(-0.45)}$ | $\underset{6.44}{(0.77)}$ |    |    |    |    |    |
+| $(1, d, 1)$ | $\underset{-1.69}{(-0.38)}$ | $\underset{5.52}{(0.74)}$ |    |    | $\underset{-0.42}{(-0.05)}$ |    |    |
+| $(1, d, 2)$ | $\underset{-1.42}{(-0.41)}$ | $\underset{2.57}{(0.65)}$ |    |    | $\underset{0.52}{(0.06)}$ | $\underset{2.56}{(0.23)}$ |    |
+| $(1, d, 3)$ | $\underset{-1.73}{(-0.33)}$ | $\underset{1.04}{(0.37)}$ |    |    | $\underset{1.17}{(0.26)}$ | $\underset{2.61}{(0.39)}$ | $\underset{1.17}{(0.17)}$ |
+| $(2, d, 0)$ | $\underset{-1.27}{(-0.30)}$ | $\underset{2.44}{(0.60)}$ | $\underset{0.79}{(0.08)}$ |    |    |    |    |
+| $(2, d, 1)$ | $\underset{-1.54}{(-0.29)}$ | $\underset{0.22}{(0.07)}$ | $\underset{2.07}{(0.44)}$ |    | $\underset{1.63}{(0.52)}$ |    |    |
+| $(2, d, 2)$ | $\underset{-0.79}{(-0.25)}$ | $\underset{2.80}{(0.78)}$ | $\underset{-1.05}{(-0.26)}$ |    | $\underset{-0.93}{(-0.23)}$ | $\underset{1.45}{(0.37)}$ |    |
+| $(2, d, 3)$ | $\underset{-0.77}{(-0.13)}$ | $\underset{1.73}{(0.41)}$ | $\underset{-1.45}{(-0.39)}$ |    | $\underset{0.12}{(0.03)}$ | $\underset{3.39}{(0.63)}$ | $\underset{1.51}{(0.19)}$ |
+| $(3, d, 0)$ | $\underset{-1.52}{(-0.39)}$ | $\underset{2.76}{(0.70)}$ | $\underset{1.65}{(0.17)}$ | $\underset{-2.24}{(-0.17)}$ |    |    |    |
+| $(3, d, 1)$ | $\underset{-1.11}{(-0.34)}$ | $\underset{2.29}{(0.75)}$ | $\underset{0.45}{(0.11)}$ | $\underset{-2.23}{(-0.18)}$ | $\underset{-0.25}{(-0.11)}$ |    |    |
+| $(3, d, 2)$ | $\underset{-1.73}{(-0.59)}$ | $\underset{3.01}{(1.18)}$ | $\underset{-2.94}{(-0.93)}$ | $\underset{2.60}{(0.51)}$ | $\underset{-2.23}{(-0.29)}$ | $\underset{7.20}{(0.81)}$ |    |
+| $(3, d, 3)$ | $\underset{-1.10}{(-0.52)}$ | $\underset{3.04}{(1.16)}$ | $\underset{-3.03}{(-0.94)}$ | $\underset{2.33}{(0.50)}$ | $\underset{-1.06}{(-0.34)}$ | $\underset{5.96}{(0.83)}$ | $\underset{-0.17}{(-0.04)}$ |
+
+In the literature (e.g. Sowell 1992; Diebold and Rudebusch 1989) the zero frequency unit root of order one hypothesis given log GNP is sometimes rejected and sometimes not rejected against the alternative of a deterministic trend by an ADF unit root test. Given our ADF test results this hypothesis could not be rejected. From the maximum likelihood results above
+we observe that a zero frequency unit root is present in the autoregressive structure of $\log$ GNP, however not of integer order one but of fractional order $(0.41$ or 0.55$)$. The ADF test for a zero frequency unit root of integer order one therefore restricts the set of possible models for log GNP and seems to be a test for non-stationarity versus stationarity rather than a unit root test.
+
+The modeling strategy of Sowell (1992a) clearly leads to the incorrect impression that the nonfractional $A R M A(0,2)$ model is an important nonfractional alternative to the fractional $\operatorname{ARMA}(3,-0.59,2)$ model. ${ }^{40}$ From the plot of the spectral densities of the estimated models over the periodogram for the first differences of log GNP it appears that the nonfractional $\operatorname{ARMA}(2,2)$ model gives a better description of the frequency domain behavior than the model advocated by Sowell (see figure 4.3). ${ }^{41}$ Campbell and Mankiw (1987) selected this model out of a set of nonfractional ARMA models. This finding gives support to our proposition that application of the AIC or SIC criterion to find one model out of a set of nonfractional and fractional alternatives is a strategy not to be pursued. It is advisable to apply the criteria to the set of nonfractional alternatives only to find an AIC optimal and an SIC optimal model and do the same for a set of fractional alternatives only. A choice between the models can be made by studying the forecasting performances of the set of optimal models. ${ }^{42}$
+
+### The second stage of the GPH (1983) estimation procedure {.unnumbered .unlisted}
+
+The GPH estimation of fractional ARMA models procedure consists of two stages: at the first stage the long memory parameter $d$ is estimated by a log periodogram regression (equation (3.3)), and at the second stage the short memory autoregressive parameters are estimated. In order to get a clear picture of the meaning of fractional integration in general and the GPH methodology in particular we first discuss the GPH results given the fractional $\operatorname{ARMA}(1,-0.45,0)$ model for $\operatorname{slny}$ (this model is SIC optimal when estimated by maximum likelihood). Thus in this discussion estimation of the[^2]
+
+Figure 4.3
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-13.jpg?height=2312&width=1648&top_left_y=311&top_left_x=224)
+parameter of fractional integration at the first stage of the GPH procedure is skipped. The GPH estimation results when performing the first stage $\log$ periodogram regression will be discussed hereafter.
+
+Given $d=-0.45$, we can compute the mean-corrected series
+
+$$
+\begin{equation*}
+u_{t}=(1-L)^{-0.45} \Delta l n y_{t} \tag{1}
+\end{equation*}
+$$
+
+by premultiplication of $\Delta l n y_{t}$ in the frequency domain. In figure 4.4 we plotted the series $u_{t}$ against $\Delta l n y_{t}$ where both series run from 1947:II to 1989:IV (171 data points).
+
+The negative sign of the parameter of fractional integration indicates that in order to attain stationarity the series $\ln y_{t}$ has been overdifferenced when considering $\Delta \ln y_{t}$. As $u \sim I(0)$ we observe that lny is already stationary and without long memory when corrected for an integration order of 0.55 ; it is overdifferenced when corrected for an integration order of 1.00 . Notice that $u_{t}=(1-L)^{0.55} \ln y_{t}$.
+
+Yule-Walker estimation of the autoregressive structure of $u$ at the second stage of the GPH procedure gives the following model for the mean-corrected series $u_{t}$ :
+
+$$
+\begin{gather*}
+(1-0.77 L) u_{t}=\varepsilon_{t}  \tag{2}\\
+(-15.70)
+\end{gather*}
+$$
+
+where the first order autoregressive parameter estimate appears to be equal to the corresponding maximum likelihood estimate (see table 4.4).
+
+### Predictions obtained by time domain transforms {.unnumbered .unlisted}
+
+In order to construct forecasts of $\Delta l n y_{t}$ and thereby of $l n y_{t}$ we can perform convolution of the short-memory autoregressive polynomial $(1-0.77 L)$ and the long memory autoregressive polynomial (an alternative device will be discussed later). The latter polynomial is approximated by its infinite order autoregressive representation, truncated after lag 50. In figure 4.5 we have illustrated the convolution of these autoregressive polynomials. We have depicted the short and long memory autoregressive coefficients and the coefficients resulting after convolution. Furthermore we have plotted the implied short and long memory estimated spectral densities and the spectral density corresponding to the convoluted polynomial, each estimated density plotted against the periodogram of $\Delta \ln y_{t}$. It is clear that the shape of the periodogram at the higher frequencies is approximated best by the short memory spectral density whereas the lower frequency behavior is captured best
+
+Figure 4.4
+
+First differences and the fractionally differenced $(\mathrm{d}=-0.45)$ first differences
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-15.jpg?height=983&width=1711&top_left_y=478&top_left_x=205)
+
+Figure 4.5
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-16.jpg?height=564&width=833&top_left_y=254&top_left_x=222)
+
+Autoregressive Coefficients After Convolution
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-16.jpg?height=1144&width=758&top_left_y=1522&top_left_x=246)
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-16.jpg?height=1138&width=780&top_left_y=254&top_left_x=208)
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-16.jpg?height=568&width=807&top_left_y=252&top_left_x=1108)
+by the long memory spectral density.
+
+In figure 4.6 the one-step ahead predictions $\Delta l n y_{t, 1}$ are plotted against $\Delta l n y_{t}$, given the bases 1959:II up to 1989:III. From the histogram of the one-step ahead prediction errors in figure 4.7 (122 data points) we observe a slight skewness to the left with an extreme prediction error of -0.06 in 1982:III. The square root of the mean squared one-step ahead in-sample prediction errors of 0.0177 can be compared to 0.0097 , i.e. the maximum likelihood estimate of the standard deviation of the fractional $\operatorname{ARMA}(1,-0.45,0)$ model. Notice however that the former figure is based on 122 data points whereas the latter is based on 172 data points. Compare the results with the predictions obtained by frequency domain transforms.
+
+One-step ahead predictions of $l n y_{t}$ are obtained by integration of the forecasts $\Delta l n y_{t, 1}$, thereby making use of
+
+$$
+\begin{equation*}
+\ln y_{t, 1}=\ln y_{t}+\Delta \ln y_{t, 1} \tag{3}
+\end{equation*}
+$$
+
+The one-step ahead in-sample predictions $\ln y_{t, 1}$ are plotted against $\ln y_{t}$ in figure 4.8, given the bases 1959:II up to 1989:III. By substitution of the identity $\ln y_{t}=\ln y_{t+1}-\Delta \ln y_{t+1}$ in (3) it can be derived that
+
+$$
+\Delta \ln y_{t+1}-\Delta \ln y_{t, 1}=\ln y_{t+1}-\ln y_{t, 1}
+$$
+
+i.e. the one-step ahead prediction errors for the first differences of $\log$ GNP equal those of the levels. For the histogram of the one-step ahead prediction errors of $\ln y_{t}$ we therefore refer to the one corresponding to $\Delta l n y_{t}$. Furthermore, the square root of the mean squared one-step ahead in-sample prediction errors of 0.0177 for $\ln y_{t}$ can thus be compared to the maximum likelihood estimate of the standard deviation of the fractional ARMA $(1,-0.45,0)$ model for $\Delta l n y_{t}$.
+
+In general $h$-step ahead predictions of $l n y_{t}$ are obtained by making use of the identity $\ln y_{t, h}=\ln y_{t, h-1}+\Delta \ln y_{t, h}$. Given the basis 1959:II the predictions of $\log$ GNP for horizons 1 up to 120 are plotted against the realizations in figure 4.9.
+
+### Predictions obtained by frequency domain transforms {.unnumbered .unlisted}
+
+An alternative device to generate one-step ahead predictions of $\Delta l n y_{t}$ given the model in equation (2) is the following. One-step ahead predictions of $u_{t}$ can be derived from model (2) as
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-18.jpg?height=1038&width=1714&top_left_y=339&top_left_x=181)
+
+Histogram of one-step ahead prediction errors of first differences
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-19.jpg?height=984&width=1651&top_left_y=346&top_left_x=241)
+
+Figure 4.8
+
+Realizations and one-step ahead predictions of levels
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-20.jpg?height=989&width=1674&top_left_y=338&top_left_x=218)
+
+Figure 4.9
+
+Levels and predictions given base 1959:IV
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-21.jpg?height=992&width=1685&top_left_y=365&top_left_x=230)
+
+$$
+\begin{equation*}
+\hat{u}_{t}=0.77 u_{t-1} \tag{4}
+\end{equation*}
+$$
+
+for $t=2, \ldots, 171$. Premultiplication of $\hat{u}_{t}$ by the filter $(1-L)^{0.45}$ in the frequency domain gives one-step ahead predictions of $\Delta l n y_{t}$, say $\Delta l \hat{n}_{t}$. Notice the difference in the generation of predictions as described before: they were derived after convolution of the short- and long-memory autoregressive polynomials as given in equations (1) and (2). The histogram of the one-step ahead predictions of $\Delta l n y_{t}$ derived in this way is presented in figure 4.10. The square root of the mean squared in-sample predictions errors based on 170 data-points is 0.0110 ; based on the period after 1959:II the corresponding figure is 0.0108 .
+
+### Fractional AR models estimated according to GPH (1983) {.unnumbered .unlisted}
+
+At the first stage of the GPH estimation procedure the number of periodogram ordinates $n$ to be used in the $\log$ periodogram regression (3.3) is determined by the rule $n=z(T)$ where $z(T)=T^{\alpha}$ as proposed by Geweke and Porter-Hudak (1983) where $0<\alpha \leq 1$ has to be chosen. Although $\alpha=0.55$ or $\alpha=0.6$ is proposed by Geweke and Porter-Hudak (1983), in the literature usually $\alpha=0.5$ is taken (e.g. Diebold and Rudebusch 1989). If the process under consideration is fractional noise Hassler (1993a, 1993b) suggests that the log periodogram regression should be run over the whole range of harmonic frequencies. We estimated the short-memory component of the fractional models for autoregressive orders of one up to 50. According to the SIC criterion an optimal short-memory autoregressive order for the mean-corrected series $\Delta l n y_{t}$ is determined.
+
+The first differences of $\log$ GNP reveal short-memory behavior. The $\log$ periodogram regression has been run over the first $n=13(\alpha=0.5), n=16$ $(\alpha=0.55)$ and $n=21(\alpha=0.6)$ nonzero periodogram ordinates. ${ }^{43}$ From the first panel of table 4.5 we conclude that the estimates of the parameter of fractional integration for $n=13,16,21$ are not significantly different from zero. This is in sharp contrast with the maximum likelihood results.[^3]
+
+Histogram frequency domain one-step ahead prediction errors
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-23.jpg?height=984&width=1665&top_left_y=366&top_left_x=248)
+
+)
+
+Table 4.5
+
+Parameter estimates of fractional $A R(p)$ models of the first differences of log quarterly real GNP (s.a.);
+
+$t$-statistics between parentheses
+
+| periodogram regression |  |  |  | $A R(p)$ parameters |  | SIC value |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| $\alpha$ | $n$ | constant | $d$ | $p$ | $\phi_{1}$ |  |
+| 0.5 | 13 | -10.79 <br> $(-13.81)$ | 0.06 <br> $(0.25)$ | 1 | 0.31 <br> $(4.29)$ | 9.181 |
+| 0.55 | 16 | -10.76 <br> $(-18.77)$ | 0.05 <br> $(0.28)$ | 1 | 0.32 <br> $(4.38)$ | 9.181 |
+| 0.6 | 21 | -10.27 <br> $(-26.56)$ | -0.07 <br> $(-0.53)$ | 1 | 0.44 <br> $(6.44)$ | 9.193 |
+|  | 6 | -9.12 <br> $(-27.50)$ | -0.29 <br> $(-4.02)$ | 1 | 0.65 <br> $(11.07)$ | 9.211 |
+|  | 7 | -9.83 <br> $(-17.64)$ | -0.16 <br> $(-1.22)$ | 1 | 0.52 <br> $(8.02)$ | 9.200 |
+|  | 8 | -9.26 <br> $(-15.61)$ | -0.27 <br> $(-1.89)$ | 1 | 0.63 <br> $(10.50)$ | 9.209 |
+
+Note: In the first two columns $\alpha$ and $n$ according to the rule $n=T^{\alpha}$ are presented, where $T=171$. In the third and fourth column the estimated constant of the log periodogram regression and the estimated parameter of fractional integration are shown. The optimal order of the short memory autoregressive model, the corresponding estimate of the autoregressive parameter(s) and the corresponding SIC value are depicted in the columns five, six and seven, respectively.
+
+The periodogram of $\Delta l n y_{t}$ increases up to $n=8$ and decreases afterwards. As the increment has to be described by the long-memory part of the fractional $A R$ model it is advisable to perform the log periodogram regression for $n=8$. The estimation results are presented in the second panel of table 4.5, together with those for $n=6$ and $n=7$ for comparison. The estimated parameter of integration $d=-0.27$ for $n=8$ is almost significantly different from zero and the SIC value is higher than the ones corresponding to the estimates discussed before. For $n=6$ the estimate $d=-0.29$ is significantly different from zero and corresponds to the overall highest SIC value reported in this table. The model for the mean corrected series $\Delta l n y_{t}$ reads
+
+$$
+\begin{equation*}
+\underset{(-11.07)}{(1-0.65 L)}(1-L)_{(-4.02)}^{-0.29} \Delta \ln y_{t}=\varepsilon_{t} \tag{5}
+\end{equation*}
+$$
+
+where the estimated variance equals $17.5652 \times 10^{-5}$. For $n=7$ the parameter of integration is not significantly different from zero.
+
+The rule $z(T)=T^{\alpha}$, where $\alpha \in\{0.5,0.55,0.6\}$, does lead to a serious bias in the parameter of fractional integration and it is therefore not advisable to apply this rule in case of fractional $A R$ modeling of $\log$ GNP. In figure 4.11 we have plotted the $\log$ periodogram of the first differences of $\log$ GNP, the deterministic regressor $\ln \left\{4 \sin ^{2}\left(\lambda_{j, T} / 2\right)\right\}$ and the regressor multiplied by the maximum likelihood estimate $d=-0.45$. It is clear that the latter gives a good description only of the first few low harmonic frequencies. The periodogram at the higher frequencies causes the upward bias in the estimate of the long-run parameter of integration, as these are best described given a positive order of fractional integration.
+
+The bias in $d$ is caused by the presence of strong short memory autoregressive correlation of the first order as can be seen from equation (2). In a Monte Carlo experiment Sowell (1992a) estimates the parameter $d$ by performing the log periodogram regression for the first $k$ nonzero periodogram ordinates where $k$ was varied between 3 and 32 . One thousand samples were simulated from the fractional $\operatorname{ARIMA}(3, d, 2)$ model as estimated by maximum likelihood for the first differences of $\log$ GNP. The means of the estimated parameters $d$ all show upward bias from the population value which monotonically increases with the number of ordinates used. Hassler (1993b) derives an analytical representation of the bias in the estimate of the parameter $d$ which depends on the coefficients of the ARMA polynomials only. Indeed, for first order autoregressive processes with first order autocorrelation of 0.8 extremely biased estimators are obtained, the bias growing with $n$.
+
+### A Yule-Walker nonfractional AR model {.unnumbered .unlisted}
+
+To apply the Yule-Walker estimation procedure stationarity is necessary. As we want to estimate a nonfractional $A R$ model and given de ADF test results the relevant series should be $\Delta l n y_{t}$. We estimated nonfractional $A R$ models for an autoregressive order of one up to 50. According to the SIC criterion the following Yule-Walker estimated model for the mean-corrected series $\Delta l n y_{t}$ is optimal
+
+(6) $\quad(1-0.37 L) \Delta \ln y_{t}=\varepsilon_{t}$
+
+$$
+(-5.18)
+$$
+
+where the estimate of the first order autoregressive parameter equals the corresponding maximum likelihood estimate (see table 4.2). The estimated variance equals $10.0018 \times 10^{-5}$.
+
+Log Periodogram of First Differences of Quarterly Real US GNP, I
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-26.jpg?height=1084&width=1634&top_left_y=362&top_left_x=198)
+
+1
+
+In the discussion of the maximum likelihood estimation of fractional ARMA models we noticed that the generation of one-step ahead predictions of $\Delta \ln y_{t}$ given the model (2) could be done in two ways: first convolute the short- and long-memory autoregressive polynomials and then compute the forecasts of $\Delta l n y_{t}$, or first generate predictions of the long-memory series $u_{t}$ and then premultiplicate these predictions by the filter $(1-L)^{0.45}$ in the frequency domain (see equation (4)). It is the latter procedure that makes an interesting comparison possible.
+
+Given model (6) it is possible to derive predictions of $\Delta l n y_{t}$ as
+
+$$
+\Delta l \hat{n} y_{t}=0.37 \Delta l n y_{t-1}
+$$
+
+for $t=2, \ldots, 171$. If model (6) as well as model (2) give a good description of the underlying process these one-step ahead prediction errors should be similar in distribution as those computed according via the frequency domain. From the histogram in figure 4.12 we observe that this is indeed the case (compare figure 4.10). The square root of the mean squared in-sample predictions errors based on 170 data-points is 0.0112 ; based on the period after 1959:II the corresponding figure is 0.0106 .
+
+### An ordinary least squares nonfractional $A R$ model {.unnumbered .unlisted}
+
+In order to estimate a nonfractional $A R$ model by ordinary least squares stationarity of the series to be modeled is not necessary. According to the SIC criterion the following ordinary least squares estimated model for the $\operatorname{lng}_{t}$ is optimal ${ }^{44}$
+
+$$
+\begin{equation*}
+\left.\underset{(-18.90)}{(1-1.36 L}+\underset{(5.06)}{\left.0.36 L^{2}\right)}\right)_{n} y_{t}=\underset{(1.43)}{0.02}+\varepsilon_{t} \tag{7}
+\end{equation*}
+$$
+
+where the estimated variance equals $10.1026 \times 10^{-5}$. The presence of a zero frequency unit root is clearly revealed. Rewriting this model we obtain
+
+$$
+(1-0.36 L) \Delta l n y_{t}=0.02+\varepsilon_{t}
+$$
+
+which is very similar to the Yule-Walker estimated model (4) for the meancorrected series $\Delta l n y_{t}$.[^4]
+
+Histogram time domain one-step ahead prediction errors
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-28.jpg?height=981&width=1648&top_left_y=365&top_left_x=248)
+
+I
+
+The choice of an optimal model
+
+From table 4.6 we observe that the nonfractional models are to be preferred in terms of in-sample forecasting performance. Note however that there are only 3 horizon 120 predictions, so that conclusions should be drawn carefully. The ADF test result is in accordance with the optimal model choices.
+
+Table 4.6
+
+Square roots of mean squared in-sample prediction errors for horizons $1,5,20,40,60$ and 120 corresponding to log quarterly real GNP (s.a.)
+
+| type of model | estimation <br> method | horizons |  |  |  |  |  |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+|  |  | 1 | 5 | 20 | 40 | 60 | 120 |
+| (models of the levels) |  |  |  |  |  |  |  |
+| nonfractional $A R(2)$ | OLS | 0.009 | 0.028 | 0.047 | 0.043 | 0.045 | 0.043 |
+| (models of the first differences) |  |  |  |  |  |  |  |
+| nonfractional $A R M A(2,2)$ | ML | 0.012 | 0.031 | 0.053 | 0.064 | 0.079 | 0.028 |
+| nonfractional $A R M A(0,2)$ | ML | 0.010 | 0.029 | 0.052 | 0.066 | 0.081 | 0.028 |
+| fractional $A R M A(3,-0.59,2)$ | ML | - | - | - | - | - | - |
+| fractional $A R M A(1,-0.45,0)$ | $\mathrm{ML}$ | 0.018 | 0.038 | 0.054 | 0.066 | 0.068 | 0.039 |
+| fractional $A R(1,-0.29)$ | GPH | 0.012 | 0.035 | 0.053 | 0.065 | 0.071 | 0.039 |
+| nonfractional $A R(1)$ | $\mathrm{YW}$ | 0.009 | 0.029 | 0.053 | 0.069 | 0.084 | 0.033 |
+
+### Cumulative impulse responses {.unnumbered .unlisted}
+
+From figure 4.13 we see that the cumulative impulse responses are very close for all models. In the longer run the shock persistence corresponding to the the fractional models is much less than that corresponding to the nonfractional models. Given the rather small number of observations available it should be noted that standard errors will be high.
+
+Cumulative Impulse Responses For Various Estimated Models
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-30.jpg?height=1078&width=1666&top_left_y=382&top_left_x=225)
+
+,
+
+## ANNUAL TRIER OAK TREE RING WIDTHS
+
+In Lamb (1977, table v21) a series of 1143 data points is tabulated. The data points reflect yearly Trier oak tree ring widths from the west of the Rhine, near Trier and cover the years $822-1964$. The data were gathered by felling the oaks and measuring the thickness of the rings, the youngest ring being the one nearest to the bark. Generally in each year there have been between 10 and 36 sample measurements; in the years before 910 there have been only 1-9 measurements and only 4-8 in the period between 1060 and 1129 . The unit of measurement is not reported in Lamb (1977) but may well be $0.1 \mathrm{~mm}$ (see also Steyn 1992).
+
+The ring widhts are the subject of dendroclimatology as they provide indirect evidence of weather conditions. The nature of the weather dependence of this series has not been investigated at Lamb's (1977) time of writing. Decades with mild winters and warm summers which also gave plenty of rain seem to have produced the most growth; colder or drier summers or winters probably restricted growth. The ring widths seem to register the effects of more than one year. The Trier oak tree ring widths are plotted in figure 4.14.
+
+As the emphasis in this thesis is on long memory behavior of stochastic processes a series of this length should be considered as very welcome, given economic series which are often of rather short length and are therefore rather inadequate for this purpose. From the periodogram of the Trier oak tree ring widths we observe that long memory behavior is present in this series. The correponding autocorrelation function dies out slowly which is an indication of the presence of a zero frequency unit root as well.
+
+From the figures corresponding to the first differences a surprising phenomenon is manifest. While the levels of the series are primarily dominated by the low frequency behavior, the first differences are primarily dominated by the behavior at the high frequencies. Furthermore, from the estimated autocorrelation function and partial autocorrelation function an appropriate model for the first differences seems to be an $M A(1)$ model with first order autocorrelation of about -0.5. However, the corresponding first order moving-average coefficient then should be about -1 , which is an indication of overdifferentiation as well.
+
+Thus the levels of the series are non-stationary whereas taking first
+
+Figure 4.14
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-32.jpg?height=1072&width=784&top_left_y=294&top_left_x=224)
+
+fractions of c
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-32.jpg?height=1052&width=768&top_left_y=1587&top_left_x=240)
+
+fractions of c
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-32.jpg?height=2398&width=796&top_left_y=315&top_left_x=1118)
+differences is just too much. This dilemma very strongly indicates the necessity of allowing for fractional integration when modeling this series. Fractional integration seems to be tailor-made for description of the behavior of the Trier oak tree ring widths series.
+
+### Augmented Dickey-Fuller tests {.unnumbered .unlisted}
+
+The ADF test is performed by estimation of equation (2.2.4) for the Trier oak tree ring widths, denoted $y_{t}$, including a constant, a deterministic linear trend of order one and lagged differences of $y_{t}$ up to order $50(p=51)$. The five percent critical value is -3.41 (Fuller 1976, table 8.5.2, $\hat{\tau}_{\tau}, n=\infty$ ). For both $y_{t}$ and $\Delta y_{t}$ the ADF test statistic is significantly different from zero for all lags up to 50: the zero frequency integer unit root hypothesis is rejected against a fractional unit root less than one at a five percent significance level in both cases (see figure 4.15).
+
+### Model estimation {.unnumbered .unlisted}
+
+Given the results of the ADF tests we model levels of the Trier oak tree ring widths by a nonfractional and a fractional ARMA model first. Estimation of these models will be performed by maximum likelihood. A fractional $A R$ model for $y_{t}$ will also be estimated following Geweke and Porter-Hudak (1983). A nonfractional $A R$ model for $y_{t}$ will once be estimated by solving the Yule-Walker equations and once by ordinary least squares.
+
+### Nonfractional ARMA models estimated by maximum likelihood {.unnumbered .unlisted}
+
+Estimation of nonfractional ARMA models for the levels of the Trier oak tree ring widths indicate the presence of a zero frequency autoregressive unit root of order one. ${ }^{45}$ Therefore we present in tables 4.7 and 4.8 the results corresponding to the first differences of the Trier series. The optimal model, both according to AIC and SIC, is the nonfractional $\operatorname{ARMA}(2,1)$ model
+
+$$
+\begin{gathered}
+\left(1-0.24 L-0.20 L^{2}\right) \Delta y_{t}=(1-0.92 L) \varepsilon_{t} \\
+(-7.09)(-6.16)
+\end{gathered}
+$$
+
+where the corresponding estimated residual variance is 418.0292 .[^5]
+
+Figure 4.15
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-34.jpg?height=1134&width=1692&top_left_y=275&top_left_x=178)
+
+LEVELS
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-34.jpg?height=1138&width=1694&top_left_y=1544&top_left_x=181)
+
+FIRST DIFFERENCES
+
+Table 4.7
+
+2lnL, AIC and SIC for sixteen nonfractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths
+
+|  |  |  |  |  |
+|  | Number of $MA$ parameters |  |  |  |
+| :--- | :---: | :---: | :---: | :---: |
+|  |  |  |  |  |
+| Number of $AR$ parameters | 0 | 1 | 2 | 3 |
+|  |  |  |  |  |
+| 0 | -10578.025 | -10183.825 | -10177.450 | -10140.641 |
+|  | -10578.025 | -10185.825 | -10181.450 | -10146.641 |
+|  | -10578.025 | -10190.865 | -10191.531 | -10161.763 |
+|  |  |  |  |  |
+| 1 | -10285.213 | -10170.637 | -10145.002 | -10134.484 |
+|  | -10287.213 | -10174.637 | -10151.002 | -10142.484 |
+|  | -10292.254 | -10184.718 | -10166.124 | -10162.646 |
+|  |  |  |  |  |
+| 2 | -10246.630 | -10134.488 | -10134.481 | -10134.079 |
+|  | -10250.630 | -10140.488 | -10142.481 | -10144.079 |
+|  | -10260.711 | -10155.610 | -10162.643 | -10169.281 |
+|  |  |  |  |  |
+| 3 | -10226.841 | -10134.479 | -10134.131 | -10132.912 |
+|  | -10232.841 | -10142.479 | -10144.131 | -10144.912 |
+|  | -10247.962 | -10162.641 | -10169.334 | -10175.155 |
+
+Table 4.8
+
+Parameter estimates of sixteen nonfractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths;
+
+$t$-statistics between parentheses
+
+| $\frac{\text { Model }}{(0,1)}$ | $\phi_{1}$ |  | $\phi_{2}$ |  | $\phi_{3}$ | $\theta_{1}$ <br> -0.69 <br> $(-23.43)$ | $\theta_{2}$ |  | $\theta_{3}$ |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+|  |  |  |  |  |  |  |  |  |  |
+| $(0,2)$ |  |  |  |  |  | -0.67 <br> $(-23.98)$ | ( | -0.08 <br> $-2.56)$ |  |
+| $(0,3)$ |  |  |  |  |  | -0.68 <br> $(-23.48)$ | ( | 0.05 <br> $1.22)$ | -0.19 <br> $(-6.25)$ |
+| $(1,0)$ | -0.48 <br> $(-18.28)$ |  |  |  |  |  |  |  |  |
+| $(1,1)$ | 0.20 <br> $(\quad 4.36)$ |  |  |  |  | -0.84 <br> $(-26.93)$ |  |  |  |
+| $(1,2)$ | 0.72 <br> $(\quad 11.18)$ |  |  |  |  | -1.37 <br> $(-18.72)$ | ( | 0.41 <br> $6.58)$ |  |
+| $(1,3)$ | 0.42 <br> $(\quad 2.64)$ |  |  |  |  | -1.09 <br> $(-6.91)$ | ( | 0.32 <br> $3.04)$ | -0.14 <br> $(-3.36)$ |
+| $(2,0)$ | -0.56 <br> $(-19.33)$ | ( | -0.18 <br> $-6.26)$ |  |  |  |  |  |  |
+| $(2,1)$ | 0.24 <br> $(\quad 7.09)$ | ( | 0.20 <br> $6.16)$ |  |  | -0.92 <br> $(-56.51)$ |  |  |  |
+| $(2,2)$ | 0.26 <br> $(\quad 1.74)$ | ( | 0.20 <br> $4.08)$ |  |  | -0.93 <br> $(-6.26)$ | ( | 0.01 <br> $0.09)$ |  |
+| $(2,3)$ | 0.32 <br> $(\quad 1.69)$ | ( | 0.10 <br> $0.63)$ |  |  | -1.00 <br> $(-5.23)$ | ( | 0.16 <br> $0.61)$ | -0.08 <br> $\left(\begin{array}{l}-0.66)\end{array}\right.$ |
+| $(3,0)$ | -0.59 <br> $(-19.98)$ | ( | -0.26 <br> $-7.70)$ | ( | -0.13 <br> $-4.47)$ |  |  |  |  |
+| $(3,1)$ | 0.24 <br> $(\quad 7.10)$ | ( | 0.20 <br> $6.16)$ | ( | 0.00 <br> $0.10)$ | -0.92 <br> $(-52.70)$ |  |  |  |
+| $(3,2)$ | -0.35 <br> $(-0.72)$ | ( | 0.35 <br> $2.78)$ | ( | 0.14 <br> $1.40)$ | -0.33 <br> $(-0.67)$ | ( | -0.55 <br> $-1.23)$ |  |
+| $(3,3)$ | -0.24 <br> $(-0.64)$ | ( | 0.10 <br> $0.45)$ | ( | 0.15 <br> $1.72)$ | -0.43 <br> $(-1.15)$ | ( | -0.21 <br> $-0.54)$ | -0.20 <br> $\left(\begin{array}{l}-1.23\end{array}\right)$ |
+
+### Fractional ARMA models estimated by maximum likelihood {.unnumbered .unlisted}
+
+The tables 4.9 and 4.10 include the results of maximum likelihood estimation of fractional ARMA models for the levels of the Trier series, i.e. $y_{t}$. According to the AIC criterion a fractional $\operatorname{ARMA}(2,0.45,0)$ model is optimal, whereas the SIC criterion results in a fractional $\operatorname{ARMA}(1,0.49,0)$ model. From the parameters of integration we conclude that the Trier series has a zero frequency unit root of fractional order about 0.47 which implies stationarity and invertibility. This is in accordance with the results of the ADF test. Once again the ADF test seems to be a test for non-stationarity versus stationarity instead of a unit root test as a zero frequency unit root is present. Integer differencing the series $y_{t}$ once therefore leads to serious overdifferencing as we have already seen from the periodogram of $\Delta y_{t}$. However, modeling $y_{t}$ without any correction leaves too much long-memory behavior in this series and will be not justified as well (see estimation of nonfractional $ARMA$ models for $y_{t}$ ).
+
+Table 4.9
+
+2lnL, AIC and SIC for sixteen fractional ARMA $(p, q)$ models of the standardized Trier oak tree ring widths
+
+|  | Number of $M A$ parameters |  |  |  |
+| :--- | :---: | :---: | :---: | :---: |
+| Number of | 1 |  |  |  |
+| AR parameters | 0 | 2 | 3 |  |
+| 0 | -10170.996 | -10156.470 | -10147.821 | -10146.455 |
+|  | -10172.996 | -10160.470 | -10153.821 | -10154.455 |
+|  | -10178.037 | -10170.553 | -10168.945 | -10174.621 |
+|  |  |  |  |  |
+|  | -10152.494 | -10148.842 | -10147.095 | -10146.122 |
+|  | -10156.494 | -10154.842 | -10155.095 | -10156.122 |
+|  | -10166.577 | -10169.966 | -10175.260 | -10181.329 |
+|  |  |  |  |  |
+|  | -10147.638 | -10147.638 | -10144.905 | -10143.158 |
+|  | -10153.638 | -10155.638 | -10154.905 | -10155.158 |
+|  | -10168.763 | -10175.804 | -10180.112 | -10185.406 |
+|  |  |  |  |  |
+|  | -10147.638 | -10147.355 | -10142.892 | -10142.827 |
+|  | -10155.638 | -10157.355 | -10154.892 | -10156.827 |
+|  | -10175.804 | -10182.562 | -10185.140 | -10192.117 |
+
+Table $\underline{4.10}$
+
+Parameter estimates of sixteen fractional ARMA $(p, q)$ models of the standardized Trier oak tree ring widths;
+
+$t$-statistics between parentheses
+
+| Model | $d$ |  | $\phi_{1}$ |  | $\phi_{2}$ |  | $\phi_{3}$ |  | $\theta_{1}$ |  | $\theta_{2}$ |  | $\theta_{3}$ |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(0, d, 0)$ | 0.40 |  |  |  |  |  |  |  |  |  |  |  |  |
+|  | $(20.15)$ |  |  |  |  |  |  |  |  |  |  |  |  |
+| $(0, d, 1)$ | 0.48 |  |  |  |  |  |  |  | 0.15 |  |  |  |  |
+|  | $(23.15)$ |  |  |  |  |  |  | $(-4$ | $.27)$ |  |  |  |  |
+| $(0, d, 2)$ | 0.44 |  |  |  |  |  |  |  | 0.11 |  | 0.10 |  |  |
+|  | $(11.67)$ |  |  |  |  |  |  | $(-2$ | .26) | ( | $2.89)$ |  |  |
+| $(0, d, 3)$ | 0.46 |  |  |  |  |  |  |  | 0.14 |  | 0.10 |  | -0.04 |
+|  | $(12.25)$ |  |  |  |  |  |  | $(-2)$ | .78) | ( | 2.92) | ( | $-1.19)$ |
+| $(1, d, 0)$ | 0.49 |  | -0.17 |  |  |  |  |  |  |  |  |  |  |
+|  | $(28.20)$ | 1 | $-5.08)$ |  |  |  |  |  |  |  |  |  |  |
+| $(\mathbf{1}, d, \mathbf{1})$ | 0.47 |  | -0.45 |  |  |  |  |  | 0.29 |  |  |  |  |
+|  | $(20.15)$ | ( | $-3.46)$ |  |  |  |  |  | .04) |  |  |  |  |
+| $(1, d, 2)$ | 0.45 |  | -0.20 |  |  |  |  |  | 0.08 |  | 0.08 |  |  |
+|  | $(12.13)$ | ( | $-0.90)$ |  |  |  |  | $(1$ | .37) | ( | $1.53)$ |  |  |
+| $(1, d, 3)$ | 0.47 |  | 0.26 |  |  |  |  |  | -0.40 |  | 0.13 |  | -0.07 |
+|  | $(13.00)$ | ( | $0.60)$ |  |  |  |  | $(-$ | .91) | ( | 1.99) | ( | $-1.40)$ |
+| $(2, d, 0)$ | 0.45 |  | -0.13 |  | 0.08 |  |  |  |  |  |  |  |  |
+|  | $(12.39)$ | ( | $-2.64)$ | ( | 2.08) |  |  |  |  |  |  |  |  |
+| $(2, d, 1)$ | 0.45 |  | -0.13 |  | 0.08 |  |  |  | 0.00 |  |  |  |  |
+|  | $(11.97)$ | ( | $-0.45)$ | ( | 1.33) |  |  | ( | $0.01)$ |  |  |  |  |
+| $(2, d, 2)$ | 0.45 |  | -0.58 |  | -0.38 |  |  |  | 0.47 |  | 0.42 |  |  |
+|  | $(13.55)$ | ( | $-1.89)$ | ( | $-2.20)$ |  |  | ( | 1.63) | ( | 2.39) |  |  |
+| $(2, d, 3)$ | 0.47 |  | -0.27 |  | -0.59 |  |  |  | 0.12 |  | 0.64 |  | -0.10 |
+|  | $(15.60)$ | ( | $-1.13)$ | ( | $-3.06)$ |  |  | ( | $0.51)$ | ( | $3.82)$ | ( | $-1.79)$ |
+| $(3, d, 0)$ | 0.45 |  | -0.13 |  | 0.08 |  | -0.00 |  |  |  |  |  |  |
+|  | $(11.70)$ | ( | $-2.60)$ | ( | $1.99)$ | ( | $-0.01)$ |  |  |  |  |  |  |
+| $(3, d, 1)$ | 0.47 |  | 0.48 |  | 0.15 |  | -0.06 |  | -0.62 |  |  |  |  |
+|  | $(11.83)$ | ( | $0.91)$ | ( | $1.87)$ | ( | $-1.41)$ | ( | $-1.17)$ |  |  |  |  |
+| $(3, d, 2)$ | 0.47 |  | -0.41 |  | -0.69 |  | -0.10 |  | 0.26 |  | 0.73 |  |  |
+|  | $(16.55)$ | ( | $-1.82)$ | ( | $-3.61)$ | ( | $-1.89)$ | ( | $1.20)$ | ( | $4.60)$ |  |  |
+| $(3, d, 3)$ | 0.46 |  | -0.58 |  | -0.80 |  | -0.20 |  | 0.44 |  | 0.82 |  | 0.10 |
+|  | $(14.69)$ | ( | $-0.82)$ | ( | $-1.60)$ | ( | $-0.50)$ | ( | $0.61)$ | ( | $1.96)$ | ( | $0.25)$ |
+
+The AIC and SIC optimal models are respectively
+
+$$
+\left(1+\underset{(2.64)(-2.08)}{\left.0.13 L-0.08 L^{2}\right)}(1-\underset{(12.39)}{L})^{0.45} y_{t}=\varepsilon_{t}\right.
+$$
+
+and
+
+$$
+\left(1+\underset{(5.08)}{0.17 L)}\left(1-\underset{(28.20)}{L)^{0.49}} y_{t}=\varepsilon_{t}\right.\right.
+$$
+
+where the estimates of the residual variance corresponding to the nonfractional ARMA optimal models are 418.92 and 420.25 , respectively. It should be noted that there is another model with an AIC value slightly less
+than that of the fractional $A R M A(2,0.45,0)$ model: the fractional $\operatorname{ARMA}(0,0.44,2)$ model
+
+$$
+\begin{gathered}
+(1-L)^{0.44} \\
+(11.67)
+\end{gathered} y_{t}=\left(1-0.11 L+\frac{\left.0.10 L^{2}\right)}{(-2.26)}\left(\begin{array}{c}
+(2.89)
+\end{array}\right.\right.
+$$
+
+where the estimate of the residual variance is 419.10. A choice between the three models will be made on the basis of their forecasting performances.
+
+Table 4.11
+
+2lnL, AIC and SIC for sixteen fractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths
+
+|  | Number of $M A$ parameters |  |  |  |
+| :--- | :---: | :---: | :---: | :---: |
+| Number of <br> $A R$ parameters | 0 | 1 | 2 | 3 |
+| 0 | -10161.763 | -10144.171 | -10137.960 | -10135.418 |
+|  | -10163.763 | -10148.171 | -10143.960 | -10143.418 |
+|  | -10168.804 | -10158.252 | -10159.082 | -10163.580 |
+|  |  |  |  |  |
+| 1 | -10139.821 | -10137.684 | -10136.934 | -10132.496 |
+|  | -10143.821 | -10143.684 | -10144.934 | -10142.496 |
+|  | -10153.902 | -10158.806 | -10165.096 | -10167.699 |
+| 2 |  |  |  |  |
+|  | -10137.309 | -10137.280 | -10134.820 | -10131.936 |
+|  | -10143.309 | -10145.280 | -10144.820 | -10143.936 |
+|  | -10158.430 | -10165.442 | -10170.022 | -10174.179 |
+|  |  |  |  |  |
+| 3 | -10137.223 | -10132.982 | -10130.396 | -10129.787 |
+|  | -10145.223 | -10142.982 | -10142.396 | -10143.787 |
+|  | -10165.385 | -10168.184 | -10172.639 | -10179.071 |
+
+For completeness we present the maximum likelihood results for the first differences of the Trier series in case of fractional ARMA models as well. From table 4.11 the fractional $\operatorname{ARMA}(3,-0.32,2)$ model appears to be AIC optimal whereas the fractional $\operatorname{ARMA}(1,-0.48,0)$ model is optimal according to SIC. From table 4.12 the models are respectively
+
+$$
+\begin{aligned}
+& \left(1-1.49 L+0.31 L^{2}+0.22 L^{3}\right)(1-L)^{-0.32} \Delta y_{t}= \\
+& \begin{array}{lll}
+(-9.40) & (1.98) & (6.00)
+\end{array}(-2.94) \\
+& \left(1-1.86 L+0.88 L^{2}\right) \varepsilon_{t} \\
+& (-25.06) \quad(12.58)
+\end{aligned}
+$$
+
+and
+
+$$
+\left(1+\underset{(4.98)}{0.21 L)}(1-L)^{-0.48} \Delta y_{t}=\varepsilon_{t}\right.
+$$
+
+where the estimated residual variances are 416.42 and 419.65, respectively. Again there is another model with almost the same AIC value as the optimal
+one, i.e. the fractional $\operatorname{ARMA}(1,-0.29,3)$ which reads
+
+$$
+\begin{aligned}
+& (1-0.57 L)(1-L)^{-0.29} \Delta y_{t}=\left(1-0.96 L+0.25 L^{2}-0.12 L^{3}\right) \varepsilon_{t} \\
+& \begin{array}{llll}
+(-4.07) & (-1.76) & (-4.76) & (2.82) \\
+(-3.01)
+\end{array}
+\end{aligned}
+$$
+
+where the estimated residual variance is 417.15. A choice between the models will be made on the basis of their forecasting performances. It should be noted that the fractional orders of integration indicate that the levels of the Trier series may be non-stationary as the confidence intervals of the fractional $A R M A(1,-0.48,0)$ model and the fractional $A R M A(1,-0.29,3)$ contain $d=0.5$ as a possible estimate of the parameter of integration.
+
+Table $\underline{4.12}$
+
+Parameter estimates of sixteen fractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths;
+
+| Model | $d$ |  | $\phi_{1}$ |  | $\phi_{2}$ |  | $\phi_{3}$ | $\theta_{1}$ |  | $\theta_{2}$ | $\theta_{3}$ |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(0, d, 1)$ | -0.47 |  |  |  |  |  |  | -0.19 |  |  |  |
+|  | $(-11.31)$ |  |  |  |  |  |  | $(-3.82)$ |  |  |  |
+| $(0, d, 2)$ | -0.54 |  |  |  |  |  |  | -0.13 |  | 0.09 |  |
+|  | $(-12.34)$ |  |  |  |  |  |  | $(-2.37)$ | ( | $2.54)$ |  |
+| $(0, d, 3)$ | -0.49 |  |  |  |  |  |  | -0.19 |  | 0.08 | -0.06 |
+|  | $(-7.34)$ |  |  |  |  |  |  | $(-2.59)$ | ( | $2.16)$ | $(-1.55)$ |
+| $(1, d, 0)$ | -0.48 |  | -0.21 |  |  |  |  |  |  |  |  |
+|  | $(-14.11)$ |  | $-4.98)$ |  |  |  |  |  |  |  |  |
+| $(1, d, 1)$ | -0.50 |  | -0.41 |  |  |  |  | 0.24 |  |  |  |
+|  | $(-14.73)$ |  | $-3.10)$ |  |  |  |  | $(1.56)$ |  |  |  |
+| $(1, d, 2)$ | -0.53 |  | -0.24 |  |  |  |  | 0.10 |  | 0.06 |  |
+|  | $(-11.76)$ | ( | $-1.06)$ |  |  |  |  | $(0.47)$ | ( | $0.99)$ |  |
+| $(1, d, 3)$ | -0.29 |  | 0.57 |  |  |  |  | -0.96 |  | 0.25 | -0.12 |
+|  | $(-1.76)$ | ( | $4.07)$ |  |  |  |  | $(-4.76)$ | ( | $2.82)$ | $(-3.01)$ |
+| $(2, d, 0)$ | -0.52 |  | -0.15 |  | 0.06 |  |  |  |  |  |  |
+|  | $(-11.73)$ | ( | $-2.83)$ | ( | $1.57)$ |  |  |  |  |  |  |
+| $(2, d, 1)$ | -0.52 |  | -0.21 |  | 0.05 |  |  | 0.05 |  |  |  |
+|  | $(-11.49)$ | ( | $-0.64)$ | ( | $0.74)$ |  |  | $(0.17)$ |  |  |  |
+| $(2, d, 2)$ | -0.54 |  | -0.67 |  | -0.38 |  |  | 0.54 |  | 0.39 |  |
+|  | $(-13.72)$ | ( | $-1.69)$ | ( | $-2.20)$ |  |  | $(1.45)$ | ( | $2.36)$ |  |
+| $(2, d, 3)$ | -0.49 |  | -0.21 |  | -0.60 |  |  | 0.03 |  | 0.64 | -0.14 |
+|  | $(-9.99)$ | ( | $-0.80)$ | ( | $-3.23)$ |  |  | $(0.10)$ | ( | $4.10)$ | $(-2.12)$ |
+| $(3, d, 0)$ | -0.52 |  | -0.16 |  | 0.06 |  | -0.01 |  |  |  |  |
+|  | $(-10.42)$ | ( | $-2.76)$ | ( | 1.30) | ( | $-0.29)$ |  |  |  |  |
+| $(3, d, 1)$ | -0.24 |  | 0.43 |  | 0.21 |  | -0.03 | -0.86 |  |  |  |
+|  | $(-1.37)$ | ( | $3.24)$ | ( | $5.51)$ | ( | $-0.66)$ | $(-13.45)$ |  |  |  |
+| $(3, d, 2)$ | -0.32 |  | 1.49 |  | -0.31 |  | -0.22 | -1.86 |  | 0.88 |  |
+|  | $(-2.94)$ | ( | $9.40)$ | ( | $-1.98)$ | ( | $-6.00)$ | $(-25.06)$ | ( | 12.58) |  |
+| $(3, d, 3)$ | -0.38 |  | 1.44 |  | -0.15 |  | -0.31 | -1.74 |  | 0.62 | 0.13 |
+|  | $(-3.37)$ | ( | $9.00)$ | ( | $-0.64)$ | ( | $-2.54)$ | $(-9.97)$ | ( | $1.86)$ | $(0.80)$ |
+
+$t$-statistics between parentheses
+
+### Fractional AR models estimated according to GPH (1983) {.unnumbered .unlisted}
+
+In table 4.13 we have tabulated the results from the application of the Geweke and Porter-Hudak (1983) procedure to the levels of the Trier series, i.e. $y_{t}$. At the first stage of the GPH estimation procedure the number of periodogram ordinates $n$ to be used in the log periodogram regression (3.3) is determined by the rule $n=z(T)$ where $z(T)=T^{\alpha}$ as proposed by Geweke and Porter-Hudak (1983) where $0<\alpha \leq 1$ has to be chosen. In table 4.13 results are presented for $n=33(\alpha=0.5), n=48(\alpha=0.55)$ and $n=68(\alpha=0.6)$. As compared to the parameter of fractional integration as estimated by maximum likelihood before there is an upward bias in the GPH estimator of this parameter $d$. However, the bias is less than the bias reported for the log GNP series. The reason for this is the much smaller short memory autoregressive component of the Trier series.
+
+According to the SIC criterion an optimal short-memory autoregressive order for the mean-corrected series $y_{t}$ is determined. The optimal order turned out to be one for $\alpha=0.5$ or $\alpha=0.55$ and two for $\alpha=0.6$. The short-memory behavior of the estimated autoregressive models is not too high. According to the SIC values the fractional $A R(2,0.52)$ model is superior:
+
+$$
+\left(1+\underset{(4.35)(-1.13)}{\left.0.18 L-0.05 L^{2}\right)}(1-L)^{0.52}{ }_{(5.72)} y_{t}=\varepsilon_{t}\right.
+$$
+
+Table 4.13
+
+Parameter estimates of fractional $A R(p)$ models of the
+
+Trier oak tree ring widths;
+
+$t$-statistics between parentheses
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-41.jpg?height=781&width=1420&top_left_y=1851&top_left_x=319)
+
+Although not reported here we also performed the GPH procedure on the first differences of the Trier series. The estimated parameters of fractional integration were $d=-0.14(\alpha=0.5), d=-0.28(\alpha=0.55)$ and $d=-0.40(\alpha=0.6)$. The short memory autoregressive models were of orders 15,15 and 16 respectively.
+
+### A Yule-Walker nonfractional AR model {.unnumbered .unlisted}
+
+As the ADF tests revealed that the Trier series is stationary we applied the Yule-Walker equations to $y_{t}$. The SIC optimal model is
+
+$$
+\begin{aligned}
+& \left(1-0.34 L-0.28 L^{2}-0.05 L^{3}-0.02 L^{4}-0.09 L^{5}-0.07 L^{6}\right) y_{t}=\varepsilon_{t} \\
+& (-4.94)(-5.12)(-0.96)(-0.34)(-1.81)(-1.32)
+\end{aligned}
+$$
+
+where the estimated residual variance is 425.78. For the first differences an $A R(15)$ model was found to be SIC optimal.
+
+### An ordinary least squares nonfractional $A R$ model {.unnumbered .unlisted}
+
+As no stationarity is required in order to perform ordinary least squares we we estimated $A R$ models for $y_{t}$. The SIC optimal model turned out to be
+
+$$
+\begin{aligned}
+& \left(1-0.34 L-0.28 L^{2}-0.05 L^{3}-0.01 L^{4}-0.09 L^{5}-0.07 L^{6}\right) y_{t}=\varepsilon_{t} \\
+& (-11.39)(-9.03)(-1.47)(-0.36)(-2.92)(-2.37)
+\end{aligned}
+$$
+
+where the estimated residual variance is 422.96 . The coefficients very much resemble those of the Yule-Walker estimated model for $y_{t}$. The OLS coefficients are more often significantly different from zero however, at a five percent significance level.
+
+### The choice of an optimal model {.unnumbered .unlisted}
+
+From table 4.14 we observe that the fractional models are to be preferred over the nonfractional ones. The ADF test rejects integer unit root stationarity against the fractional unit root alternatives of lower order. Stationarity is however not that clear as the parameter of integration is somewhere about 0.5 .
+
+Table 4.14
+
+Square roots of mean squared in-sample prediction errors for horizons 1, 5, 20,40,60 and 120 corresponding to annual Trier oak tree ring widths
+
+| type of model | estimation <br> method | horizons |  |  |  |  |  |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+|  |  | $\mathbf{1}$ | 5 | 20 | 40 | 60 | 120 |
+| (models of the levels) |  |  |  |  |  |  |  |
+| fractional $A R M A(2,0.45,0)$ | ML | 20.41 | 23.52 | 25.90 | 27.48 | 27.91 | 28.67 |
+| fractional $A R M A(1,0.49,0)$ | ML | 21.45 | 24.99 | 27.04 | 27.86 | 28.02 | 28.64 |
+| fractional $A R M A(0,0.44,2)$ | ML | 20.72 | 23.35 | 25.38 | 27.33 | 27.91 | 28.85 |
+| fractional $A R(2,0.52)$ | GPH | 20.94 | 24.44 | 26.80 | 27.80 | 28.01 | 28.64 |
+| nonfractional $A R(6)$ | $\mathrm{YW}$ | 20.35 | 23.92 | 26.27 | 27.79 | 28.01 | 28.64 |
+| nonfractional $A R(6)$ | OLS | 20.34 | 23.91 | 26.22 | 27.73 | 27.96 | 28.59 |
+| (models of the first differences) |  |  |  |  |  |  |  |
+| nonfractional $A R M A(2,1)$ | ML | 32.00 | 47.20 | 49.95 | 52.41 | 54.17 | 58.42 |
+| fractional $A R M A(3,-0.32,2)$ | ML | - | - | - | - | - | - |
+| fractional $A R M A(1,-0.48,0)$ | ML | 20.67 | 24.13 | 27.07 | 30.59 | 32.27 | 36.99 |
+| fractional $A R M A(1,-0.29,3)$ | ML | 33.21 | 23.08 | 26.64 | 30.33 | 32.35 | 37.23 |
+
+### Cumulative impulse responses {.unnumbered .unlisted}
+
+From figure 4.17 we observe that the cumulative impulse responses do not differ for horizons up to 50. Figure 4.17 shows horizon 120 predictions for the fractional $\operatorname{ARMA}(1,0.49,0)$ model: obviously there is mean reversion. Finally, figure 4.18 showes the estimated residuals of the latter model, the autocorrelation coefficients, the periodogram and the partial autocorrelation coefficients. From the log periodograms plotted below we observe that the one corresponding to the fractional differences is more evenly distributed over the frequencies.
+
+Figure 4.16
+
+Cumulative Impulse Responses - Estimated Models for Levels
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-44.jpg?height=1067&width=1720&top_left_y=345&top_left_x=201)
+
+Cumulative Impulse Responses - Estimated Models for First Differences
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-44.jpg?height=985&width=1809&top_left_y=1615&top_left_x=202)
+
+horizons 1-80
+
+Figure 4.17
+
+Horizon 120 predictions of annual Trier oak tree ring widths
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-45.jpg?height=1080&width=1690&top_left_y=327&top_left_x=250)
+
+)
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-46.jpg?height=1068&width=788&top_left_y=228&top_left_x=223)
+
+fractions of $c$
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-46.jpg?height=1158&width=780&top_left_y=1554&top_left_x=244)
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-46.jpg?height=1128&width=798&top_left_y=234&top_left_x=1118)
+
+Log Periodogram Fractional Differences
+
+![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-46.jpg?height=525&width=775&top_left_y=1594&top_left_x=1138)
+
+[^33]: Exact line minimization means that in each iteration $t_{n}$ is selected such that $f\left(\psi_{n}+\zeta_{n}\right)$ is minimal for each step $\zeta_{n}=-t_{n} P_{n} \gamma_{n}$, given $\psi_{n}, P_{n}$ and $\gamma_{n}$.
+
+[^34]: Contrary to what is stated in Sowell $(1992 \mathrm{~b}$, footnote 7$)$ the original Vax/VMS Fortran computer code does not allow for a zero parameter of integration $d$. In this thesis we apply this code (albeit modified) to estimate fractional ARMA models only as well and other computer code to estimate stationary nonfractional ARMA models only.
+
+[^35]: The autoregressive parameters in Sowell (1992a) are the negative of the autoregressive parameters in this thesis.
+
+[^36]: In Sun/Unix TSP the Gauss-Marquandt updating formula is applied.
+
+[^37]: The AIC value slightly increases in case of zero autoregressive order.
+
+[^38]: In the periodogram of log GNP the dip at the seasonal dummy $\pi/2$ indicates that the series has been seasonally adjusted. Seasonal overdifferentiation is a reason for considering frequency $\pi/2$ integration of fractional order. This will not be performed here.
+
+[^39]: The autoregressive parameters in Sowell (1992a) are the negative of the autoregressive parmaters in this thesis.
+
+[^40]: Sowell chooses an optimal model out of nonfractional and fractional models according to some criterium (AIC,SIC). In this thesis however we choose an optimal nonfractional model and an optimal fractional model according to some criterium (AIC,SIC).
+
+[^41]: The shape of the periodogram of $\Delta lny_{t}$ at the higher frequencies differs from the one depicted in Sowell (1992a, figures 2, 3 and 11).
+
+[^42]: Sowell (1992a) remarks the alternative of a nonfractional ARMA model at the end of the discussion only.
+
+[^43]: As application of the rule $n=z(T)$ often leads to a real number $n$ we choose $n$ as the entier of $z(T)$.
+
+[^44]: The series $lny_{t}$ has not been corrected for its mean.
+
+[^45]: These results are not reported here. They can be obtained from the author on request.

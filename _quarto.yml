@@ -1,5 +1,7 @@
 project:
   type: book
+  preview:
+    port: 2024
 
 book:
   title: "Univariate Fractionally Integrated Time Series Modeling"
@@ -19,8 +21,11 @@ bibliography: references.bib
 format:
   html:
     theme: cosmo
+    cap-location: top
   pdf:
     documentclass: scrreprt
 
-
+execute: 
+  warning: false
+  echo: false
 

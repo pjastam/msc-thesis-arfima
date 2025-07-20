@@ -27,3 +27,13 @@ In Section 2 we describe the theory underlying ARMA, ARIMA and ARFIMA modeling o
 In Section 3 we present the estimation methods. In this thesis the nonfractional ARMA parameters are estimated using three estimation methods, i.e. Yule-Walker, ordinary least-squares and maximum likelihood. The fractional parameter in the ARFIMA model is estimated using two methods. The first method is the two-stage estimation procedure as proposed by Geweke and Porter-Hudak (1983) the integration parameter is estimated first by using a frequency domain property of ARFIMA processes; the ARMA parameters of the transformed process are modeled afterwards. The other method is maximum likelihood estimation as proposed by Sowell (1992b), such that the integration parameter and ARMA parameters are estimated simultaneously.
 
 In Section 4 we illustrate the theory with economic and non-economic data sequences. The economic series is quarterly real US gross national product (seasonally adjusted, 172 data points); the non-economic series is annual Trier oak tree ring widths (1143 data points). Section 5 concludes.
+
+::: {.callout-warning}
+The information below should be integrated in this intro too.
+:::
+
+In Lamb (1977, table V21) a series of 1143 data points is tabulated. The data points reflect yearly Trier oak tree ring widths from the west of the Rhine, near Trier and cover the years 822—1964.
+
+Lamb, H. H. (1977), Climate: Present, Past and Future, vol.2 — Climatic History and the Future, Methuen & Co.: London.
+
+*Note that this reference to Lamb (1997) has already been put in Zotero and can be added to the reference.bib file of this repository*

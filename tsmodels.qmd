@@ -1,11 +1,1204 @@
 # Time series models
 
-In Section 2.1 we discuss the traditional so---called ARMA models. The concept of asymptotic stationarity plays a crucial role here. In Section 2.2 we present the natural extension to integrated ARMA models, where the so-called order of integration is traditionally restricted to integer values. In Section 2.3 we come to the main body of this thesis, fractionally integrated ARMA processes which allow the integration order to take any real value. These kinds of models are particularly useful to model long-term dynamics. Simulation experiments are presented in Section 2.4 in order to get a grasp of the empirical implications of the presented fractional integration theory.
+In Section 2.1 we discuss the traditional so-called $ARMA$ models. The concept of asymptotic stationarity plays a crucial role here. In Section 2.2 we present the natural extension to integrated ARMA models, where the so-called order of integration is traditionally restricted to integer values. In Section 2.3 we come to the main body of this thesis, fractionally integrated ARMA processes which allow the integration order to take any real value. These kinds of models are particularly useful to model long-term dynamics. Simulation experiments are presented in Section 2.4 in order to get a grasp of the empirical implications of the presented fractional integration theory.
 
-## _ARMA_ models
+## $ARMA$ models
 
-## Integer integrated _ARMA_ models
+Suppose that a univariate stochastic process $y$ with zero mean has the following AutoRegressive Moving Average model, i.e. $y \sim ARMA(p+d, q)$ :
 
-## Fractionally integrated _ARMA_ models
+$$
+\alpha(L) y_{t}=\theta(L) \varepsilon_{t} \tag{1}
+$$
+
+where
+
+$$
+\alpha(L)=1-\alpha_{1} L-\alpha_{2} L^{2}-\ldots-\alpha_{p+d} L^{p+d}
+$$
+
+and
+
+$$
+\theta(L)=1-\theta_{1} L-\theta_{2} L^{2}-\ldots-\theta_{q} L^{q}
+$$
+
+where $y_{t}$ is a realization of the process $y$ \$(t=1,2, \ldots, T), $L$ is a lag-operator such that $L y_{t} \equiv y_{t-1}$ and $\varepsilon_{t}$ is the $t$-th observation of a covariance stationary stochastic error process.
+
+*A process $\varepsilon$ will be called [covariance stationary]{.underline} if its first two moments exist, are finite, and are independent of time; covariances only depend on the time span between two observations of the process*:
+
+$$
+\begin{aligned}
+& \mathbb{E}\left(\varepsilon_{t}\right)=\mu_{\varepsilon} & &\quad\left|\mu_{\varepsilon}\right|<\infty \\
+& \mathbb{E}\left(\varepsilon_{t}-\mu_{\varepsilon}\right)^{2}=\sigma_{\varepsilon}^{2} & &\quad \sigma_{\varepsilon}^{2}<\infty \\
+& \mathbb{E}\left(\varepsilon_{t}-\mu_{\varepsilon}\right)\left(\varepsilon_{t-k}-\mu_{\varepsilon}\right)=\gamma_{\varepsilon}(k) & &\quad\left|\gamma_{\varepsilon}(k)\right|<\infty, k=1,2, \ldots
+\end{aligned}
+$$
+
+A stationary process $\varepsilon$ is said to be [ergodic]{.underline} if the sample mean of every function of finite observations tends to its expected value in mean square, at least when the expected value of the square of the function exists (Griliches and Intriligator 1983, p. 243, footnote 7). The following quantities are consistent estimators of the mean $\mu_{\varepsilon}$, variance $\sigma_{\varepsilon}^{2}$ and covariances $\gamma_{\varepsilon}(k)$ respectively (Harvey 1981, except for the correction factors for the variance and covariances):
+
+$$
+\begin{aligned}
+& \hat{\mu}_{\varepsilon}=T^{-1} \sum_{t=1}^{\infty} \varepsilon_{t} \\
+& \hat{\sigma}_{\varepsilon}^{2}=(T-1)^{-1} \sum_{t=1}^{\infty}\left(\varepsilon_{t}-\hat{\mu}_{\varepsilon}\right)^{2} \\
+& \hat{\gamma}_{\varepsilon}(k)=(T-k-1)^{-1} \sum_{t=1}^{\infty}\left(\varepsilon_{t}-\hat{\mu}_{\varepsilon}\right)\left(\varepsilon_{t-k}-\hat{\mu}_{\varepsilon}\right)
+\end{aligned}
+$$
+
+In this case, a single very long realization of the stationary process allows us to infer everything about the probability law generating that process, i.e. the finite sample moments converge to the infinite sample moments, which are equal to the population moments with probability one (Nerlove, Grether and Carvalho 1979). If we say that $\varepsilon$ is stationary, we hereafter assume that it is ergodic as well and that it has finite moments. Furhermore, Unless stated otherwise in this thesis, $\varepsilon_{t}$ will be assumed to be a normally distributed series of independent random shocks with zero mean and variance $\sigma_{\varepsilon}^{2}$, i.e. $\varepsilon_{t} \sim N I D\left(0, \sigma_{\varepsilon}^{2}\right)$. We speak of "white noise".
+
+Given this covariance stationary process $\varepsilon$, what can we say about the stochastic properties of the process $y$ ? To study these properties we have to investigate the properties of the lag-polynomials $\alpha(L)$ and $\theta(L)$. Because the algebra of these polynomial operators is isomorphic to the algebra of the polynomial functions $\alpha(z)$ and $\theta(z)$ (see Franses 1991 and the references therein), we can study the properties of the polynomial operator $\alpha(L)$ by looking at the polynomial functions $\alpha(z)$ and $\theta(z), z$ being a complex variable. The behavior of the discrete time series $y_{t}$ is different as the roots of the equations $|\alpha(z)|=0$ and $|\theta(z)|=0$ - the zeros of the determinants of the polynomials $\alpha(z)$ and $\theta(z)$ - fall in different regions of the complex plane.
+
+### **The polynomial function** $\alpha(z)$ {.unnumbered .unlisted}
+
+Let us first concentrate on the polynomial function $\alpha(z)$. Denoting the smallest zero by $\xi$, we can classify ARMA processes as follows.[^1]
+
+- If $|\xi|>1$, the process $y$ is called [asymptotically stationary]{.underline}, i.e. the time series $y_{t}$ converges to a covariance stationary time series if $t$ tends to
+
+  In this thesis we abstain from processes with an autoregressive polynomial function that has at least one zero inside the complex unit circle, i.e. $|\xi|<1$. These processes are called explosive. infinity.
+
+  However, it is not guaranteed that $y$ is [covariance stationary]{.underline} if $\xi$ is outside the complex unit circle. In the $A R(1)$ case [^2] for example, the latter condition boils down to the condition $\left|\alpha_{1}\right|<1$. Following Dickey, Bell and Miller (1986), we demonstrate in Appendix A that mean and variance depend on the properties of the initial observation. Therefore, to ensure covariance stationarity, the following additional conditions are necessary: the starting point of the series is independently distributed from the disturbances $\varepsilon_{t}$, the initial shock $\varepsilon_{0}$ is zero, the initial observation $y_{0}$ has zero mean, and $y_{0}$ has zero variance or the same variance as the realizations $\left\{y_{t}\right\}_{t=1}^{\infty}$ of the process $y$. The five conditions together are sufficient to ensure covariance stationarity. In appendix A it is noted that similar arguments hold for higher order models.
+
+- If $\xi$ is a zero of $\alpha$ with $|\xi|=1$, then $\xi$ is called a unit root. A distinction is usually made between the real root -1 , the real root +1 and the complex roots $\exp (-i \lambda)$ with $\lambda \in(0,2 \pi) \backslash\{\pi\}$. The existence of unit roots in the autoregressive structure equal to +1 has led to a distinct class of models, so-called ARIMA models (see Sections 2.2 and 2.3).
+
+*In general, we can classify a stochastic process* $y$ *by putting it in moving-average form, i.e.* [^3]
+
+$$
+y_{t}=\sum_{k=0}^{\infty} h_{k} \varepsilon_{t-k}
+$$
+*The [stochastic process]{.underline}* $y$ *is called asymptotically stationary if the variance of the process* $y$ *is finite and (asymptotically) [non-stationary]{.underline} in case of infinite variance. (Gourieroux and Monfort 1990).*[^4]
+
+The variance of the process $y$ is finite if the coefficients $h_{k}$ are squared summable, i.e. $\sum_{k=0}^{\infty} h_{k}^{2}<+\infty$.
+
+For the $A R(1)$ model the moving-average approximation is
+
+$$
+y_{t}=\sum_{k=0}^{\infty} h_{k} \cdot \varepsilon_{t-k}
+$$
+where $h_{k}=\alpha_{1}^{k}$ if $\left|\alpha_{1}\right|<1$ and so the process $y$ is asymptotically stationary if $\sum_{k=0}^{\infty} \alpha_{1}{ }^{2 k}<+\infty$. From equation (A3) in Appendix A it is seen that in this case any new observation at $t$ causes the variance of the process $y$ to increase with only $\alpha_{1}^{2(t-1)} \sigma_{\varepsilon}^{2}$.
+
+If $\alpha_{1}=1$ the $A R(1)$ process has a unit root +1 ; we call such a process a random walk. From $(A 3)$ it can be seen that in this case any new observation adds variance $\sigma_{\varepsilon}^{2}$ to the process. Notice that a random walk process can not be put in a finite moving-average form.
+
+### **The polynomial function** $\theta(z)$ {.unnumbered .unlisted}
+
+We now turn to the polynomial function $\theta(z)$. If the smallest zero of the moving-average polynomial lies outside the complex unit circle, the process $y$ is called invertible. In this thesis we only deal with invertible $ARMA$ processes.
+
+### The autocovariance function
+
+The [autocovariance]{.underline} generating function of a stationary process $y$ (a.c.g.f.), say $g_{y}(z)$, is defined as (Harvey 1989)
+
+$$
+g_{y}(z)=\sum_{k=-\infty}^{\infty} \gamma_{y}(k) \cdot z^{k} \tag{2}
+$$
+
+where $\gamma_{y}(0)=\sigma_{y}^{2}$ and the autocovariance $\gamma_{y}(k)$ corresponding to $z^{k}$ is as defined before. In case the observations $y_{t}$ are real, as is the case with most economic time-series, there holds $\gamma_{y}(-k)=\gamma_{y}(k)$. For the stationary ARIMA process, a so-called $ARMA$ process, the a.c.g.f. is
+
+$$
+g_{y}(z)=\sigma_{\varepsilon}^{2} \cdot \frac{\theta(z) \theta(1 / z)}{\phi(z) \phi(1 / z)}
+$$
+
+The $k$-th order [autocorrelation]{.underline} function is defined as $\rho_{y}(k)=\gamma_{y}(k) / \gamma_{y}(0)$. For ARMA processes the autocorrelation function can be approximated by
+
+$$
+\rho_{y}(k) \sim a^{k}
+$$
+
+where $0<a<1$ and $k \rightarrow \infty$. The autocorrelation function shows an exponential decay.
+
+### The power spectrum
+
+In the frequency domain a powerful tool is the [power spectrum]{.underline} of a stationary process, usually called the spectrum. The spectrum is defined as the Fourier transform of the autocovariances:
+
+$$
+f_{y}(\lambda)=(2 \pi)^{-1} \sum_{k=-\infty}^{\infty} \gamma_{y}(k) \cdot \exp \{-i \lambda k\}, \quad-\pi \leq \lambda \leq \pi \tag{3}
+$$
+
+provided the right-hand side converges, which can be written as
+
+$$
+f_{y}(\lambda)=(2 \pi)^{-1}\left\{\gamma_{y}(0)+2 \sum_{k=1}^{\infty} \gamma_{y}(k) \cdot \cos (\lambda k)\right\}
+$$
+
+if $y$ is a process that generates real observations. In this case the spectrum is symmetric around zero frequency. Note that $\lambda$ is a continuous variable.
+
+The autocovariance function and the spectrum contain the same information about the process; the difference is in the representation of this information. This can be seen by the inversion of (3) which gives
+
+$$
+\gamma_{y}(k)=\int_{-\pi}^{\pi} f_{y}(\lambda) \cdot \exp \{-i \lambda k\} d \lambda
+$$
+
+from which we observe that $\sigma_{y}^{2}=\gamma_{y}(0)$ can be decomposed into the spectrum values at the frequencies $\lambda \in[-\pi, \pi]$. We can therefore interpret the power spectrum as a measure of the contribution of a cycle with a particular angular frequency to the variance of the process.[^5]
+
+Moreover, the [spectrum]{.underline} $f(\lambda)$ is proportional to the a.c.g.f. $g_{y}($.$) evaluated$ along the complex unit circle in the following way (Harvey 1989):
+
+$$
+\begin{aligned}
+f_{y}(\lambda)=(2 \pi)^{-1} g_{y}(\exp \{-i \lambda\}), & & -\pi \leq \lambda \leq \pi
+\end{aligned}
+$$
+where $2 \pi$ is a normalization constant. This expression for the spectrum seems to be more convenient for the evaluation of spectra than (1). Harvey calls the right-hand side the '[spectral generating function]{.underline}' (s.g.f.).
+
+Hence, for $ARMA(p, q)$ processes the s.g.f. is given by
+
+$$
+f_{y}(\lambda)=\frac{\sigma_{\varepsilon}^{2}}{2 \pi}\left|\frac{\theta(\exp \{i \lambda\})}{\phi(\exp \{i \lambda\})}\right|^{2} \tag{4}
+$$
+
+For example, the spectrum of an $A R(1)$ process is
+
+$$
+f_{y}(\lambda)=\frac{\sigma_{\varepsilon}^{2}}{2 \pi} \frac{1}{1-2 \phi \cos (\lambda)+\phi^{2}}
+$$
+
+whereas the spectrum of a white noise process is constant:
+
+$$
+f_{y}(\lambda)=\frac{\sigma_{\varepsilon}^{2}}{2 \pi}
+$$
+
+The latter spectrum indicates that the contribution of each cycle with a particular frequency to the variance of the process is just as much as that of any other. In the time domain this is equivalent with zero autocovariances at positive lags.
+
+In the figures 2.1, 2.2, 2.3 and 2.4 we illustrate the relationship between the s.g.f. and the a.c.g.f.. In each figure we observe five panels: three panels with $T=300$ realizations of a particular process for three different parameter values, a panel with the a.c.g.f. and a panel with the s.g.f., both for the three different parameter values. The dotted line in the latter panel is the spectrum of a white noise process. The variance of the error process is assumed to be one.
+
+```{r}
+source("functions/figure2_1_2_3_4.R")
+```
+
+```{r}
+#| fig-cap: "Figure 2.1"
+#| fig-height: 12
+figure2_1_2_3_4(300,'ar',1)
+```
+
+From figure 2.1 we observe realizations of an $A R(1)$ process for the parameter values $\alpha_{1}=0.1,0.5,0.9$. To obtain a realization of the $AR(1)$ process we used zero as a starting-up value. It can be seen that the higher the parameter value, the more the observations depend on observations in the past. This longer memory property for a higher parameter value is also observed from the a.c.g.f. and the s.g.f., where the spectral density near zero tends to infinity for parameter values close to one.
+
+```{r}
+#| fig-cap: "Figure 2.2"
+#| fig-height: 12
+figure2_1_2_3_4(300,'ar',-1)
+```
+
+From figure 2.2 we observe realizations of an $A R(1)$ process for neagtive parameter values. Apart from the negative correlation between adjacent observations as can be seen from the a.c.g.f., we observe that short-run cycles contribute more to the variance of the process the more negative the parameter value.
+
+```{r}
+#| fig-cap: "Figure 2.3"
+#| fig-height: 12
+figure2_1_2_3_4(300,'ma',1)
+```
+
+Figure 2.3 reveals the consequence of the a.c.g.f. of an $M A(1)$ process for the s.g.f.: the positive association between adjacant observations is equivalent to the predominance of long-run cycles in the series. The realizations of the $M A(1)$ process are obtained by an indirect Cholesky decomposition of the variance-autocovariance procedure (see Section 2.4.1).
+
+```{r}
+#| fig-cap: "Figure 2.4"
+#| fig-height: 12
+figure2_1_2_3_4(300,'ma',-1)
+```
+
+Figure 2.4 deals with negative $M A(1)$ coefficients. The predominance of the shorter-run cycles is equivalent to the negative association between adjacent observations.
+
+### **Sample equivalent of spectral density function** {.unnumbered .unlisted}
+
+In practice we only observe realizations of a process and therefore need an estimator for the power spectrum. The sample equivalent of the power spectrum is the sample spectrum, say $I_{y}(\lambda)$, where the autocovariances are replaced by their sample estimates $\hat{\gamma}_{y}(k)$, with a denominator equal to $T$ instead of $(T-k-1)$. The summation is restricted to $T-1$ in this case and the sample spectrum appears to be proportional to the squared absolute value of the Fourier transform of the realizations $\left\{y_{1}, \ldots, y_{T}\right\}$ :
+
+$$
+\begin{array}{rlrl}
+I_{y}(\lambda) & =(2 \pi)^{-1} \sum_{k=-T+1}^{T-1} \hat{\gamma}_{y}(k) \cdot \exp \{-i \lambda k\}, & -\pi \leq \lambda \leq \pi  \tag{5}\\
+& =(2 \pi T)^{-1}\left|\sum_{k=1}^{T} y_{t} \exp (-i \lambda k)\right|^{2}
+\end{array}
+$$
+
+The power spectrum can be seen as the average value of the sample spectrum in repeated realizations, i.e. there holds
+
+$$
+\lim _{T \rightarrow \infty} \mathbb{E}\left(I_{y}(\lambda)\right)=f_{y}(\lambda)
+$$ However, the sample spectrum is not a consistent estimator of the power spectrum: the variance does not decrease as the sample size increases.
+
+Usually the frequency $\lambda$ in (5) is restricted to be [discrete]{.underline}, in particular $\lambda_{j}=2 \pi j / T$ is the $j$ th harmonic of the fundamental frequency $2 \pi / T$. Although the [periodogram]{.underline} of a process is proportional and not identical to the sample spectrum where $\lambda$ is discrete instead of continuous, usually one speaks of (5) as the periodogram.[^6] We follow this convention.
+
+It is interesting to note that for the discrete $\lambda$ case Box and Jenkins (1976) showed that equation (5) is equal to
+
+$$
+I_{y}\left(\lambda_{j}\right)=\frac{T}{2}\left(a_{j}^{2}+b_{j}^{2}\right), \quad j=1,2, \ldots, q
+$$
+
+If $T$ is even $I\left(\lambda_{q}\right)=T a_{q}^{2}$. The interesting point is that the coefficients $\left(a_{j}, b_{j}\right)$ seem to arise from an equation where $y_{t}$ is described as a linear combination of cosine and sine terms (Box and Jenkins 1976), the so-called real Fourier transform:
+
+$$
+y_{t}=a_{0}+\sum_{j=1}^{q}\left\{a_{j} \cos \left(\lambda_{j} t\right)+b_{j} \sin \left(\lambda_{j} t\right)\right\}+\varepsilon_{t} \tag{6}
+$$
+where $\lambda_{j}=2 \pi j / T$ and $q=[T / 2]$.[^7] As such the periodogram evaluated at the frequency $\lambda_{j}$ indicates the contibution of the corresponding cycle to the variance of the process, as measured by the squared amplitude. Finally, it can be derived that
+
+$$
+\sum_{t=1}^{T}\left(y_{t}-\bar{y}\right)=\sum_{j=1}^{q} I_{y}\left(\lambda_{j}\right)
+$$
+
+### Prediction Theory
+
+### **The General Prediction Problem** {.unnumbered .unlisted}
+
+Suppose $y$ and $x$ are two random variables with joint probability density $f(y, x)$. If we want to predict $y$ from some function of $x$, say $u(x)$, Priestley (1981, Theorem 2.12.2) shows that $u(x)=\mathbb{E}(y \mid x)$ is the optimal predictor in a mean square sense, i.e. in this case the objective function
+
+$$
+\mathcal{S}(u(x))=\int_{-\infty}^{\infty} \int_{-\infty}^{\infty}[y-u(x)]^{2} f(y, x) d y d x
+$$
+
+is minimized over all functions $u$ of $x$.
+
+Suppose for the moment that at time $(t-1)$ we have $p$ observations $\left(y_{t-1}, y_{t-2}, \ldots, y_{t-p}\right)$ and want to predict $y_{t}$. Following Priestley's (1981) argument the minimum mean square error predictor of $y_{t}$ given this information, denoted by $y_{t-1,1}$, is
+
+$$
+y_{t-1,1}=\mathbb{E}\left(y_{t} \mid y_{t-1}, y_{t-2}, \ldots, y_{t-p}\right) \text {. }
+$$
+
+The first index implies that he realizations before and inclusive the period $(t-1)$ are known, the second index reflects the prediction horizon.
+
+In practice [the density function $f$ is hardly ever known in advance]{.underline} and therefore we cannot say anything about this conditional mean. We therefore have to make an assumption. We assume $y_{t}, y_{t-1}, \ldots, y_{t-p}$ to be jointly normally distributed for which the following linear relationship holds
+
+$$
+y_{t}=a_{1, p} \cdot y_{t-1}+\ldots+a_{p, p} \cdot y_{t-p} \tag{7}
+$$
+
+where the subscript $p$ in $a_{k, p}$ denotes that the coefficient corresponds to an autoregressive polynomial of finite order and is introduced for future purposes. The optimal prediction in a mean squared error sense is obtained by minimizing $\mathbb{E}\left[\left(y_{t-1,1}-y_{t}\right)^{2}\right]$.[^8]
+
+Differentiating the latter expectation with respect to $a_{k, p}, k=1, \ldots, p$, gives the following set of equations for which the expectation is minimized:
+
+$$
+\gamma_{y}(k)=a_{1, p \cdot} \gamma_{y}(k-1)+\ldots+a_{p, p \cdot} \gamma_{y}(k-p) \tag{8}
+$$
+
+where $k=1,2, \ldots, p$ (see e.g. Box and Jenkins 1976).[^9] These equations are usually called the Yule-Walker equations and can be obtained directly by multiplying (7) throughout by $y_{t-k}$ and taking expectations. In matrix notation the set of linear equations for $a_{1, p}, a_{2, p}, \ldots, a_{p, p}$ in terms of the autocovariances $\gamma_{y}(0), \gamma_{y}(1), \ldots, \gamma_{y}(p)$ reads:
+
+$$
+\left(\begin{array}{c}
+\gamma_{y}(1)  \tag{9}\\
+\vdots \\
+\gamma_{y}(p)
+\end{array}\right)=\left(\begin{array}{ccc}
+\gamma_{y}(0) & \ldots & \gamma_{y}(-p+1) \\
+\vdots & & \vdots \\
+\gamma_{y}(p-1) & \ldots & \gamma_{y}(0)
+\end{array}\right)\left(\begin{array}{c}
+a_{1, p} \\
+\vdots \\
+a_{p, p}
+\end{array}\right)
+$$
+In practice the population values of the autocovariances are usually unknown. Estimates of the finite order autoregressive parameters are then obtained by substitution of estimates of the theoretical autocovariances (see also chapter 3 on estimation of time series models). A formula to obtain the standard errors for $\hat{a}_{1, p}, \hat{a}_{2, p}, \ldots, \hat{a}_{p, p}$ is described in Box and Jenkins (1976, eq. 7.3.8).
+
+In general we make predictions of $y_{n, h}$, i.e. at time $n$ we make a prediction of $y_{n+h}$ which lies $h$ periods ahead. The finite order coefficients of this "shifted" autoregressive model are then obtained from (9), where $\left(\gamma_{y}(1), \ldots, \gamma_{y}(p)\right)^{\prime}$ is then replaced by $\left(\gamma_{y}(h), \ldots, \gamma_{y}(p+h)\right)^{\prime}$.
+
+### **Predictions made from a specified model** {.unnumbered .unlisted}
+
+If we assume that the realization results from [a certain type of model]{.underline} we must procede in a different way to obtain predictions. Contrary to the previous discussion we now highlight the prediction problem when the predictions are made from a certain type of model. If we assume that $y$ is an $\underline{M A(q)}$ process then there holds
+
+$$
+\begin{aligned}
+y_{t, h} & =\sum_{k=0}^{q-h} \theta_{k+h} \varepsilon_{t-k}, & & h \leq q, \\
+& =0, & & h>q .
+\end{aligned}
+$$
+
+with corresponding prediction variance
+
+$$
+V\left(y_{t, h}\right)=\sum_{k=0}^{q-h} \theta_{k+h} \sigma_{\varepsilon}^{2}
+$$
+
+Note that $\varepsilon_{t}=y_{t}-y_{t-1,1}$ can be interpreted as a one-step ahead prediction error, also called innovation error. Making use of this fact and given $h \leq q$ we can write
+
+$$
+y_{t, h}=\sum_{k=0}^{q-h} \theta_{k+h}\left(y_{t-k}-y_{t-k-1,1}\right)
+$$
+
+which is a useful expression for updating purposes.
+
+Granger and Newbold (1986) show that if $y$ is an $\underline{AR(p)}$ process the optimal predictor $y_{t, h}$ is as follows:
+
+$$
+y_{t, h}=\sum_{k=1}^{p} \alpha_{k} y_{t, h-k}
+$$
+
+where $y_{t, k}=y_{t+k}$ for $k \leq 0$. In particular, if $p=1$ then
+
+$$
+\begin{aligned}
+& y_{t, h}=\alpha_{1} y_{t, h-1}=\alpha_{1}^{h} y_{t} \\
+& \operatorname{var}\left(y_{t, h}\right)=\left(1-\alpha_{1}^{2 h}\right) \sigma_{\varepsilon}^{2} /\left(1-\alpha_{1}^{2}\right)
+\end{aligned}
+$$
+
+where the variance of the prediction ${var}\left(y_{t, h}\right)$ tends to the variance of the process if $h$ tends to infinity.
+
+If the process under consideration is an $\underline{ARMA(p, q)}$ process Granger and Newbold (1986) show that
+
+$$
+\begin{array}{rlrl}
+y_{t, h} & =\sum_{k=1}^{p} \alpha_{k} y_{t, h-k}+\sum_{k=0}^{q-h} \theta_{k+h}\left(y_{t-k}-y_{t-k-1,1}\right), & & q-h \leq 0, \\
+& =\sum_{k=1}^{p} \alpha_{k} y_{t, h-k}, & & q-h>0
+\end{array}
+$$
+
+where $y_{t, h-k}=y_{t+h-k}$ for $h-k \leq 0$. In general, the variance of the prediction can be obtained by writing the ARMA model in moving-average form. Judge (1982, p. 699) presents a recursive formula to obtain the coefficients of the corresponding $M A$-representation from the autoregressive parameters $\phi$ and the moving-average parameters $\theta$.
+
+### Modeling non-zero processes
+
+In equation (1) we have assumed that the process $y$ has zero mean. This assumption boils down to exactly the same model specification as that of a non-zero mean process for which its mean has been subtracted from its realization:
+
+$$
+\alpha(L)\left(y_{t}-\mu_{y}\right)=\theta(L) \varepsilon_{t} \tag{1'}
+$$
+
+It should be noted that the realization has to be corrected for its mean when calculating the a.c.g.f. of the non-zero mean process $y$ as well, but that the periodogram is independent from this mean. This means that standard periodograms do not differ at non-zero frequencies for processes that only differ with respect to their mean.
+
+Instead of modeling a mean-corrected non-zero mean process as in (1') we can model the mean explicitly as follows
+
+$$
+\alpha(L) y_{t}=c+\theta(L) \varepsilon_{t} \tag{1"}
+$$
+
+The mean $\mu_{y}$ of the process $y$ is then $c / \alpha(1)$; an estimate $\hat{\mu}_{y}$ can be obtained after $c$ and the autoregressive parameters have been estimated. The possibility of extension to higher order polynomial deterministic behavior is obvious.
+
+## Integer integrated $ARMA$ models
+
+To turn to the subject of this thesis, suppose that $\alpha(z)$ contains a zerofrequency unit root of multiplicity $d$, where $d \in \mathbb{N} \cup\{0\}$. Then there holds
+
+$$
+\alpha(z)=\phi(z)(1-z)^{d}
+$$
+
+so that equation (2.1.1) can be written as
+
+$$
+\phi(L)(1-L)^{d} y_{t}=\theta(L) \varepsilon_{t} \tag{1}
+$$
+
+where
+
+$$
+\phi(L)=\left(1-\phi_{1} L-\phi_{2} L^{2}-\ldots-\phi_{p} L^{p}\right)
+$$
+
+and $\theta(L)$ is as defined before; $t=1, \ldots, T$. If all zeros of the polynomial $\phi(z)$ are outside the unit circle, equation (1) is called an AutoRegressive Integrated Moving Average model of the process $y$ with parameters $p, d$ and $q$, i.e. $y \sim A R I M A(p, d, q)$.[^10] This type of presentation of discrete time series was introduced by Box and Jenkins (1970). [^11]
+
+In the special case where $\underline{d=0}$, $y_{t}$ is said to be a realization of an asymptotic stationary process. We get a model analogous to equation (2.1.1), under the assumption that $|\xi|>1$. Asymptotic stationary processes can be distinguished as short-memory processes and long-memory processes:
+
+*An asymptotic stationary process is of [short-memory]{.underline} if $\sum_{k=0}^{\infty}\left|h_{k}\right|<+\infty$ and of [long-memory]{.underline} if $\sum_{k=0}^{\infty}\left|h_{k}\right|=+\infty$, where $h_{k}$ is the $k$-th moving-average coefficient if (1) is put in moving-average form.*
+
+If the roots of the polynomials $\phi(z)$ and $\theta(z)$ are outside the unit circle and $d=0$, the coefficients $h_{k}$ of the infinite order moving-average model decay exponentially. In particular, $\sum_{k=0}^{\infty} h_{k}{ }^{2}<+\infty$ and $\sum_{k=0}^{\infty}\left|h_{k}\right|<+\infty$, i.e. ARMA processes have short memory.
+
+On the other hand, if the integer $\underline{d>0}$ the process is non-stationary, except under trivial assumptions like $\sigma=0$. Engle and Granger (1987) call a process $y$ with no deterministic component [integrated]{.underline} of order $d$, denoted $y^{\sim} I(d)$, if taking first differences $d$ times leaves a process that has a stationary and invertible ARMA model. Notice that this concept reflects zero-frequency integration only.
+
+The level of an integer integrated process is non-stationary. Random walk realizations for example, where $d=1$, can be thought of as summations of covariance stationary observations like $\varepsilon_{t}$. However, a positive value of $d$ does not necessarily imply that the level of the integrated process is non-stationary: in this thesis an argument will be given for $d$ to be any real number and it can be shown that for a subset of positive values we deal with a stationary process nonetheless.
+
+It should be clear that the autocovariance and spectral generating function are not defined for integer integrated ARMA processes, because of nonstationarity.
+
+### Prediction Theory
+
+For an $ARIMA(p, d, q)$ process $y$ where $d>0$, prediction of a realization at time $t-1$ one step ahead necessarily has to be preceded by prediction of the realization of the stationary $d$ th differenced process. Along the lines of Section 2.1.3 we obtain the prediction for the latter realization, denoted $\Delta^{d} y_{t-1,1}$. The prediction $y_{t-1,1}$ can be derived easily hereafter.[^12]
+
+### Testing Unit Roots Against Stationary Alternatives
+
+### AR(1) processes {.unnumbered .unlisted}
+
+To determine the order of integration of a process $y$ Fuller (1976) proposes the so-called Dickey-Fuller (DF) test on unit roots. The unit root null hypothesis $H_{0}$ is tested against the alternative $H_{1}$ of no unit root, i.e. it is a test of $I(1)$ integration against $I(0)$ :
+
+$$
+\begin{align*}
+& H_{0}: y_{t}=y_{t-1}+\varepsilon_{t} \\
+& H_{1}: y_{t}=\phi \cdot y_{t-1}+\varepsilon_{t}, \quad \phi \neq 1 \tag{2}
+\end{align*}
+$$
+
+where in both cases $y_{0}=c$ is a constant term and $\varepsilon_{t}$ is independently and identically distributed (Fuller 1976; Dickey and Fuller 1979).
+
+As we exclude explosive processes from our analysis, a realistic one-sided alternative hypothesis would be (2), where $|\phi|<1$. It is common use to estimate equation (2) in first differences, i.e.
+
+$$
+\Delta y_{t}=a_{0} \cdot y_{t-1}+\varepsilon_{t} \tag{3}
+$$
+
+where there is a unit root if $a_{0}=0$. The advantage of this expression is that $\hat{\tau}$ is the $t$-ratio corresponding to $a_{0}$ and is therefore readily available.
+
+If we can not reject the hypothesis $H_{0}$ it is possible that zero-frequency unit root has multiplicity two or more. A DF test of $I(2)$ against $I(1)$ should then be applied to the first differences of the process $y$. Rejection of the $I(2)$ hypothesis then usually implies that we continue modeling first differences instead of the levels of the process. Notice that this testing strategy starts with the most general (unrestricted) model and continues testing more restricted models subsequently.
+
+### Size and power of the Dickey-Fuller test {.unnumbered .unlisted}
+
+From asymptotic theory we know that $(\hat{\phi}-\phi)=\mathcal{O}_{p}\left(T^{-1 / 2}\right)$, or
+
+$$
+T^{1 / 2}(\hat{\phi}-\phi) \stackrel{a s y}{\sim} N\left(0,1-\phi^{2}\right)
+$$
+
+provided $|\phi|<1$. Under the null hypothesis the asymptotic distribution is degenerate as $\operatorname{plim}_{T \rightarrow \infty} T^{1 / 2}(\hat{\phi}-1)=0$. Fuller (1976) showed $\hat{\phi}$ to be superconsistent: $(\hat{\phi}-1)=\mathcal{O}_{p}\left(T^{-1}\right)$. As a consequence of this difference in convergence the probability that $\hat{\phi}<1$ given $\phi=1$ approaches 0.6826 as sample size gets large, given testing on the basis of standard normal limit distributions: empirical size 0.6826 is much larger than nominal size $(0.50)$. This size is not often used in testing however. Ooms $(1993$, p. 23) gives another example of the magnitude of error one can make by incorrectly ignoring unit root characteristics. example. In table 8.5.1 of Fuller (1976) finite sample and asymptotic critical values of $\hat{\phi}$ based on $T(\hat{\phi}-1)$ are given, derived from Monte Carlo studies.
+
+Another test-statistic is defined as $\hat{\tau}=(\hat{\phi}-\phi) / \hat{\sigma}_{\rho}$, where $\hat{\sigma}_{\rho}$ is the leastsquares estimator of the standarddeviation of $\hat{\phi}$. As the standard $t$-distribution is not a good finite sample distribution of $\hat{\tau}$ under the nullhypothesis, for this statistic as well Fuller (1976) presented percentage points for the empirical distribution of $\hat{\tau}$ (table 8.5.2). In Dickey and Fuller (1979) analytical representations for the limit distributions of the estimator of $\phi$ and of the regression $t$ test are derived.
+
+De Jong et al (1992) show that powers of integration tests against plausible trend-stationary alternatives [^13] can be quite low (see also Dickey and Fuller 1981, table IX), just as the powers of trend-stationarity tests against integrated alternatives can be. Furthermore, there are many cases in which neither test will reject. Evans and Savin (1981) derive power functions from exact distributions of $\hat{\phi}_{\tau}$ and show that a large value of $T$ is required to achieve reasonable power at alternatives near the null hypothesis, particularly for values less than unity. They prove that for $\phi$ near but below unity the cumulative distribution function is very poorly approximated by the limiting normal, even for large values of $T$. Cochrane (1991) warns that application of unit root tests without consideration for their low power and for the restrictions that they inevitably impose in finite samples can be misleading. Furthermore, properties of unit root processes can be arbitrarily close to those of any given stationary process and vice versa.
+
+Blough (1992) explains that the minimum power against any stationary alternative can be no greater than the maximum nominal size of the DF unit root test for all elements of the composite null. Hassler (1992) concludes from Monte Carlo experiments that in general unit root tests are not very powerful except when the probability of a type I error is high. Therefore, such tests can have power against any stationary alternative only if they also have excessive probability of false rejection for some unit root processes.
+
+### $A R(p)$ processes {.unnumbered .unlisted}
+
+Equation (3) applies if we deal with an (integrated) $A R(1)$ process. Said and Dickey (1984) assume the residuals in equation (2) to be a stationary and invertible $ARMA(p, q)$ process, i.e.
+
+$$
+\begin{aligned}
+& H_{0}: y_{t}=y_{t-1}+u_{t} \\
+& H_{1}: y_{t}=\phi y_{t-1}+u_{t}, \quad \phi \neq 1
+\end{aligned}
+$$
+
+where $\phi(L) u_{t}=\theta(L) \varepsilon_{t}$ and $\varepsilon_{t}$ is i.i.d. again. If the data generating process of $u_{t}$ is $\underline{A R(p)}$ we simply augment (3) with lagged first-differences of $y$. The stochastic process $y$ can then be modeled as follows:
+
+$$
+y_{t}=\phi_{1} y_{t-1}+\phi_{2} y_{t-2}+\ldots+\phi_{p} y_{t-p}+\varepsilon_{t}
+$$
+
+Subtracting $y_{t-1}$ from both sides and reordering terms results in the following equation:
+
+$$
+\Delta y_{t}=a_{0} y_{t-1}+\sum_{k=1}^{p-1} a_{k} \Delta y_{t-k}+\varepsilon_{t} \tag{3'}
+$$
+
+where $a_{0}=\sum_{k=1}^{p} \phi_{k}-1$ and $a_{k}=-\sum_{i=k+1}^{p} \phi_{k}$ for $k=1, \ldots, p-1, t=1, \ldots, T$ and $p \geq 2$.
+
+### $ARMA(p, q)$ processes {.unnumbered .unlisted}
+
+If the residual process $u_{t}$ is (integrated) $\underline{ARMA(p, q)}$ the DF test can still be applied if we accept a finite $A R$-approximation of the $ARMA$-process (Said and Dickey 1984).[^14] The autoregressive approximation assumption and the accompanying fact that in practice the approximation is finite reduce the reliability of the outcomes of the ADF-test. Firstly, use of the finite order autoregressive approximation can influence the outcome. For example, given the stationary and invertible $ARMA(1,1)$ process we have
+
+$$
+(1-\alpha L) y_{t}=(1+\gamma L) \varepsilon_{t}
+$$
+
+Under the assumption that the generating process has an autoregressive structure we have:
+
+$$
+\begin{aligned}
+& \frac{(1-\alpha L)}{(1+\gamma L)} y_{t}=\varepsilon_{t} \\
+& (1-\alpha L)\left(1-\gamma L-\gamma^{2} L^{2}-\ldots\right) y_{t}=\varepsilon_{t} \\
+& \left(1-(\gamma+\alpha) L-\gamma(\gamma-\alpha) L^{2}-\ldots\right) y_{t}=\varepsilon_{t}
+\end{aligned}
+$$
+
+If $\alpha=0.8$ and $\gamma=0.2$ the autoregressive order $p$ will probably be taken equal to one. The autoregressive root then equals $1 /(\gamma+\alpha)$, i.e. one. Use of a finite order autoregressive approximation thus can lead to wrongly detecting a unit-root.
+
+Secondly, several criteria can be used to choose the autoregressive order thereby possibly leading to alternative choices of $p$. The outcome of the test therefore depends on the choice of the criterion. One criterion is based on the $t$-value of the coefficient $a_{p-1}$. Sequentially, a lower order is chosen if equality to zero can not be rejected. Another criterion is the variance of the estimated residuals. In that case the minimal variance order $p$ is chosen. Additionally, you can take account of the order $p$ when seaking minimal variance. Such criteria are the Akaike- and Schwartz-criteria.
+
+Thirdly, if we try to describe an $ARMA$ process by a finite order $A R$ model, the residuals of this augmented DF test will necessarily be correlated with the regressors: inconsistent parameter estimates are obtained if ordinary least squares is applied.[^15] One of the solutions proposed is adding lagged first-differences to the DF regression (Said and Dickey 1984).
+
+In this thesis the following test equation is estimated when applying the ADF test for zero frequency unit roots (compare $\left(3^{\prime}\right)$ and $(D 2 b)$ ):
+
+$$
+\Delta y_{t}=c+\delta t+a_{0} y_{t-1}+\sum_{k=1}^{p-1} a_{k} \Delta y_{t-k}+\varepsilon_{t} \tag{3"}
+$$
+
+It should be noted that the outcome of the test depends on the choice of the estimation period. If equation (3") is estimated recursively[^16] it is possible that the null hypothesis is not repeatedly rejected and not repeatedly not rejected. An application of this test procedure can be found in e.g. Ooms (1993).
+
+### Measuring shock persistence
+
+Once it is known that there exists a unit root, a measure of the permanent component is needed. One measure is the sum of the coefficients of the moving-average model of the first-differenced series, also known as the cumulative impulse response. Specifically, consider
+
+$$
+\Delta y_{t}=B(L) \varepsilon_{t}=\left(1+b_{1} L+b_{2} L^{2}+\ldots\right) \varepsilon_{t} \tag{5}
+$$
+
+where $B(L)=\phi(L)^{-1} \theta(L)$.
+
+The impact of a unit shock in period $t$ on the growth rate of $Y$ at time $t=k$ is $b_{k}$, while the impact on the level of $\underline{y}$ at time $t+k$ is $c_{k} \equiv 1+b_{1}+b_{2}+\ldots+b_{k}$.[^17] In the limit we obtain $c_{\infty}$, which is the effect of a unit shock today on the level of $Y$ infinitely far in the future. For stationary series $c_{\infty}=0$, because the effect of any shock is transitory as reversion to mean or trend eventually dominates. For a random walk $c_{\infty}=1$, i.e. the effect of a shock is permanent. In general, unit roots lead to a nonzero long-run response; however, the particular value of $c_{\infty}$ depends on the specific parameterization of the process.
+
+Cochrane $(1988,1991)$ states that measures based on the quantity $c_{\infty}$ are the only measures of the presence of a unit root in finite samples. Thus, we can construct a trend-stationary series that is 'just like' a given differencestationary series in every respect except $c_{\infty}$. Or, by changing the periodogram ordinate of the first differences at frequency zero without changing the other ordinates we can construct a non-stationary series with a zero frequency unit root from a stationary series and vice versa.
+
+As Diebold and Nerlove (1988) note, it is possible that the infinite horizon corresponding to $B(1)$ is not likely to correspond to the economic horizon of interest. Diebold and Rudebusch (1989) not only use $c_{\infty}$ to measure persistence, but the sequence $C=\left\{1, c_{1}, c_{2}, \ldots, c_{\infty}\right\}$. They use $C$ to study persistence because then it is possible to answer the question: 'How does a shock today affect the level of output in the short, medium, long and very long run?'. In the long-memory models that Diebold and Rudebusch consider, the cumulative impulse response can differ substantially from $c_{\infty}$, even at quite long horizons. Note that $c_{\infty}$ is not measurable for finite series.
+
+## Fractionally integrated $ARMA$ models
+
+The issue of modeling persistence in economic series is addressed in various ways in the literature. Campbell and Mankiw (1987) used an ${ARIMA(2,1,2)}$ representation to model persistence in real output, whereas Watson (1986) and Clark (1987) used unobserved components (UC) models, which are (nonlinearly) restricted ARIMA models (see e.g. Harvey 1989). Although it is true that ARIMA models are designed to represent the short- rather than the long-run dynamics of an economic series, one can have doubts about a restricted ARIMA model as being favorable to describe persistence as well. In this thesis we investigate the merits of a generalized instead of a restricted ARIMA representation of long-run dynamics, i.e. we will allow for fractional integratedness of economic series. This generalization has desirable properties, to which we will return after having formalized matters.
+
+Recall equation (2.1.1), the standard ARIMA representation of an economic process $y$ that is integrated of the order $d$ :
+
+$$
+\phi(L)(1-L)^{d} y_{t}=\theta(L) \varepsilon_{t} \tag{1}
+$$
+
+where $\phi(z)$ and $\theta(z)$ are as defined before, both polynomials having zeros that are all outside the unit circle. If we assume that the parameter $d$ can take any real value instead of restricting its value to be an integer, we have the case of [fractional integration]{.underline}: the zero frequency unit root has fractional multiplicity. Geweke and Porter-Hudak (1983) called these generalized models AutoRegressive Fractionally Integrated Moving Average, denoted $ARFIMA(p, d, q)$.
+
+### $ARFIMA (0, d, 0)$ processes
+
+Suppose for the moment that the ARMA part of the process can be neglected, i.e. that we deal with an $ARFIMA(0, d, 0)$ process or fractional noise. Geweke and Porter-Hudak (1983) called these processes simple integrated series. To describe the properties of such a process we first have to get the binomial expansion of the operator $(1-z)^{d}$ :
+
+$$
+\begin{align*}
+(1-z)^{d} & =\sum_{k=0}^{\infty}\left(\begin{array}{l}
+d \\
+k
+\end{array}\right)(-z)^{k}  \tag{2}\\
+& =\sum_{k=0}^{\infty} \frac{\Gamma(k-d)}{\Gamma(-d)} \frac{z^{k}}{k !} \\
+& =1-d z-\frac{d(1-\mathrm{d})}{2 !} z^{2}-\frac{d(1-\mathrm{d})(2-d)}{3 !} z^{3}+\cdots
+\end{align*}
+$$
+
+where $\Gamma(d)$ denotes the gamma, or generalized factorial, function and is defined as follows
+
+$$
+\Gamma(d)= \begin{cases}\int_{0}^{\infty} s^{d-1} e^{-s} d s & \text { if } d>0 \\ \infty & \text { if } d=0\end{cases}
+$$
+
+For $d<0, \Gamma(d)$ is defined in terms of the above expressions and the recurrence formula $d \Gamma(d)=\Gamma(d+1)$ which holds for all values of $d$. Note that the recurrence formula and $\Gamma(0)=\infty$ imply that $\Gamma(d)$ has poles at the nonpositive integers. Thus, $(1-z)^{d}$ provides an infinite-order polynomial function with slowly and monotonically declining weights.
+
+When $\underline{d>-\frac{1}{2}}$ the process $y$ is invertible and has an infinite autoregressive representation:
+
+$$
+\sum_{k=0}^{\infty} \frac{\Gamma(k-d)}{\Gamma(-d)} \frac{L^{k}}{k !} y_{t}=\varepsilon_{t}
+$$
+
+Hosking (1981) obtains this representation from the binomial expansion of $(1-z)^{d}$. From Stirling's formula it follows that $\Gamma(k-d) /(\Gamma(-d) k !)$ can be approximated by $k^{-d-1} / \Gamma(-d)$ for $k \rightarrow \infty$.
+
+When $d<\frac{1}{2}$, the process $y$ is stationary and has an infinite moving-average representation. Hosking (1981) obtains the moving-average representation by inversion of (3.1) and by making use of the binomial expansion of $(1-z)^{-d}$ :
+
+$$
+\begin{aligned}
+y_{t} & =(1-L)^{-d} \varepsilon_{t} \\
+& =\sum_{k=0}^{\infty} \frac{\Gamma(k+d)}{\Gamma(d)} \frac{L^{k}}{k !} \varepsilon_{t}
+\end{aligned}
+$$
+
+From Stirling's formula it follows that $\Gamma(k+d) /(\Gamma(d) k !)$ can be approximated by $k^{d-1} / \Gamma(d)$ for $k \rightarrow \infty$. The factor $k^{d-1}$ is summable or not depending on the value taken by $d$. The fractional process is [asymptotically stationary]{.underline} if and only if $d<\frac{1}{2}$; the (asymptotically) stationary fractional process is of [short-memory]{.short-memory} if $d \leq 0$ and of [long-memory]{.underline} if $0<d<\frac{1}{2}$.
+
+*In short, an ARFIMA $(0, d, 0)$ process is stationary and invertible if and only if $d$ is less than $\frac{1}{2}$ in absolute value.*
+
+It is obvious that the autoregressive polynomial of infinite order has to be approximated by a polynomial of finite order, given that a realization of a process $y$ consists of a finite amount of observations. We can choose to simply [truncate the infinite autoregressive polynomial]{.underline} and ignore the remaining part. Alternatively, following Levinson (1947) and Hosking (1981), we can derive the autoregressive coefficients of a [finite order autoregressive polynomial approximation]{.underline} to the polynomial of infinite order.
+
+Let us denote the coefficient of the infinite order autoregressive polynomial function (2) corresponding to $z^{k}$ by $a_{k, \infty}$. Thus
+
+$$
+a_{k, \infty}=-\frac{\Gamma(k-d)}{\Gamma(-d) \Gamma(k+1)}
+$$
+
+Notice the minus sign that follows from the definition of an autoregressive polynomial function in this thesis. Approximating the infinite order polynomial function by a finite order $p$ polynomial function gives equation (2.1.7) which is represented here:
+
+$$
+y_{t}=a_{1, p} y_{t-1}+\ldots+a_{p, p} y_{t-p} \tag{3}
+$$
+
+where the second index $p$ indicates that it is an autoregressive coefficient of a finite order $p$ polynomial function. Hosking (1981) derived the analytical representation of the finite order linear regression coefficients by solving the Yule-Walker equations for the autoregressive model of finite order $p$ with the Levinson-Durbin-Whittle recursion formulas (see appendix B) for the autoregressive coefficients of (3) for $p=1, \ldots, T-1$ and $k=1,2, \ldots, p-1$:
+
+$$
+\begin{align*}
+a_{k, p} & =a_{k, \infty} \cdot \frac{p(p-1) \ldots(p-k+1)}{(p-d)(p-d-1) \ldots(p-d-k+1)} \tag{4}\\
+a_{p, p} & =\frac{d}{p-d} \tag{5}
+\end{align*}
+$$
+
+where
+
+$$
+a_{k, \infty}=-\left(\frac{-d(1-d) \ldots(k-1-d)}{k !}\right) \quad k=1,2, \ldots \tag{6}
+$$
+
+The discrepancy between the infinite and finite order autoregressive coefficients which are necessary for applying the infinite polynomial operator to a finite realization of the process $y$ is clearly seen from figure 2.5. Given that we approximate the infinite polynomial by a polynomial of the order $p=100$ we see that the coefficients $a_{k, 100}$ seem to account for the truncation of the polynomial at high $k$. This reveals the short-coming of simply truncating a polynomial of infinite order.[^18]
+
+```{r}
+# In this figure we present two approximations for an AR process with an infinite number of lags p:
+# 1. An AR process with the number of lags simply truncated after 100 lags ('Truncated AR($\infty$)')
+# 2. An AR process also with 100 lags but with the coefficients adjusted for the truncation ('AR(100) approximation')
+# Assumption: parameter of integration d = 1/3
+#| fig-cap: "Figure 2.5"
+#| fig-height: 12
+
+d <- 1/3
+par(mfrow=c(1,1))
+k <- 0:100
+# See footnote [^18] for the formulae for the two starting values of the truncated Truncated AR($\infty$)
+a_inf <- rep(0, 101)
+a_inf[1] <- 1
+a_inf[2] <- d
+# The a_inf[3:101] are calculated using the formula for the infinite AR process in equation (6) above
+for (i in 3:101) {
+  a_inf[i] <- a_inf[i-1]*((i-2)-d)/(i-1)
+}
+# The a_100[3:101] are calculated using the formula in equation (4') of footnote [^18]
+a_100 <- rep(0, 101)
+a_100[1] <- 1
+a_100[2] <- d*100/(100-d)
+for (i in 3:101) {
+  a_100[i] <- a_100[i-1]*(100-(i-1)+1)*((i-1)-1-d)/((100-d-(i-1)+1)*(i-1))
+}
+# The title of this figure is Çomparison of Autoregressive Coefficients', 
+# the x-axis runs from 0 up to 100 and is labeled 'lags k' and 
+# the y-axis runs from -8 to 0 and is labeled 'Logarithmic scale'.
+# Note that the coefficients are thus presented on a logarithmic y-scale.
+plot(k, log(a_inf), type='l', lty=1, lwd=2, xlab='lags k', ylab='Logarithmic scale', main='Comparison of Autoregressive Coefficients')
+lines(k, log(a_100), lty=2, lwd=2)
+legend('topleft', c(expression(Truncated~AR(infinity)), 'AR(100) approximation'), lty = c(1, 2), lwd=2)
+```
+
+Instead of applying the finite version of the infinite lag operator or simply truncating the infinite lag operator in the time domain, Geweke and Porter-Hudak (1983) propose to premultiply $y_{t}$ by the infinite operator in the [frequency domain]{.underline} after which the result is transformed back to the time domain. However, Sowell $(1987,1992 b)$ proves that this procedure suffers from the time domain truncation problem as well, as was not expected by Geweke and Porter-Hudak.
+
+#### The autocovariance function
+
+To derive the autocovariances we make use of the moving-average representation of the $ARFIMA(0, d, 0)$ process. It can be shown (Gourieroux and Monfort 1990) that the $k$-th order autocovariance is
+
+$$
+\gamma_{y}(k)=\sigma_{\varepsilon}^{2} \cdot \frac{\Gamma(k+d)}{\Gamma(k+1-d)} \cdot \frac{\Gamma(1-2 d)}{\Gamma(d) \Gamma(1-d)}
+$$
+
+having the same sign as the order of integration $d$ for $k \geq 1$.[^19] Making use of Stirling's formula we can write for large $k$
+
+$$
+\gamma_{y}(k) \sim \sigma_{\varepsilon}^{2} \cdot k^{2 d-1} \cdot \frac{\Gamma(1-2 d)}{\Gamma(d) \Gamma(1-d)}
+$$
+
+It shows that the convergence to zero is hyperbolic and thus slower than the exponential decay of the autocovariance function of ARMA processes. Indeed, the $k$-th order autocorrelation for ARFIMA processes is
+
+$$
+\rho_{y}(k)=\frac{\gamma_{y}(k)}{\gamma_{y}(0)} \sim k^{2 \mathrm{~d}-1}
+$$
+
+where $d<\frac{1}{2}$ and $k \rightarrow \infty$.
+
+The long-memory property of fractionally integrated processes can be illustrated by comparing the autocorrelations of two stationary series where we allow one to be fractionally integrated.[^20] The two are an $ARIMA(1,0,0)$ process with coefficient $\alpha_{1}=0.5$ and an $ARFIMA\left(0, \frac{1}{3}, 0\right)$ process. The example is taken from Diebold and Rudebusch (1989).[^21] The autocorrelations $\rho_{y}(k)=\alpha_{1}^{k}$ for the $ARFIMA(1,0,0)$ process can be derived from the a.c.g.f.; for the $ARFIMA\left(0, \frac{1}{3}, 0\right)$ process it can be derived that the autocorrelation function is given by $\rho_{y}(k)=\Gamma(1-d) \Gamma(k+d) /\{\Gamma(d) \Gamma(k+1-d)\}$.
+
+| $\operatorname{lag} k$ | 1 | 2 | 3 | 4 | 5 | 10 | 25 | 50 | 100 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(1-0.5 L) y_{t}=\varepsilon_{t}$ | 0.50 | 0.25 | 0.13 | 0.06 | 0.03 | 0.00 | 0.00 | 0.00 | 0.00 |
+| $(1-L)^{1 / 3} y_{t}=\varepsilon_{t}$ | 0.50 | 0.40 | 0.35 | 0.32 | 0.30 | 0.24 | 0.18 | 0.14 | 0.11 |
+: Table 3.1 Theoretical Autocorrelations of an ARIMA and an ARFIMA Process
+
+From Table 3.1 we see that the decay in correlation between observations $k$ periods apart is much slower for the fractionally integrated process. It is therefore that those processes are usually called 'long-memory' processes, whereas the usual $ARIMA(p, 0, q)$ processes are labeled 'short-memory'. Notice that the first order autocorrelations for the two processes are the same.
+
+#### The pseudo-spectrum
+
+In Table 3.1 a comparison between two processes has been made in the time domain. In the frequency domain we can make a comparison between the two processes from Table 3.1 as well. However, a problem arises with the $ARFIMA\left(0, \frac{1}{3}, 0\right)$ process. If $y \sim I(d), d$ nonzero, the process $y$ does not strictly possess a spectrum but we can define a [pseudo-spectrum]{.underline} as follows:
+
+$$
+f_{y}(\lambda)=(2 \pi)^{-1} \cdot g_{y}(\exp \{-i \lambda\}) \cdot|1-\exp \{-i \lambda\}|^{-2 d} \tag{7}
+$$
+
+This follows from the fact that differencing a series once in the time domain is equivalent to multiplying its spectrum by $|1-\exp \{-i \lambda\}|^{2}$ in the frequency domain.
+
+As $g_{y}(\exp \{-i \lambda\})=\sigma_{\varepsilon}^{2}$ for $ARFIMA(0, d, 0)$ processeses (see (2.1.4)) the pseudospectrum reads
+
+$$
+f_{y}(\lambda)=\left(\sigma_{\varepsilon}^{2} / 2 \pi\right) \cdot|1-\exp \{-i \lambda\}|^{-2 d}
+$$
+
+which equals
+
+$$
+f_{y}(\lambda)=\left(\sigma_{\varepsilon}^{2} / 2 \pi\right) \cdot(2 \sin (\lambda / 2))^{-2 d}.
+$$
+
+If $\lambda$ tends to zero we have
+
+$$
+\left.f_{y}(\lambda)=\left(\sigma_{\varepsilon}^{2} / 2 \pi\right) \cdot \mid 1-\exp \{-i \lambda\}\right)\left.\right|^{-2 d} \sim\left(\sigma_{\varepsilon}^{2} / 2 \pi\right) \cdot \lambda^{-2 d} \tag{8}
+$$
+
+Thus, the behavior of $ARFIMA(0, d, 0)$ processes is proportional to $\lambda^{-2 d}$ for $\lambda$ near zero frequency, whereas for nonfractional ARIMA processes that are multiplicity one integrated it is proportional to $\lambda^{-2}$ (substitute $d=1$ in (8)). As such, ARFIMA processes can be seen as a generalization of the zero frequency unit-root case (i.e. the unit root +1 ).
+
+The pseudo-spectrum is also useful to understand the difference between short memory and long memory (or non-stationary) processes. For the latter processes the pseudo-spectrum tends to infinity if $\lambda$ tends to zero. The velocity depends on the exponent $d$ : the closer $d$ to $\frac{1}{2}$ the higher the velocity. This can be seen from the figures 2.6 and 2.7. The [long-memory property]{.underline} of ARFIMA processes is very clearly revealed by the autocorrelation function. Although in Table 3.1 the autocorrelation function revealed this typical behavior already for $d=\frac{1}{3}$, this property is even more clear from figure 2.6 for $d=0.45$. Furthermore, it can be seen from the s.g.f. that the restriction of the long-memory property is on fewer frequencies than the restriction of other types of behavior on frequency points. Application of a fractional filter to a realization of a process therefore has a less disturbing effect on the behavior of that process - in terms of number of affected frequencies - than e.g. the (stationary) autoregressive filter.
+
+The [short-memory property]{.underline} of *ARFIMA* processes, i.e. $d \leq 0$, turns up from the time domain as well as from the frequency domain. From figure 2.7 we see that a relatively small part of the variance of such processes is explained by the low-frequency behavior and a relatively large part by the high-frequency behavior. The autocorrelation function of short-memory fractional processes turns out to compare well with that of an $M A(1)$ process with negative parameter (compare e.g. $d=-0.25$ with $\theta=-0.1$ ). The realizations of the figures 2.6 and 2.7 are obtained by an indirect Cholesky decomposition of the variance-covariance matrix procedure (see Section 2.4.1).
+
+
+```{r}
+source("functions/figure2_6_7.R")
+source("functions/acf_arfima.R")
+source("functions/spectrum_arfima.R")
+```
+
+```{r}
+#| fig-cap: "Figure 2.6"
+#| fig-height: 12
+figure2_6_7(300,1)
+```
+
+```{r}
+#| fig-cap: "Figure 2.7"
+#| fig-height: 12
+figure2_6_7(300,-1)
+```
+
+#### Prediction theory
+
+Making a prediction given a realization of a fractionally integrated process [without any autoregressive and/or moving-average structure]{.underline} requires that we take account of the infiniteness of the autoregressive polynomial expression of the model. We choose to approximate the infinite autoregressive polynomial by the [finite order polynomial expression]{.underline} (3) where the autoregressive coefficients are derived by Hosking (1981). Along the lines of section 2.1.3 we obtain predictions from the autoregressive model thus obtained.
+
+### $ARFIMA(p, d, q)$ processes
+
+$ARFIMA(0, d, 0)$ processes as described in the previous section have a very distinctive auto-correlation structure and therefore can only be of limited value to model long memory data. However, if we extend these models to account for short-run dynamics as well, a very broad class of possible autocorrelation functions results.
+
+The low-lag correlation structure of fractionally integrated processes is modeled by an ARMA part which we neglected in Section 2.3.1. The parameters $\phi$ and $\theta$ can be chosen to describe this low-lag correlation structure, whereas the parameter $d$ accounts for the correlation between observations that are very distant from each other (see equation (1)).
+
+To ensure [stationarity]{.underline} the order of integration $d$ should be less than $\frac{1}{2}$ and the roots of the equation $|\phi(z)|=0$ should all lie outside the complex unit circle. If $d>-\frac{1}{2}$ and the root of the equation $|\theta(z)|=0$ lies outside the unit circle the $ARFIMA(p, d, q)$ process is [invertible]]{.underline}.
+
+The long-term behavior of an $ARFIMA(p, d, q)$ process may be expected to be similar to that of an $ARFIMA(0, d, 0)$ process with the same value $d$, if for very distant observations the effects of the $\phi$ and $\theta$ parameters will be negligible. Hosking (1981) shows that this is indeed the case:
+
+*Given that $y$ is stationary and invertible, the spectral density $f_{y}(\lambda)$ and the autocorrelation function $\rho_{y}(k)$ have the respective properties:*
+
+$$
+\begin{aligned}
+& \lim _{\lambda \rightarrow 0} f_{y}(\lambda)=\lambda^{-2 d} \\
+& \lim _{k \rightarrow \infty} \rho_{y}(k)=k^{2 d-1}
+\end{aligned}
+$$
+
+
+This theorem expresses that the effect of the parameter $d$ decays hyperbolically as the lag increases, whereas the effect of the ARMA parameters decays exponentially.
+
+#### The Autocovariance Function
+
+Sowell (1987, 1992b) shows that for $\underline{ARFIMA(0, d, q)}$ processes the autocovariances have the form
+
+where
+
+$$
+\gamma_{y}(k)=\sigma_{\varepsilon}^{2} \cdot \sum_{l=-q}^{q} \Psi(l) \cdot \frac{\Gamma(1-2 d) \cdot \Gamma(d+k-l)}{\Gamma(d) \cdot \Gamma(1-d) \cdot \Gamma(1-d-k+l)}
+$$
+
+$$
+\Psi(l)=\sum_{i=\max \{0, l\}}^{\min \{q, q-l\}} \theta_{i} \theta_{i-l}
+$$
+
+For $\underline{ARFIMA(p, d, q)}$ processes the autocovariances look like
+
+$$
+\gamma_{y}(k)=\sigma_{\varepsilon}^{2} \cdot \sum_{l=-q}^{q} \sum_{j=1}^{p} \Psi(l) \cdot \zeta_{j} \cdot C\left(d, p+l-k, \rho_{j}\right)
+$$
+
+where $\Psi(l)$ is as defined before,
+
+$$
+\zeta_{j}=\left[\rho_{j} \cdot \prod_{i=1}^{p}\left(1-\rho_{i} \rho_{j}\right) \cdot \prod_{m \neq j}\left(\rho_{j}-\rho_{m}\right)\right]^{-1}
+$$
+
+and the factor $C\left(d, p+l-k, \rho_{j}\right)$ can be computed recursively from
+
+$$
+\begin{aligned}
+C(d, h, \rho)= & \frac{\Gamma(1-2 d) \cdot \Gamma(d+h)}{\Gamma(d) \cdot \Gamma(1-d) \cdot \Gamma(1-d+h)} * \\
+& {\left[\rho^{2 p} F(d+h, 1 ; 1-d+h ; \rho)+F(d-h, 1 ; 1-d-h ; \rho)-1\right] }
+\end{aligned}
+$$
+
+where the hypergeometric function $F(a, b ; c ; x)$ is defined by
+
+$$
+F(a, b ; c ; x)=\sum_{n=0}^{\infty} \frac{\Gamma(a+n) \Gamma(b+n) \Gamma(c)}{\Gamma(a) \Gamma(b) \Gamma(c+n) \Gamma(n+1)} \cdot x^{n}
+$$
+
+for which the following recursion holds
+
+$$
+F(a, 1 ; c ; \rho)=\frac{c-1}{\rho(a-1)}[F(a-1,1 ; c-1 ; \rho)-1].
+$$
+
+For each evaluation of the likelihood function only $p$ different hypergeometric functions need to be evaluated. The $\rho_{j}$ 's result from the factorization of the autoregressive polynomial, i.e. $\phi(z)=\prod_{j=1}^{p}\left(1-\rho_{j} z\right)$.[^22]
+
+#### The Pseudo-Spectrum
+
+From equation (7) we derive the pseudo-spectrum for the general $ARFIMA(p, d, q)$ process
+
+$$
+f_{y}(\lambda)=\frac{\sigma_{\varepsilon}^{2}}{2 \pi} \cdot\left|\frac{\theta(\exp \{i \lambda\})}{\phi(\exp \{i \lambda\})}\right|^{2} \cdot|1-\exp \{-i \lambda\}|^{-2 d} \tag{9}
+$$
+
+If $\lambda$ tends to zero we have
+
+$$
+f_{y}(\lambda) \sim g_{y}(1) \cdot|1-\exp \{-i \lambda\}|^{-2 d} \sim g_{y}(1) \cdot \lambda^{-2 d}
+$$
+
+which means that near zero frequency behavior of $ARFIMA(p, d, q)$ processes is proportional to $\lambda^{-2 d}$.
+
+From (9) it follows that if we look at the lower angular frequencies of $f_{y}(\lambda)$ we are able to say something about the order of integration $d$. Because the shape of the pseudo-spectrum uniquely determines the relationship $\left.f_{y}(\lambda) / \mid 1-\exp \{-i \lambda\}\right)\left.\right|^{-2 d}$ we can determine the second order characteristics of the process $(1-L)^{d} Y_{\boldsymbol{t}}$ (for large $t$ ) if we know the pseudo-spectrum (e.g. Geweke and Porter-Hudak 1983).
+
+From the frequency domain it is clarifying to see that neither not differencing, nor differencing a fractionally integrated series once --- i.e. applying integer differencing --- are good ways to proceed. Furthermore it reveals that fractional differentiation has attractive features that seem to be tailor-made for the 'typical spectral shape' problem, mentioned by Granger (1966).
+
+#### Prediction Theory
+
+If we deal with a fractionally integrated process (1) with [autoregressive parameters]{.underline} we have to make use of the concept of [convolution]{.underline} in order to derive predictions from this model, i.e. convolution of the finite order autoregressive coefficients (4) and (5) corresponding to the fractional filter (2) and those of the autoregressive polynomial $\phi(z)$. Specifically, given the finite $p1$ order autoregressive polynomial $a(z)$ and the finite $p2$ order polynomial $\phi(z)$ defined as
+
+$$
+\begin{aligned}
+& a(z)=1-a_{1, p 1} z-a_{2, p 1} z^{2}-\ldots-a_{p 1, p 1} z^{\mathrm{p} 1} \\
+& \phi(z)=1-\phi_{1} z-\phi_{2} z^{2}-\ldots-\phi_{p 2} z^{\mathrm{p} 2}
+\end{aligned}
+$$
+
+the $k$-th coefficient of the convolution $\xi(z)=\phi(z) a(z)$ is given by
+
+$$
+\xi_{k}=\sum_{j=0}^{k} \phi_{j} a_{k-j, p1}
+$$
+
+where $k=0,1, \ldots, p1+p2$ and $a_{0, p1}=\phi_{0}=1$.
+
+Geweke and Porter-Hudak (1983) use a truncated version of the infinite order autoregressive coefficients $a_{k, \infty}$ as given in (6) to approximate the fractional filter (2). Given the finite order autoregressive polynomial function $\xi(z)$ we can make the predictions as usual. After convolution, predictions from an $ARFIMA(p, d, q)$ process can be obtained by application of the prediction theory with respect to $ARMA(p, q)$ processes as described in Section 2.1.3.
+
+#### Testing Unit Roots Against Stationary Alternatives
+
+In section 2.2.2 we described the (augmented) Dickey-Fuller test for zero frequency unit roots. This test amounts to the comparison of one point, i.e. $\rho=1$, against a whole range of stationary alternatives $|\rho|<1$. We started by assuming i.i.d. residuals $\varepsilon_{t}$ and allowed for stationary $ARMA(p, q)$ residuals $u_{t}$ later on. In both cases the residuals are zero frequency integrated of the order zero, i.e. $\varepsilon_{t} \sim I(0)$ and $u_{t} \sim I(0)$.
+
+In this section we assume $u_{t}$ to be general fractional noise (Geweke and Porter-Hudak 1983), i.e. $u_{t} \sim I(\delta)$ where the parameter of zero frequency integration $\delta$ can be any real number less than one half in absolute value. The null hypothesis is:
+
+$$
+H_{0}: y_{t}=y_{t-1}+u_{t}
+$$
+
+where $\phi(L)(1-L)^{\delta} u_{t}=\theta(L) \varepsilon_{t}$ which implies that under this hypothesis
+
+$$
+\phi(L)(1-L)^{d} y_{t}=\theta(L) \varepsilon_{t} \tag{10}
+$$
+
+where $d=1-\delta, d \in(-1 / 2,3 / 2)$ and $\varepsilon_{t}$ i.i.d. again.
+
+Dickey-Fuller unit-root testing now amounts to regressing $y_{t}$ on $y_{t-1}$, the estimator $\phi(1)$ in (1) converging to its asymptotic distribution at a rate
+crucially depending on $\tilde{d}$ (Sowell 1990). For $\tilde{d} \epsilon \left[0, \frac{1}{2}\right)$. the convergence result is
+
+$$
+\left(\hat{\phi}_{1}-1\right)=\mathcal{O}_{p}\left(T^{-1}\right)
+$$
+
+whereas if $\tilde{d} \in\left(-\frac{1}{2}, 0\right)$ the convergence is faster or slower than $\mathcal{O}\left(T^{-1 / 2}\right)$ as $\tilde{d}$ is greater or smaller than $-\frac{1}{4}$, respectively. In this case
+
+$$
+\left(\hat{\phi}_{1}-1\right)=\mathcal{O}_{p}\left(T^{-2 \tilde{d}-1}\right)
+$$
+
+Sowell (1990) proofs that the (augmented) Dickey-Fuller tests are invalid if one allows for residual (general) fractional noise, except when $\delta=0$ or $d=1$. Diebold and Rudebusch (1991) conclude that the power of the Dickey-Fuller tests (Fuller 1976) against fractionally integrated alternatives is quite low. Diebold and Rudebusch (1991) illustrate this with a Monte Carlo experiment. Sowell (1990) as well conjectures that commonly applied Dickey-Fuller unit root tests under fractionally integrated alternatives have quite low power. Although asymptotically the integer unit root distribution differs severely from its fractional equivalent, finite sample distributions are rather similar.[^23]
+
+As an alternative test for zero frequency unit roots it is possible to estimate the parameter of integration $d$ in equation (10). As the parameter values under the null hypothesis reflect non-stationarity, the model for the first differences $\Delta y_{t}$ has to be estimated instead and an estimate of $d$ can be obtained as $1-\hat{\delta}$, where $\hat{\delta}$ is the estimated $\delta$. Notice that these tests are valid in case of fractionally integrated processes as well as in case of $ARMA$ processes, as opposed to the (augmented) Dickey-Fuller tests.
+
+#### Measuring shock persistence
+
+Analogue to equation (2.2.5) we define the cumulative impulse response function in case of fractional integration as follows:
+
+$$
+\Delta y_{t}=B(L) \varepsilon_{t}=\left(1+b_{1} L+b_{2} L^{2}+\ldots\right) \varepsilon_{t}
+$$
+
+where now $B(L)=\phi(L)^{-1}(1-L)^{-\delta} \theta(L)$, where $\delta=d-1$. Under the assumption $\frac{1}{2}<d<1 \frac{1}{2}$ there holds $-\frac{1}{2}<\delta<\frac{1}{2}$, i.e. the first differences follow a fractionally integrated stationary and invertible ARMA process, and therefore the coefficients $b_j$ are quare summable.
 
 ## Simulation experiments
+
+In this section we first describe two procedures to generate a realization from a theoretical stochastic process. Secondly, using one of these procedures we perform simulation experiments in order to be able to identify the quality of variance- and autocovariances-estimates for different kinds of models. Variances and covariances play a crucial role in model identification.
+
+### Generating a realization from some process
+
+If we want to generate a realization $y_{1}, y_{2}, \ldots, y_{T}$ of a stochastic process $y$ the general idea is to start from a normally distributed white noise sequence which under some transformation gives us a realization of $y$. This transformation can be carried out in two ways.
+
+Given that $y \sim ARMA(p, q)$ an obvious and easy way to procede is to generate a white noise sequence $\varepsilon_{1}, \varepsilon_{2}, \ldots, \varepsilon_{T}$ and just combine these values according to the formulated model. Note that for this procedure we need $p+q$ start-up values in order to generate a realization of length $T$. For $T$ not too small the influence of these start-up values is negligible because of the short-memory property of $ARMA$ processes.
+
+Another procedure is presented in McLeod and Hipel (1978, p. 497). Suppose we want to generate a $T$ dimensional realization from a zero mean stochastic process $y$ that is characterized by the theoretical variance-autocovariance matrix $Q$, i.e.
+
+$$
+Q=\left(\begin{array}{ccc}
+\gamma_{y}(0) & \ldots & \gamma_{y}(-p+1) \\
+\vdots & & \vdots \\
+\gamma_{y}(p-1) & \ldots & \gamma_{y}(0)
+\end{array}\right)
+$$
+
+Premultiplication of the vector of white noise observations $\underline{\varepsilon}$ by a transformation matrix, say $M$, gives us a realization of $y$ if and only if
+
+$$
+Q=MM^{\prime}
+$$
+
+which is called a [direct Cholesky decomposition]{.underline} of the variance-autocovariance matrix $Q$ of the process $y$. The matrix $M$ is lower triangular. In general, if $y \sim ARMA(p, q)$ it is possible to generate a vector of realizations $\underline{y}$ of a process $y$ with mean vector $\underline{\mu}$ and autocovariance-matrix $Q$ as follows
+
+$$
+\underline{y}=\underline{\mu}+M \underline{\varepsilon}
+$$
+
+If we procede in this way we do not need start-up values to generate a realization of $y$.
+
+For $ARMA$ processes both procedures can be pursued. However, if we want to generate a realization of $y \sim ARFIMA(p, d, q)$ only the second procedure is relevant: the first procedure depends on the influence of start-up values which only dies out very slowly because of the long-memory property of fractionally integrated processes.
+
+The transformation matrix $M$ is found by a direct Cholesky decomposition of the variance-autocovariance matrix $Q$. Alternatively, the matrix $M$ can be computed from an [indirect Cholesky decomposition]{.underline} of $Q$ as suggested by Jonas (1981). Whittle (1983, §3.4 and §7.1) shows the correspondence between the autocovariance matrix $Q$ and the finite order autoregressive coefficients $a_{k, p}$
+
+$$
+\quad Q^{-1}=A \Sigma^{-2} A^{\prime}   \tag{1}
+$$
+
+where
+
+$$
+A=\Sigma Q^{-1 / 2}=\left(\begin{array}{ccccc}
+1 & -a_{1,1} & -a_{2,2} & \ldots & -a_{p, p}  \tag{2}\\
+0 & 1 & -a_{1,2} & \ldots & -a_{p-1, p} \\
+0 & 0 & 1 & \ldots & -a_{p-2, p} \\
+\vdots & \vdots & \vdots & & \vdots \\
+0 & 0 & 0 & & -a_{1, p} \\
+0 & 0 & 0 & \ldots & 1
+\end{array}\right)
+$$
+
+$$
+\quad \Sigma^{2}=\operatorname{diag}\left(\sigma_{0}^{2}, \sigma_{1}^{2}, \ldots, \sigma_{p}^{2}\right)   \tag{3}
+$$
+
+such that if $Q=M M^{\prime}$ then $M^{-1}=\Sigma^{-1} A^{\prime}$. The autoregressive coefficients of the matrix $A$ and the elements of the diagonal matrix $\Sigma$ are computed recursively from the Levinson-Durbin-Whittle algorithm (see appendix B).[^24] Storage requirements are proportional to $T^{2}$ for both direct and indirect Cholesky decompositions. The advantage of performing the Cholesky decomposition indirect is in terms of computation time which is proportional to $T^2$, contrary to $T^3$ in case of a direct Cholesky decomposition. Notice that $p=T-1$ for a series of length $T$.
+
+### A simulation study on variance and autocovariances
+
+The variance and autocovariance structure of a process have to be estimated in practice. The importance of the autocovariances in model identification on the one hand and their relationship with the spectral density function on the other hand makes it interesting to investigate the quality of the empirical estimates of the population variance and autocovariances. We use simulations to investigate these empirical properties given the theoretical mean and covariance—structure of the relevant process (e.g. McLeod and Hipel 1978; Granger and Joyeux 1980; Geweke and Porter—Hudak 1983). In general, we want to investigate the empirical properties of a certain statistic $S$ using simulations.
+
+Suppose we generate N independent simulations of a covariance-stationary time-series $y_1,y_2,...,y_T$ and the statistic $S = S(y_1,y_2,...,y_T)$ is calculated in each simulated series. The empirical mean $\bar{S}$ is then the average over $N$ simulations. If each realization $y_1,y_2,...,y_T$ is independent of the other realizations so that the empirical averages of the statistic $S$ are mutually independent, we can calculate the variance $V_S$ of $S$. By the central limit theorem, $\bar{S}$ will be distributed very nearly normally with mean equal to $E[S]$ and with variance approximately equal to $V_S/N$. The standard deviation and confidence intervals for the expected value being estimated are readily obtained from $V_S/N$ (McLeod and Hipel 1978, p. 501).
+
+In the context of simulation of fractionally integrated processes the following point is of great importance. Suppose we generate series of length $NT$ and then subdivide it into $N$ series of $T$ data-points. This procedure has bad consequences if adjacent data—points are heavily correlated and subsequently the $N$ resulting estimations of $S$. The resulting estimate for $E[S]$ will be less precise (i.e. has larger variance) and the estimate of the variance will be underestimated, so that the correct standard deviations and confidence intervals for $E[S]$ will not be available. For a simulation study on fractional processes we therefore explicitly generate $N$ realizations of dimension $T$.
+
+### The Geweke and Porter—Hudak (1983) experiment replicated {.unnumbered .unlisted}
+
+Let us start with a replication of the Geweke and Porter-Hudak (1983, Table 1) simulation study of a fractionally integrated process. In their experiment they generate $N = 4000$ realizations of dimension $T = 265$ from zero mean $ARFIMA(0,d,0)$ processes for $d = 0.25$ and $d = 0.45$. They apply the indirect Cholesky decomposition of the variance-autocovariance matrix procedure in order to generate a single realization, i.e. they use the Levinson-Durbin-Whittle algorithm. As the variance of the generated processes equals one we can read autocorrelations when we discuss the autocovariances. The computer code we used is written in Convex/Unix Fortran.
+
+In figure 2.8 we present graphically the results of the replication of the Geweke and Porter-Hudak (1983) experiment in the upper two panels.[^25] The corresponding tables can be found in appendix C. The mean estimated autocovariance function seems to coincide almost exactly with its population equivalent in both cases. The mean variance and the first 25 mean autocovariances are slight underestimates if $d = 0.25$, whereas they are slight overestimates of the population variance and autocovariances if $d = 0.45$ as can be observed as well from Table 1 (Geweke and Porter-Hudak 1983). The confidence interval is larger if $d = 0.45$ than in the other case.
+
+```{r}
+source("functions/figure2_8_12_13_14_15.R")
+```
+
+```{r}
+#| fig-cap: "Figure 2.8"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(4, 1))
+
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=265, param = 0.25, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=265, param = 0.45, nk = 50, mu = 0, sigmasq = 1, ymin = -2.5, ymax = 2.5, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=265, param = 0.25, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=265, param = 0.45, nk = 50, mu = 0, sigmasq = 1, ymin = -2.5, ymax = 2.5, pop_mean = FALSE)
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+From personal communication with Geweke (1992) we discovered that the autocovariances in Geweke and Porter—Hudak (1983) are computed given the population mean of the simulated process. Although not mentioned in Geweke and Porter-Hudak (1983) this information appears to be crucial for the identification of the quality of the estimate of the autocovariance function. Of course, in practice such information is hardly ever known.
+
+The consequence for the estimated autocovariance functions of [not]{.underline} making use of the population mean of the process but estimating it in each replication can be observed from the lower two panels of figure 2.8. The table can again be found in appendix C. For $d = 0.25$ processes the mean estimated autocovariance function appears to lie below the theoretical autocovariance function, although they do not differ significantly. The mean estimated autocovariance function for $d = 0.45$ processes differs significantly from its theoretical equivalent. What has happened?
+
+### Underestimation of the sample autocovariance function {.unnumbered .unlisted}
+
+It is possible that the phenomenon described above only takes place if we deal with fractionally integrated processes. Therefore it seems useful to investigate the phenomenon and make a comparison with an alternative process at the same time. We have already noted that the autocovariance functions for the $ARFIMA(1, \frac{1}{3}, 0)$ process and the $ARIMA(1, 0, 0)$ process where $\alpha = 0.5$ are comparable.
+
+The set—up is as follows. We generate $N = 1000$ replications of realizations of length $T = 300$ for both processes and calculate the mean of the estimated variance and autocovariances over 1000 replications, first given that the population mean of the sample is known and second given that we have to estimate the mean of the sample each time the autocovariance function has to be computed. For both processes we employ the indirect Cholesky decomposition procedure.
+
+The consequence of using the sample instead of the population mean of the process for the calculation of the autocovariance function is the same for both processes. The underestimation problem in case of the $ARIMA(1, 0, 0)$ process turns out to be less severe than in case of the $ARFIMA(1, \frac{1}{3}, 0)$ process. The reason of the underestimation is evident if we observe the histograms that are depicted in the figures 2.9, 2.10 and 2.11 on estimated means, variances and covariances.[^26]
+
+From figure 2.9 we see that the $N = 1000$ estimated [means]{.underline} of the generated samples from the $ARFIMA(0, \frac{1}{3}, 0)$ process have a much larger spread around zero than the estimated means of the $ARIMA(1, 0, 0)$ samples, though for both processes about symmetrically distributed with respect to zero. The consequences are observed from the next two figures.
+
+In figure 2.10 we have depicted the $N = 1000$ estimated [variances]{.underline} of the $ARFIMA(0, \frac{1}{3}, 0)$ process and the $ARIMA(1, 0, 0)$ process given the population mean in the first and second panel respectively, whereas in the lower two panels the histograms are given if we estimate the mean of each generated sample. We conclude first that histograms of the estimated variances, whether the population or sample means are used, are skewed to the left for the $ARFIMA$ process and symmetrical around their population value for the $ARIMA$ process. Secondly, with respect to the $ARFIMA$ process, the estimated variances reveal a much larger spread if the population mean is used than when the mean is estimated. Consequently, the mean of the variances over 1000 replications coincides more with its theoretical value if the population mean information is available. Thirdly, the histograms for the $ARIMA$ process have a comparable spread of the estimated variances. The histograms for the first-order [autocovariances]{.underline} in figure 2.11 show equivalent results.
+
+```{r}
+source("functions/figure2_9_10_11.R")
+figure2_9_10_11 <- figure2_9_10_11(N = 1000, T=300, mu = 0, sigmasq = 1)
+```
+
+```{r}
+#| fig-cap: "Figure 2.9"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(2, 1))
+
+# Figure 2.9
+hist(figure2_9_10_11$mean_est_arfima, breaks = "scott", col = NULL, main = "sample mean (T=300, d=1/3)", xlab = "Mean", xlim = c(-1.1, 1.1), ylim = c(0, 250))
+hist(figure2_9_10_11$mean_est_arima, breaks = "scott", col = NULL, main = "sample mean (T=300, alpha=1/2)", xlab = "Mean", xlim = c(-1.1, 1.1), ylim = c(0, 250))
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+```{r}
+#| fig-cap: "Figure 2.10"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(4, 1))
+
+hist(figure2_9_10_11$var_pop_arfima, breaks = "scott", col = NULL, main = "variances (T=300, population mean, d=1/3)", xlab = "Variance", xlim = c(0.5, 2.5), ylim = c(0, 300))
+hist(figure2_9_10_11$var_pop_arima, breaks = "scott", col = NULL, main = "variances (T=300, population mean, alpha=1/2)", xlab = "Variance", xlim = c(0.5, 2.5), ylim = c(0, 300))
+hist(figure2_9_10_11$var_est_arfima, breaks = "scott", col = NULL, main = "variances (T=300, sample mean, d=1/3)", xlab = "Variance", xlim = c(0.5, 2.5), ylim = c(0, 300))
+hist(figure2_9_10_11$var_est_arima, breaks = "scott", col = NULL, main = "variances (T=300, sample mean, alpha=1/2)", xlab = "Variance", xlim = c(0.5, 2.5), ylim = c(0, 300))
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+```{r}
+#| fig-cap: "Figure 2.11"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(4, 1))
+
+# Figure 2.11
+hist(figure2_9_10_11$acov_pop_arfima, breaks = "scott", col = NULL, main = "first order autovariances (T=300, population mean, d=1/3)", xlab = "Autocovariance", xlim = c(0, 1.7), ylim = c(0, 300))
+hist(figure2_9_10_11$acov_pop_arima, breaks = "scott", col = NULL, main = "first order autovariances (T=300, population mean, alpha=1/2)", xlab = "Autocovariance", xlim = c(0, 1.7), ylim = c(0, 300))
+hist(figure2_9_10_11$acov_est_arfima, breaks = "scott", col = NULL, main = "first order autovariances (T=300, sample mean, d=1/3)", xlab = "Autocovariance", xlim = c(0, 1.7), ylim = c(0, 300))
+hist(figure2_9_10_11$acov_est_arima, breaks = "scott", col = NULL, main = "first order autovariances (T=300, sample mean, alpha=1/2)", xlab = "Autocovariance", xlim = c(0, 1.7), ylim = c(0, 300))
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+[In conclusion]{.underline}: Suppose that in a simulation experiment where $N$ samples are generated from a fractionally integrated process the mean of the $N$ estimated autocovariance functions is taken as an estimator of the population autocovariance function. Then, if we do not have information about the population mean of the process, this mean function falls severely short of the population function [not]{.underline} because the estimated variances and autocovariances are skewed to the left, [but]{.underline} because the spread is much smaller and therefore the skewness is more important.[^27] In Brockwell and Davies (1991) the slow convergence of the estimator of the mean to the population mean for long—memory processes is indicated.
+
+### The Granger and Joyeux (1980) experiment replicated {.unnumbered .unlisted}
+
+A second type of simulation experiments has been performed by Granger and Joyeux (1980). They recognized the fact that the McLeod and Hipel (1978) method to generate a sample of observations could be time-consuming for $T$ about 200 or more because it includes the direct Cholesky decomposition of the variance—autocovariance matrix $Q$. Instead of using the alternative Jonas's (1981, 1983) indirect Cholesky decomposition method they proposed to approximate the infinite order autoregressive polynomial by a finite order autoregressive polynomial. Notice that the finite order polynomial coefficients are obtained from solving the Levinson-Durbin-Whittle recursions.
+
+Given the autoregressive coefficients it is easy to calculate a new observation from the past observations. However, to procede in this way start-up values are needed. Granger and Joyeux (1980) used the McLeod and Hipel (1978) procedure to generate the start-up values necessary for the finite autoregressive approximation.
+
+Specifically, Granger and Joyeux (1980) used the McLeod and Hipel (1978) procedure to generate 100 start-up values for an $AR(100)$ approximation to an $ARFIMA(0,0.25,0)$ and an $ARFIMA(0,0.45,0)$ process. Series of length 400 were generated. The estimated and theoretical autocorrelations matched more closely for $d=0.25$ than for $d=0.45$.[^28] From their tables it is observed that for $d=0.25$ the mean estimated autocorrelations of each order are overestimated, whereas these are underestimated for $d = 0.45$. The estimated and theoretical autocorrelations matched more closely for $d = 0.25$ than for $d = 0.45$.
+
+Geweke (1992) believes that their underestimation problem is caused by some kind of tapering or windowing, e.g. taking a denominator of $N$ instead of $N-k$ when calculating a $k$—th order autocovariance, where $N$ denotes the number of simulations. However, it is possible that their problems can be attributed to the use of the sample mean when calculating the autocovariance functions, as appeared to be the case when dealing with our underestimation problems. In order to check this we replicated the Granger and Joyeux (1980) experiments. Series of length $T = 400$ given 100 start-up values were generated 1,000 times. However, we had difficulty even getting a satisfatory estimate of the unit variance of the process, as can be verified in appendix C. The reason for this is yet unknown.
+
+### The influence of sample size on the results {.unnumbered .unlisted}
+
+In this experiment we try to determine the influence of sample size on the results of the simulation studies reported above, i.e. for $T$ = 50, 100, 200 and 300. Thereby we make a comparison between the results of the experiment when the autocovariance function is computed given the theoretical mean of the process and those given the sample mean of the process. There will be two processes under consideration: the $ARIMA(1, 0, 0)$ and the $ARFIMA(1, \frac{1}{3}, 0)$ processes from Table 3.1, respectively.
+
+The figures 2.12 and 2.13 deal with the $ARFIMA(1, \frac{1}{3}, 0)$ process. The mean of the autocorrelation functions that are estimated given the population mean show a pattern as expected: for all four sample sizes they approximate the theoretical autocovariance function satisfactory. The influence of sample size is on the width of the confidence interval. However, if the sample mean is used for computation of the autocovariance functions we are confronted with the familiar problem of underestimation of the theoretical autocovariance function for all four sample sizes. Although the confidence intervals are smaller the higher sample size the theoretical autocovariance function is almost on their upper border and therefore almost significantly different from the mean of its empirical equivalents.
+
+The figures 2.14 and 2.15 deal with the $ARIMA(1, 0, 0)$ process. Comparing these figures reveals that the confidence intervals of the mean of the estimated autocovariance functions for the $ARIMA(1, 0, 0)$ process are smaller than for the $ARFIMA(1, \frac{1}{3}, 0)$ process for each sample size. For the $ARIMA(1, 0, 0)$ process the underestimation becomes smaller as sample size grows if the sample mean is used, as is observed from figure 2.15. The width of the confidence intervals are comparable with that of the $ARFIMA(1, \frac{1}{3}, 0)$ process.
+
+```{r}
+source("functions/figure2_8_12_13_14_15.R")
+```
+
+```{r}
+#| fig-cap: "Figure 2.12"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(4, 1))
+
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=50, param = 0.33333, nk = 49, mu = 0, sigmasq = 1, ymin = -2, ymax = 2, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=100, param = 0.33333, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=200, param = 0.33333, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=300, param = 0.33333, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+```{r}
+#| fig-cap: "Figure 2.13"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(4, 1))
+
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=50, param = 0.33333, nk = 49, mu = 0, sigmasq = 1, ymin = -2, ymax = 2, pop_mean = FALSE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=100, param = 0.33333, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=200, param = 0.33333, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+figure2_8_12_13_14_15(process = 1, nrsimul = 100, T=300, param = 0.33333, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+```{r}
+#| fig-cap: "Figure 2.14"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(4, 1))
+
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=50, param = 0.5, nk = 49, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=100, param = 0.5, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=200, param = 0.5, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=300, param = 0.5, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = TRUE)
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+```{r}
+#| fig-cap: "Figure 2.15"
+#| fig-height: 12
+# Change the graphics parameters
+par(mfrow = c(4, 1))
+
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=50, param = 0.5, nk = 49, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=100, param = 0.5, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=200, param = 0.5, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+figure2_8_12_13_14_15(process = 2, nrsimul = 100, T=300, param = 0.5, nk = 50, mu = 0, sigmasq = 1, ymin = -1, ymax = 1, pop_mean = FALSE)
+
+# Reset the graphics parameters
+par(mfrow = c(1, 1))
+```
+
+[^1]: In this thesis we abstain from processes with an autoregressive polynomial function that has at least one zero inside the complex unit circle, i.e. $|\xi|<1$. These processes are called explosive.
+
+[^2]: $ARMA(p,0)$ and $ARMA(0,q)$ processes are usually called $AR(p)$ and $MA(q)$ processes, respectively.
+
+[^3]: Putting the model of $y$ as given in (1) in moving-average form is equivalent to finding a particular solution to this stochastic difference equation.
+
+[^4]: the condition $\sum_{k=0}^{\infty} h_{k}^{2}<\infty$ implies $\lim _{k \rightarrow \infty} h_k=0$.
+
+[^5]: If we divide (3) by the variance of the process $\sigma_y^{2}$ we speak of [spectral density]{.underline} because then there holds $\int_{-\pi}^{\pi} f_{y}(\lambda) d \lambda=1$.
+
+[^6]: The periodogram is defined as $4 \pi I_y(\lambda)$.
+
+[^7]: If $\mathrm{T}$ is odd, the least squares estimates of the coefficients $a_{0}$ and $\left(a_{i}, \mathrm{~b}_{i}\right)$ where $\quad i=1, \ldots, q \quad$ are: $\quad a_{0}=\bar{y}, \quad a_{i}=2 T^{-1} \sum_{t=1}^{T} y_{t} \cos \left(\lambda_{j} t\right) \quad$ and $\quad b_{i}=2 T^{-1} \sum_{t=1}^{T} y_{t} \sin \left(\lambda_{j} t\right)$. If $\mathrm{T}$ is even, the least squares estimates of the coefficients $a_{0}$ and $\left(a_{i}, \mathrm{~b}_{i}\right)$ where $i=1, \ldots, q-1$ are as mentioned above, whereas $\left(a_{q}, \mathrm{~b}_{q}\right)=\left(T^{-1} \sum_{t=1}^{T}(-1)^{t} y_{t}, 0\right)$.
+
+[^8]: The predictor $y_{t-1,1}$ is optimal in the class of linear predictors. If the normality assumption holds as well, it is an optimal non-linear predictor as well.
+
+[^9]: The equations can also be expressed in terms of the autocorrelations $\rho_{y}(1), \rho_{y}(2), \ldots, \rho_{y}(p)$.
+
+[^10]:  In this thesis we assume that the smallest zero of the determinant of the polynomial function $\theta(z)$ is outside the unit circle in the complex plane.
+
+[^11]: The $ARMA(p, q)$ model is an $ARIMA(p, 0, q)$ model.
+
+[^12]:  Suppose $d=1$. Then $y_{t-1,1}=\Delta y_{t-1,1}+y_{t-2,1}$, where $y_{t-2,1}$ can be replaced by $y_{t-1}$ which is known at time $t-1$.
+
+[^13]:  See appendix $\mathrm{D}$.
+
+[^14]:  A necessary condition to validate an AR-approximation of an ARMA process is that of invertibility: the smallest zero of the moving average polynomial function $\phi(z)$ should lie outside the unit circle in the complex plane.
+
+[^15]:  If we approximate an $ARMA(1,1)$ process by an $AR(\mathrm{p})$ model, we get the following model
+$$
+\left(1-\gamma L-\gamma^{2} L^{2}-\ldots-\gamma^{p} L^{p}\right) y_{t}=u_{t}
+$$
+where the residual $u_{t}=\left(\gamma^{p+1} L^{p+1}+\gamma^{p+2} L^{p+2}+\ldots\right) y_{t}+\varepsilon_{t}, \quad \varepsilon_{t}$ being the error term of the $ARMA(1,1)$ model.
+
+[^16]: Recursive estimation means that an observation is added to the observation period each time the model is estimated.
+
+[^17]: The measure $c_{k}$ equals $B(1)=B(\exp \{-i \lambda\})$, where $\lambda=0$. Therefore $c_{k}$ has to do with the zero frequency long-run characteristics of the process.
+
+[^18]: From (4) and (6) the following recursions can be derived:
+$$
+a_{k, \infty}=a_{k-1, \infty} \cdot(k-1-d) / k ; a_{1, \infty}=d ; k \geq 2 ; a_{0, \infty}=1 \tag{6'}
+$$
+$$
+a_{k, p}=a_{k-1, p} \cdot(p-k+1) \cdot(k-1-d) /((p-d-k+1) \cdot k) ; a_{1, p}=d \cdot p /(p-d) ; k \geq 2; a_{0, p}=1 \tag{4'}
+$$
+
+[^19]: A recursive formula to compute the autocovariance is
+$$
+\gamma_y(k) = \gamma_y(k-1).(k-1+d)/(k-d), k \ge 1
+$$
+given $\gamma_y(0)=\sigma_\epsilon^2.\Gamma(1-2d)/{\Gamma(1-d)}^2$.
+
+[^20]: Notice that stationarity does not exclude series to be zero frequency integrated of some order $d$, where $d$ is a fraction. However, if $d$ is restricted to be an integer then integrated processes are non-stationary and vice versa.
+
+[^21]: In their Table 1 Diebold and Rudebusch (1989) mistakenly associate the given correlation function with an $ARFIMA(0,0.3,0)$ process.
+
+[^22]: For this factorisation to hold Sowell (1992b) assumes that the autoregressive polynomial roots are simple. By Monte Carlo simulatiom he shows that this is not a binding restriction at an empirical level. In addition Sowell assumes that $d<\frac{1}{2}$, the autoregressive and moving-average polynomials are of an order less than or equal to $p$ and $q$ respectively, all polynomial roots are outside the unit circle and $\varepsilon_{t}$ is normally distributed with zero mean and variance $\sigma_{\varepsilon}^{2}$.
+
+[^23]: Sowell (1990) shows that the asymptotic fractional unit root distribution may be severely misleading in all but very large samples. This is because the distribution of $\phi_{1}$ in the $A R(1)$ case depends on two underlying random variables, the convergence of one of which to its asymptotic distribution is very slow for plausible $d$ values of fractional integration.
+
+[^24]: In Jonas (1981) and Jonas (1983) there are some notational inconsistencies in the formulas concerning the indirect Cholesky decomposition. The correct formulas are stated in appendix B. Corresponding to these formulas they give the formulas to obtain a realization of the process $y$ recursively. These formulas should read
+$$
+y = (I-M^{-1})y + \epsilon
+$$
+where $M^{-1} = \Sigma^{-1}A'$ and therefore there holds
+$$
+\begin{cases}
+y_1 = \sigma_0 \epsilon_0 \\
+y_t = \sum_{k=1}^{t-1} a_{k,t-1}y_{t-k} + \sigma_{t-1} \epsilon_{t-1}, \quad t\ge 2
+\end{cases}
+$$
+[^25]: The line represents the theoretical autocovariance function, the dots represent the mean estimated autocovariances from $0$ up to the order $49$ over $N=4000$ replications and the dot—dash lines represent the mean minus two times sigma and mean plus two times sigma confidence intervals.
+
+[^26]: The text "$d=1/3$" in the title of a depicted histogram indicates that the process under consideration is $ARFIMA(0,\frac{1}{3},0)$; if the text reads "$alpha=1/2$" the process is $ARIMA(1,0,0)$.
+
+[^27]: Granger and Joyeux (1980) also encountered the problem of serious underestimated variance and autocovariances. Geweke (1992) believes that their problem is caused by taking a denominator of 4000 instead of 4000-$k$ when calculating a $k$—th order autocovariance. However, it is possible that their problems can be attributed to the use of the sample mean when calculating the autocovariance functions.
+Granger and Joyeux (1980) used the McLeod and Hipel (1978) procedure to generate 100 start—up values for an $AR(1OO)$ approximation to an $ARFIMA(0,0.25,0)$ and an $ARFIMA(0,0.45,0)$ process. Series of length 400 were generated. The estimated and theoretical autocorrelations matched more closely for $d=0.25$ than for $d=0.45$.
+
+[^28]: Granger and Joyeux (1980) did not mention how many series of length $T$ were generated for each process. It could be that they generated one for each process.

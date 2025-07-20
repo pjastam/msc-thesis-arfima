@@ -4,6 +4,8 @@ This book is a replica of my [MSc thesis](http://pietstam.nl/mscthesis/) on frac
 
 The original version of my [MSc thesis](http://pietstam.nl/mscthesis/) was finished August, 1993. Back then, I was a master's student in the [Econometric Institute](https://www.eur.nl/en/ese/department-econometrics) at [Erasmus University Rotterdam](https://www.eur.nl/).
 
+I have used [ChiWriter](https://en.wikipedia.org/wiki/ChiWriter) 3.10 for writing the original thesis. As a ChiWriter to Markdown converter is missing from pandoc, I used [Mathpix](https://mathpix.com/) to scrape the text including the mathematical formulas from the scanned PDF version of the original thesis. Thus, the current version of the thesis is written in R Markdown and is available in HTML format.
+
 ## Acknowledgements
 
 I would like to express my deepest gratitude to my parents Rina and John, brother José and sister Karin. Each in their own way they encouraged me in good and bad times. Special thanks I owe to my girlfriend Ria. Since we met there was always this thesis to be finished, which made it difficult for me to concentrate on other things in life. She suffered from my moods when finishing this thesis and cared for me nonetheless.
