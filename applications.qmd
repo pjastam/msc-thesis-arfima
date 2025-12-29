@@ -218,13 +218,12 @@ we observe that a zero frequency unit root is present in the autoregressive stru
 
 The modeling strategy of Sowell (1992a) clearly leads to the incorrect impression that the nonfractional $A R M A(0,2)$ model is an important nonfractional alternative to the fractional $\operatorname{ARMA}(3,-0.59,2)$ model.[^40] From the plot of the spectral densities of the estimated models over the periodogram for the first differences of log GNP it appears that the nonfractional $\operatorname{ARMA}(2,2)$ model gives a better description of the frequency domain behavior than the model advocated by Sowell (see figure 4.3).[^41] Campbell and Mankiw (1987) selected this model out of a set of nonfractional ARMA models. This finding gives support to our proposition that application of the AIC or SIC criterion to find one model out of a set of nonfractional and fractional alternatives is a strategy not to be pursued. It is advisable to apply the criteria to the set of nonfractional alternatives only to find an AIC optimal and an SIC optimal model and do the same for a set of fractional alternatives only. A choice between the models can be made by studying the forecasting performances of the set of optimal models.[^42]
 
-### The second stage of the GPH (1983) estimation procedure {.unnumbered .unlisted}
-
-The GPH estimation of fractional ARMA models procedure consists of two stages: at the first stage the long memory parameter $d$ is estimated by a log periodogram regression (equation (3.3)), and at the second stage the short memory autoregressive parameters are estimated. In order to get a clear picture of the meaning of fractional integration in general and the GPH methodology in particular we first discuss the GPH results given the fractional $\operatorname{ARMA}(1,-0.45,0)$ model for $\operatorname{slny}$ (this model is SIC optimal when estimated by maximum likelihood). Thus in this discussion estimation of the
-
 Figure 4.3
 ![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-13.jpg?height=2312&width=1648&top_left_y=311&top_left_x=224)
-parameter of fractional integration at the first stage of the GPH procedure is skipped. The GPH estimation results when performing the first stage $\log$ periodogram regression will be discussed hereafter.
+
+### The second stage of the GPH (1983) estimation procedure {.unnumbered .unlisted}
+*****
+The GPH estimation of fractional ARMA models procedure consists of two stages: at the first stage the long memory parameter $d$ is estimated by a log periodogram regression (equation (3.3)), and at the second stage the short memory autoregressive parameters are estimated. In order to get a clear picture of the meaning of fractional integration in general and the GPH methodology in particular we first discuss the GPH results given the fractional $\operatorname{ARMA}(1,-0.45,0)$ model for $\operatorname{slny}$ (this model is SIC optimal when estimated by maximum likelihood). Thus in this discussion estimation of the parameter of fractional integration at the first stage of the GPH procedure is skipped. The GPH estimation results when performing the first stage $\log$ periodogram regression will be discussed hereafter.
 
 Given $d=-0.45$, we can compute the mean-corrected series
 
@@ -449,6 +448,12 @@ Cumulative Impulse Responses For Various Estimated Models
 
 ## ANNUAL TRIER OAK TREE RING WIDTHS
 
+```{r}
+library(readr)
+OAKV21 <- read.csv("data/OAKV21.DAT", header = FALSE)[,1]
+WEST <- data.frame(date = seq(as.Date("822-01-01"), as.Date("1964-12-31"), by = "year"), OAKV21 = OAKV21)
+```
+
 In Lamb (1977, table v21) a series of 1143 data points is tabulated. The data points reflect yearly Trier oak tree ring widths from the west of the Rhine, near Trier and cover the years $822-1964$. The data were gathered by felling the oaks and measuring the thickness of the rings, the youngest ring being the one nearest to the bark. Generally in each year there have been between 10 and 36 sample measurements; in the years before 910 there have been only 1-9 measurements and only 4-8 in the period between 1060 and 1129 . The unit of measurement is not reported in Lamb (1977) but may well be $0.1 \mathrm{~mm}$ (see also Steyn 1992).
 
 The ring widhts are the subject of dendroclimatology as they provide indirect evidence of weather conditions. The nature of the weather dependence of this series has not been investigated at Lamb's (1977) time of writing. Decades with mild winters and warm summers which also gave plenty of rain seem to have produced the most growth; colder or drier summers or winters probably restricted growth. The ring widths seem to register the effects of more than one year. The Trier oak tree ring widths are plotted in figure 4.14.
@@ -457,21 +462,31 @@ As the emphasis in this thesis is on long memory behavior of stochastic processe
 
 From the figures corresponding to the first differences a surprising phenomenon is manifest. While the levels of the series are primarily dominated by the low frequency behavior, the first differences are primarily dominated by the behavior at the high frequencies. Furthermore, from the estimated autocorrelation function and partial autocorrelation function an appropriate model for the first differences seems to be an $M A(1)$ model with first order autocorrelation of about -0.5. However, the corresponding first order moving-average coefficient then should be about -1 , which is an indication of overdifferentiation as well.
 
-Thus the levels of the series are non-stationary whereas taking first
+Thus the levels of the series are non-stationary whereas taking first differences is just too much. This dilemma very strongly indicates the necessity of allowing for fractional integration when modeling this series. Fractional integration seems to be tailor-made for description of the behavior of the Trier oak tree ring widths series.
 
-Figure 4.14
-![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-32.jpg?height=1072&width=784&top_left_y=294&top_left_x=224)
+```{r}
+source("functions/figure4_1.R")
+```
 
-fractions of c
-![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-32.jpg?height=1052&width=768&top_left_y=1587&top_left_x=240)
-
-fractions of c
-![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-32.jpg?height=2398&width=796&top_left_y=315&top_left_x=1118)
-differences is just too much. This dilemma very strongly indicates the necessity of allowing for fractional integration when modeling this series. Fractional integration seems to be tailor-made for description of the behavior of the Trier oak tree ring widths series.
+```{r}
+#| fig-cap: "Figure 4.14"
+#| fig-height: 6
+figure4_1(title = "Log Annual Trier Oak Tree Ring Widths", OAKV21, from = WEST$date[1], to = WEST$date[length(WEST$date)], by = "year")
+```
 
 ### Augmented Dickey-Fuller tests {.unnumbered .unlisted}
 
 The ADF test is performed by estimation of equation (2.2.4) for the Trier oak tree ring widths, denoted $y_{t}$, including a constant, a deterministic linear trend of order one and lagged differences of $y_{t}$ up to order $50(p=51)$. The five percent critical value is -3.41 (Fuller 1976, table 8.5.2, $\hat{\tau}_{\tau}, n=\infty$ ). For both $y_{t}$ and $\Delta y_{t}$ the ADF test statistic is significantly different from zero for all lags up to 50: the zero frequency integer unit root hypothesis is rejected against a fractional unit root less than one at a five percent significance level in both cases (see figure 4.15).
+
+```{r}
+source("functions/figure4_2.R")
+```
+
+```{r}
+#| fig-cap: "Figure 4.15"
+#| fig-height: 6
+figure4_2(OAKV21, 51, trend = 1, constante = 1)
+```
 
 ### Model estimation {.unnumbered .unlisted}
 
@@ -482,72 +497,54 @@ Given the results of the ADF tests we model levels of the Trier oak tree ring wi
 Estimation of nonfractional ARMA models for the levels of the Trier oak tree ring widths indicate the presence of a zero frequency autoregressive unit root of order one.[^45] Therefore we present in tables 4.7 and 4.8 the results corresponding to the first differences of the Trier series. The optimal model, both according to AIC and SIC, is the nonfractional $\operatorname{ARMA}(2,1)$ model
 
 $$
-\begin{gathered}
-\left(1-0.24 L-0.20 L^{2}\right) \Delta y_{t}=(1-0.92 L) \varepsilon_{t} \\
-(-7.09)(-6.16)
-\end{gathered}
+(1 - \underset{(-7.09)}{0.24 L} - \underset{(-6.16)}{0.20 L^{2}}) \Delta y_{t} = (1 - \underset{(-56.51)}{0.92 L}) \varepsilon_{t}
 $$
 
 where the corresponding estimated residual variance is 418.0292 .[^5]
 
-Figure 4.15
-![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-34.jpg?height=1134&width=1692&top_left_y=275&top_left_x=178)
-
-LEVELS
-
-![](https://cdn.mathpix.com/cropped/2024_04_20_023bcdf5b6b787a2b1a2g-34.jpg?height=1138&width=1694&top_left_y=1544&top_left_x=181)
-
-FIRST DIFFERENCES
-
 Table 4.7
 
-2lnL, AIC and SIC for sixteen nonfractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths
+*2lnL, AIC and SIC for sixteen nonfractional $\operatorname{ARMA}(p, q)$ models of the standardized first differences of the Trier oak tree ring widths*
 
-|  |  |  |  |  |
-|  | Number of $MA$ parameters |  |  |  |
-| :--- | :---: | :---: | :---: | :---: |
-|  |  |  |  |  |
-| Number of $AR$ parameters | 0 | 1 | 2 | 3 |
-|  |  |  |  |  |
-| 0 | -10578.025 | -10183.825 | -10177.450 | -10140.641 |
-|  | -10578.025 | -10185.825 | -10181.450 | -10146.641 |
+|  | **MA(0)** | **MA(1)** | **MA(2)** | **MA(3)** |
+| :---------- | :------: | :------: | :------: | :------: |
+|  | -10578.025 | -10183.825 | -10177.450 | -10140.641 |
+| **AR(0)** | -10578.025 | -10185.825 | -10181.450 | -10146.641 |
 |  | -10578.025 | -10190.865 | -10191.531 | -10161.763 |
 |  |  |  |  |  |
-| 1 | -10285.213 | -10170.637 | -10145.002 | -10134.484 |
-|  | -10287.213 | -10174.637 | -10151.002 | -10142.484 |
+|  | -10285.213 | -10170.637 | -10145.002 | -10134.484 |
+| **AR(1)** | -10287.213 | -10174.637 | -10151.002 | -10142.484 |
 |  | -10292.254 | -10184.718 | -10166.124 | -10162.646 |
 |  |  |  |  |  |
-| 2 | -10246.630 | -10134.488 | -10134.481 | -10134.079 |
-|  | -10250.630 | -10140.488 | -10142.481 | -10144.079 |
+|  | -10246.630 | -10134.488 | -10134.481 | -10134.079 |
+| **AR(2)** | -10250.630 | -10140.488 | -10142.481 | -10144.079 |
 |  | -10260.711 | -10155.610 | -10162.643 | -10169.281 |
 |  |  |  |  |  |
-| 3 | -10226.841 | -10134.479 | -10134.131 | -10132.912 |
-|  | -10232.841 | -10142.479 | -10144.131 | -10144.912 |
+|  | -10226.841 | -10134.479 | -10134.131 | -10132.912 |
+| **AR(3)** | -10232.841 | -10142.479 | -10144.131 | -10144.912 |
 |  | -10247.962 | -10162.641 | -10169.334 | -10175.155 |
 
 Table 4.8
 
-Parameter estimates of sixteen nonfractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths;
+*Parameter estimates of sixteen nonfractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths; $t$-statistics between parentheses*
 
-$t$-statistics between parentheses
-
-| $\frac{\text { Model }}{(0,1)}$ | $\phi_{1}$ |  | $\phi_{2}$ |  | $\phi_{3}$ | $\theta_{1}$ <br> -0.69 <br> $(-23.43)$ | $\theta_{2}$ |  | $\theta_{3}$ |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-|  |  |  |  |  |  |  |  |  |  |
-| $(0,2)$ |  |  |  |  |  | -0.67 <br> $(-23.98)$ | ( | -0.08 <br> $-2.56)$ |  |
-| $(0,3)$ |  |  |  |  |  | -0.68 <br> $(-23.48)$ | ( | 0.05 <br> $1.22)$ | -0.19 <br> $(-6.25)$ |
-| $(1,0)$ | -0.48 <br> $(-18.28)$ |  |  |  |  |  |  |  |  |
-| $(1,1)$ | 0.20 <br> $(\quad 4.36)$ |  |  |  |  | -0.84 <br> $(-26.93)$ |  |  |  |
-| $(1,2)$ | 0.72 <br> $(\quad 11.18)$ |  |  |  |  | -1.37 <br> $(-18.72)$ | ( | 0.41 <br> $6.58)$ |  |
-| $(1,3)$ | 0.42 <br> $(\quad 2.64)$ |  |  |  |  | -1.09 <br> $(-6.91)$ | ( | 0.32 <br> $3.04)$ | -0.14 <br> $(-3.36)$ |
-| $(2,0)$ | -0.56 <br> $(-19.33)$ | ( | -0.18 <br> $-6.26)$ |  |  |  |  |  |  |
-| $(2,1)$ | 0.24 <br> $(\quad 7.09)$ | ( | 0.20 <br> $6.16)$ |  |  | -0.92 <br> $(-56.51)$ |  |  |  |
-| $(2,2)$ | 0.26 <br> $(\quad 1.74)$ | ( | 0.20 <br> $4.08)$ |  |  | -0.93 <br> $(-6.26)$ | ( | 0.01 <br> $0.09)$ |  |
-| $(2,3)$ | 0.32 <br> $(\quad 1.69)$ | ( | 0.10 <br> $0.63)$ |  |  | -1.00 <br> $(-5.23)$ | ( | 0.16 <br> $0.61)$ | -0.08 <br> $\left(\begin{array}{l}-0.66)\end{array}\right.$ |
-| $(3,0)$ | -0.59 <br> $(-19.98)$ | ( | -0.26 <br> $-7.70)$ | ( | -0.13 <br> $-4.47)$ |  |  |  |  |
-| $(3,1)$ | 0.24 <br> $(\quad 7.10)$ | ( | 0.20 <br> $6.16)$ | ( | 0.00 <br> $0.10)$ | -0.92 <br> $(-52.70)$ |  |  |  |
-| $(3,2)$ | -0.35 <br> $(-0.72)$ | ( | 0.35 <br> $2.78)$ | ( | 0.14 <br> $1.40)$ | -0.33 <br> $(-0.67)$ | ( | -0.55 <br> $-1.23)$ |  |
-| $(3,3)$ | -0.24 <br> $(-0.64)$ | ( | 0.10 <br> $0.45)$ | ( | 0.15 <br> $1.72)$ | -0.43 <br> $(-1.15)$ | ( | -0.21 <br> $-0.54)$ | -0.20 <br> $\left(\begin{array}{l}-1.23\end{array}\right)$ |
+| Model  | $\phi_{1}$ | $\phi_{2}$ | $\phi_{3}$ | $\theta_{1}$ | $\theta_{2}$ | $\theta_{3}$ |
+| :---:  | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(0,1)$ |  |  |  | $\underset{(-23.43)}{-0.69}$ |  |  |
+| $(0,2)$ |  |  |  | $\underset{(-23.98)}{-0.67}$ |  | $\underset{(-2.56)}{-0.08}$ |
+| $(0,3)$ |  |  |  | $\underset{(-23.48)}{-0.68}$ |  | $\underset{(1.22)}{0.05}$ | $\underset{(-6.25)}{-0.19}$ |
+| $(1,0)$ | $\underset{(-18.28)}{-0.48}$ |  |  |  |  |  |
+| $(1,1)$ | $\underset{(4.36)}{0.20}$ |  |  | $\underset{(-26.93)}{-0.84}$ |  |  |
+| $(1,2)$ | $\underset{(11.18)}{0.72}$ |  |  | $\underset{(-18.72)}{-1.37}$ | $\underset{(6.58)}{0.41}$ |  |
+| $(1,3)$ | $\underset{(2.64)}{0.42}$ |  |  | $\underset{(-6.91)}{-1.09}$ | $\underset{(3.04)}{0.32}$ | $\underset{(-3.36)}{-0.14}$ |
+| $(2,0)$ | $\underset{(-19.33)}{-0.56}$ | $\underset{(-6.26)}{-0.18}$ |  |  |  |  |
+| $(2,1)$ | $\underset{(7.09)}{0.24}$ | $\underset{(6.16)}{0.20}$ |  | $\underset{(-56.51)}{-0.92}$ |  |  |
+| $(2,2)$ | $\underset{(1.74)}{0.26}$ | $\underset{(4.08)}{0.20}$ |  | $\underset{(-6.26)}{-0.93}$ | $\underset{(0.09)}{0.01}$ |  |
+| $(2,3)$ | $\underset{(1.69)}{0.32}$ | $\underset{(0.63)}{0.10}$ |  | $\underset{(-5.23)}{-1.00}$ | $\underset{(0.61)}{0.16}$ | $\underset{(-0.66)}{-0.08}$ |
+| $(3,0)$ | $\underset{(-19.98)}{-0.59}$ | $\underset{(-7.70)}{-0.26}$ | $\underset{(-4.47)}{-0.13}$ |  |  |  |
+| $(3,1)$ | $\underset{(7.10)}{0.24}$ | $\underset{(6.16)}{0.20}$ | $\underset{(0.10)}{0.00}$ | $\underset{(-52.70)}{-0.92}$ |  |  |
+| $(3,2)$ | $\underset{(-0.72)}{-0.35}$ | $\underset{(2.78)}{0.35}$ | $\underset{(1.40)}{0.14}$ | $\underset{(-0.67)}{-0.33}$ | $\underset{(-1.23)}{-0.55}$ |  |
+| $(3,3)$ | $\underset{(-0.64)}{-0.24}$ | $\underset{(0.45)}{0.10}$ | $\underset{(1.72)}{0.15}$ | $\underset{(-1.15)}{-0.43}$ | $\underset{(-0.54)}{-0.21}$ | $\underset{(-1.23)}{-0.20}$ |
 
 ### Fractional ARMA models estimated by maximum likelihood {.unnumbered .unlisted}
 
@@ -555,188 +552,132 @@ The tables 4.9 and 4.10 include the results of maximum likelihood estimation of 
 
 Table 4.9
 
-2lnL, AIC and SIC for sixteen fractional ARMA $(p, q)$ models of the standardized Trier oak tree ring widths
+*2lnL, AIC and SIC for sixteen fractional ARMA $(p, q)$ models of the standardized Trier oak tree ring widths*
 
-|  | Number of $M A$ parameters |  |  |  |
-| :--- | :---: | :---: | :---: | :---: |
-| Number of | 1 |  |  |  |
-| AR parameters | 0 | 2 | 3 |  |
-| 0 | -10170.996 | -10156.470 | -10147.821 | -10146.455 |
-|  | -10172.996 | -10160.470 | -10153.821 | -10154.455 |
+|  | **MA(0)** | **MA(1)** | **MA(2)** | **MA(3)** |
+| :---------- | :------: | :------: | :------: | :------: |
+|  | -10170.996 | -10156.470 | -10147.821 | -10146.455 |
+| **AR(0)** | -10172.996 | -10160.470 | -10153.821 | -10154.455 |
 |  | -10178.037 | -10170.553 | -10168.945 | -10174.621 |
 |  |  |  |  |  |
 |  | -10152.494 | -10148.842 | -10147.095 | -10146.122 |
-|  | -10156.494 | -10154.842 | -10155.095 | -10156.122 |
+| **AR(1)** | -10156.494 | -10154.842 | -10155.095 | -10156.122 |
 |  | -10166.577 | -10169.966 | -10175.260 | -10181.329 |
 |  |  |  |  |  |
 |  | -10147.638 | -10147.638 | -10144.905 | -10143.158 |
-|  | -10153.638 | -10155.638 | -10154.905 | -10155.158 |
+| **AR(2)** | -10153.638 | -10155.638 | -10154.905 | -10155.158 |
 |  | -10168.763 | -10175.804 | -10180.112 | -10185.406 |
 |  |  |  |  |  |
 |  | -10147.638 | -10147.355 | -10142.892 | -10142.827 |
-|  | -10155.638 | -10157.355 | -10154.892 | -10156.827 |
+| **AR(3)** | -10155.638 | -10157.355 | -10154.892 | -10156.827 |
 |  | -10175.804 | -10182.562 | -10185.140 | -10192.117 |
 
 Table $\underline{4.10}$
 
-Parameter estimates of sixteen fractional ARMA $(p, q)$ models of the standardized Trier oak tree ring widths;
+*Parameter estimates of sixteen fractional ARMA $(p, q)$ models of the standardized Trier oak tree ring widths; $t$-statistics between parentheses*
 
-$t$-statistics between parentheses
-
-| Model | $d$ |  | $\phi_{1}$ |  | $\phi_{2}$ |  | $\phi_{3}$ |  | $\theta_{1}$ |  | $\theta_{2}$ |  | $\theta_{3}$ |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| $(0, d, 0)$ | 0.40 |  |  |  |  |  |  |  |  |  |  |  |  |
-|  | $(20.15)$ |  |  |  |  |  |  |  |  |  |  |  |  |
-| $(0, d, 1)$ | 0.48 |  |  |  |  |  |  |  | 0.15 |  |  |  |  |
-|  | $(23.15)$ |  |  |  |  |  |  | $(-4$ | $.27)$ |  |  |  |  |
-| $(0, d, 2)$ | 0.44 |  |  |  |  |  |  |  | 0.11 |  | 0.10 |  |  |
-|  | $(11.67)$ |  |  |  |  |  |  | $(-2$ | .26) | ( | $2.89)$ |  |  |
-| $(0, d, 3)$ | 0.46 |  |  |  |  |  |  |  | 0.14 |  | 0.10 |  | -0.04 |
-|  | $(12.25)$ |  |  |  |  |  |  | $(-2)$ | .78) | ( | 2.92) | ( | $-1.19)$ |
-| $(1, d, 0)$ | 0.49 |  | -0.17 |  |  |  |  |  |  |  |  |  |  |
-|  | $(28.20)$ | 1 | $-5.08)$ |  |  |  |  |  |  |  |  |  |  |
-| $(\mathbf{1}, d, \mathbf{1})$ | 0.47 |  | -0.45 |  |  |  |  |  | 0.29 |  |  |  |  |
-|  | $(20.15)$ | ( | $-3.46)$ |  |  |  |  |  | .04) |  |  |  |  |
-| $(1, d, 2)$ | 0.45 |  | -0.20 |  |  |  |  |  | 0.08 |  | 0.08 |  |  |
-|  | $(12.13)$ | ( | $-0.90)$ |  |  |  |  | $(1$ | .37) | ( | $1.53)$ |  |  |
-| $(1, d, 3)$ | 0.47 |  | 0.26 |  |  |  |  |  | -0.40 |  | 0.13 |  | -0.07 |
-|  | $(13.00)$ | ( | $0.60)$ |  |  |  |  | $(-$ | .91) | ( | 1.99) | ( | $-1.40)$ |
-| $(2, d, 0)$ | 0.45 |  | -0.13 |  | 0.08 |  |  |  |  |  |  |  |  |
-|  | $(12.39)$ | ( | $-2.64)$ | ( | 2.08) |  |  |  |  |  |  |  |  |
-| $(2, d, 1)$ | 0.45 |  | -0.13 |  | 0.08 |  |  |  | 0.00 |  |  |  |  |
-|  | $(11.97)$ | ( | $-0.45)$ | ( | 1.33) |  |  | ( | $0.01)$ |  |  |  |  |
-| $(2, d, 2)$ | 0.45 |  | -0.58 |  | -0.38 |  |  |  | 0.47 |  | 0.42 |  |  |
-|  | $(13.55)$ | ( | $-1.89)$ | ( | $-2.20)$ |  |  | ( | 1.63) | ( | 2.39) |  |  |
-| $(2, d, 3)$ | 0.47 |  | -0.27 |  | -0.59 |  |  |  | 0.12 |  | 0.64 |  | -0.10 |
-|  | $(15.60)$ | ( | $-1.13)$ | ( | $-3.06)$ |  |  | ( | $0.51)$ | ( | $3.82)$ | ( | $-1.79)$ |
-| $(3, d, 0)$ | 0.45 |  | -0.13 |  | 0.08 |  | -0.00 |  |  |  |  |  |  |
-|  | $(11.70)$ | ( | $-2.60)$ | ( | $1.99)$ | ( | $-0.01)$ |  |  |  |  |  |  |
-| $(3, d, 1)$ | 0.47 |  | 0.48 |  | 0.15 |  | -0.06 |  | -0.62 |  |  |  |  |
-|  | $(11.83)$ | ( | $0.91)$ | ( | $1.87)$ | ( | $-1.41)$ | ( | $-1.17)$ |  |  |  |  |
-| $(3, d, 2)$ | 0.47 |  | -0.41 |  | -0.69 |  | -0.10 |  | 0.26 |  | 0.73 |  |  |
-|  | $(16.55)$ | ( | $-1.82)$ | ( | $-3.61)$ | ( | $-1.89)$ | ( | $1.20)$ | ( | $4.60)$ |  |  |
-| $(3, d, 3)$ | 0.46 |  | -0.58 |  | -0.80 |  | -0.20 |  | 0.44 |  | 0.82 |  | 0.10 |
-|  | $(14.69)$ | ( | $-0.82)$ | ( | $-1.60)$ | ( | $-0.50)$ | ( | $0.61)$ | ( | $1.96)$ | ( | $0.25)$ |
+| Model | $d$ | $\phi_{1}$ | $\phi_{2}$ | $\phi_{3}$ | $\theta_{1}$ | $\theta_{2}$ | $\theta_{3}$ |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(0,d,0)$ | $\underset{(20.15)}{0.40}$ |  |  |  |  |  |  |
+| $(0,d,1)$ | $\underset{(23.15)}{0.48}$ |  |  |  | $\underset{(-4.27)}{0.15}$ |  |  |
+| $(0,d,2)$ | $\underset{(11.67)}{0.44}$ |  |  |  | $\underset{(-2.26)}{0.11}$ | $\underset{(2.89)}{0.10}$ |  |
+| $(0,d,3)$ | $\underset{(12.25)}{0.46}$ |  |  |  | $\underset{(-2.78)}{0.14}$ | $\underset{(2.92)}{0.10}$ | $\underset{(-1.19)}{-0.04}$ |
+| $(1,d,0)$ | $\underset{(28.20)}{0.49}$ | $\underset{(-5.08)}{-0.17}$ |  |  |  |  |  |
+| $(1,d,1)$ | $\underset{(20.15)}{0.47}$ | $\underset{(-3.46)}{-0.45}$ |  |  | $\underset{(0.04)}{0.29}$ |  |  |
+| $(1,d,2)$ | $\underset{(12.13)}{0.45}$ | $\underset{(-0.90)}{-0.20}$ |  |  | $\underset{(1.37)}{0.08}$ | $\underset{(1.53)}{0.08}$ |  |
+| $(1,d,3)$ | $\underset{(13.00)}{0.47}$ | $\underset{(0.60)}{0.26}$ |  |  | $\underset{(-0.91)}{-0.40}$ | $\underset{(1.99)}{0.13}$ | $\underset{(-1.40)}{-0.07}$ |
+| $(2,d,0)$ | $\underset{(12.39)}{0.45}$ | $\underset{(-2.64)}{-0.13}$ | $\underset{(2.08)}{0.08}$ |  |  |  |  |
+| $(2,d,1)$ | $\underset{(11.97)}{0.45}$ | $\underset{(-0.45)}{-0.13}$ | $\underset{(1.33)}{0.08}$ |  | $\underset{(0.01)}{0.00}$ |  |  |
+| $(2,d,2)$ | $\underset{(13.55)}{0.45}$ | $\underset{(-1.89)}{-0.58}$ | $\underset{(-2.20)}{-0.38}$ |  | $\underset{(1.63)}{0.47}$ | $\underset{(2.39)}{0.42}$ |  |
+| $(2,d,3)$ | $\underset{(15.60)}{0.47}$ | $\underset{(-1.13)}{-0.27}$ | $\underset{(-3.06)}{-0.59}$ |  | $\underset{(0.51)}{0.12}$ | $\underset{(3.82)}{0.64}$ | $\underset{(-1.79)}{-0.10}$ |
+| $(3,d,0)$ | $\underset{(11.70)}{0.45}$ | $\underset{(-2.60)}{-0.13}$ | $\underset{(1.99)}{0.08}$ | $\underset{(-0.01)}{-0.00}$ |  |  |  |
+| $(3,d,1)$ | $\underset{(11.83)}{0.47}$ | $\underset{(0.91)}{0.48}$ | $\underset{(1.87)}{0.15}$ | $\underset{(-1.41)}{-0.06}$ | $\underset{(-1.17)}{-0.62}$ |  |  |
+| $(3,d,2)$ | $\underset{(16.55)}{0.47}$ | $\underset{(-1.82)}{-0.41}$ | $\underset{(-3.61)}{-0.69}$ | $\underset{(-1.89)}{-0.10}$ | $\underset{(1.20)}{0.26}$ | $\underset{(4.60)}{0.73}$ |  |
+| $(3,d,3)$ | $\underset{(14.69)}{0.46}$ | $\underset{(-0.82)}{-0.58}$ | $\underset{(-1.60)}{-0.80}$ | $\underset{(-0.50)}{-0.20}$ | $\underset{(0.61)}{0.44}$ | $\underset{(1.96)}{0.82}$ | $\underset{(0.25)}{0.10}$ |
 
 The AIC and SIC optimal models are respectively
 
 $$
-\left(1+\underset{(2.64)(-2.08)}{\left.0.13 L-0.08 L^{2}\right)}(1-\underset{(12.39)}{L})^{0.45} y_{t}=\varepsilon_{t}\right.
+(1 + \underset{(2.46)}{0.13 L} - \underset{(-2.08)}{0.08 L^{2}}) (1 - L)^\underset{(12.39)}{0.45} y_{t} = \varepsilon_{t}
 $$
 
 and
 
 $$
-\left(1+\underset{(5.08)}{0.17 L)}\left(1-\underset{(28.20)}{L)^{0.49}} y_{t}=\varepsilon_{t}\right.\right.
+(1 + \underset{(5.08)}{0.17 L}) (1 - L)^{\underset{(28.20)}{0.49}} y_{t} = \varepsilon_{t}
 $$
 
 where the estimates of the residual variance corresponding to the nonfractional ARMA optimal models are 418.92 and 420.25 , respectively. It should be noted that there is another model with an AIC value slightly less
 than that of the fractional $A R M A(2,0.45,0)$ model: the fractional $\operatorname{ARMA}(0,0.44,2)$ model
 
 $$
-\begin{gathered}
-(1-L)^{0.44} \\
-(11.67)
-\end{gathered} y_{t}=\left(1-0.11 L+\frac{\left.0.10 L^{2}\right)}{(-2.26)}\left(\begin{array}{c}
-(2.89)
-\end{array}\right.\right.
+(1 - L)^\underset{(11.67)}{0.44} y_{t} = (1 - \underset{(-2.26)}{0.11 L} + \underset{(2.89)}{0.10 L^{2}}) \varepsilon_{t}
 $$
 
 where the estimate of the residual variance is 419.10. A choice between the three models will be made on the basis of their forecasting performances.
 
 Table 4.11
 
-2lnL, AIC and SIC for sixteen fractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths
+*2lnL, AIC and SIC for sixteen fractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths*
 
-|  | Number of $M A$ parameters |  |  |  |
-| :--- | :---: | :---: | :---: | :---: |
-| Number of <br> $A R$ parameters | 0 | 1 | 2 | 3 |
-| 0 | -10161.763 | -10144.171 | -10137.960 | -10135.418 |
-|  | -10163.763 | -10148.171 | -10143.960 | -10143.418 |
+|  | **MA(0)** | **MA(1)** | **MA(2)** | **MA(3)** |
+| :---------- | :------: | :------: | :------: | :------: |
+|  | -10161.763 | -10144.171 | -10137.960 | -10135.418 |
+| **AR(0)** | -10163.763 | -10148.171 | -10143.960 | -10143.418 |
 |  | -10168.804 | -10158.252 | -10159.082 | -10163.580 |
 |  |  |  |  |  |
-| 1 | -10139.821 | -10137.684 | -10136.934 | -10132.496 |
-|  | -10143.821 | -10143.684 | -10144.934 | -10142.496 |
+|  | -10139.821 | -10137.684 | -10136.934 | -10132.496 |
+| **AR(1)** | -10143.821 | -10143.684 | -10144.934 | -10142.496 |
 |  | -10153.902 | -10158.806 | -10165.096 | -10167.699 |
-| 2 |  |  |  |  |
+|  |  |  |  |  |
 |  | -10137.309 | -10137.280 | -10134.820 | -10131.936 |
-|  | -10143.309 | -10145.280 | -10144.820 | -10143.936 |
+| **AR(2)** | -10143.309 | -10145.280 | -10144.820 | -10143.936 |
 |  | -10158.430 | -10165.442 | -10170.022 | -10174.179 |
 |  |  |  |  |  |
-| 3 | -10137.223 | -10132.982 | -10130.396 | -10129.787 |
-|  | -10145.223 | -10142.982 | -10142.396 | -10143.787 |
+|  | -10137.223 | -10132.982 | -10130.396 | -10129.787 |
+| **AR(3)** | -10145.223 | -10142.982 | -10142.396 | -10143.787 |
 |  | -10165.385 | -10168.184 | -10172.639 | -10179.071 |
 
 For completeness we present the maximum likelihood results for the first differences of the Trier series in case of fractional ARMA models as well. From table 4.11 the fractional $\operatorname{ARMA}(3,-0.32,2)$ model appears to be AIC optimal whereas the fractional $\operatorname{ARMA}(1,-0.48,0)$ model is optimal according to SIC. From table 4.12 the models are respectively
 
 $$
-\begin{aligned}
-& \left(1-1.49 L+0.31 L^{2}+0.22 L^{3}\right)(1-L)^{-0.32} \Delta y_{t}= \\
-& \begin{array}{lll}
-(-9.40) & (1.98) & (6.00)
-\end{array}(-2.94) \\
-& \left(1-1.86 L+0.88 L^{2}\right) \varepsilon_{t} \\
-& (-25.06) \quad(12.58)
-\end{aligned}
+(1 - \underset{(-9.40)}{1.49 L} + \underset{(1.98)}{0.31 L^{2}} + \underset{(6.00)}{0.22 L^{3}}) (1 - L)^\underset{(-2.94)}{-0.32} \Delta y_{t} = (1 - \underset{(-25.06)}{1.86 L} + \underset{(12.58)}{0.88 L^{2}}) \varepsilon_{t}
 $$
 
 and
 
 $$
-\left(1+\underset{(4.98)}{0.21 L)}(1-L)^{-0.48} \Delta y_{t}=\varepsilon_{t}\right.
+(1 + \underset{(4.98)}{0.21 L}) (1 - L)^\underset{(-14.11)}{-0.48} \Delta y_{t} = \varepsilon_{t}
 $$
 
-where the estimated residual variances are 416.42 and 419.65, respectively. Again there is another model with almost the same AIC value as the optimal
-one, i.e. the fractional $\operatorname{ARMA}(1,-0.29,3)$ which reads
+where the estimated residual variances are 416.42 and 419.65, respectively. Again there is another model with almost the same AIC value as the optimal one, i.e. the fractional $\operatorname{ARMA}(1,-0.29,3)$ which reads
 
 $$
-\begin{aligned}
-& (1-0.57 L)(1-L)^{-0.29} \Delta y_{t}=\left(1-0.96 L+0.25 L^{2}-0.12 L^{3}\right) \varepsilon_{t} \\
-& \begin{array}{llll}
-(-4.07) & (-1.76) & (-4.76) & (2.82) \\
-(-3.01)
-\end{array}
-\end{aligned}
+(1 - \underset{(-4.07)}{0.57 L}) (1 - L)^\underset{(-1.76)}{-0.29} \Delta y_{t} = (1 - \underset{(-4.76)}{0.96 L} + \underset{(2.82)}{0.25 L^{2}} - \underset{(-3.01)}{0.12 L^{3}}) \varepsilon_{t}
 $$
-
 where the estimated residual variance is 417.15. A choice between the models will be made on the basis of their forecasting performances. It should be noted that the fractional orders of integration indicate that the levels of the Trier series may be non-stationary as the confidence intervals of the fractional $A R M A(1,-0.48,0)$ model and the fractional $A R M A(1,-0.29,3)$ contain $d=0.5$ as a possible estimate of the parameter of integration.
 
 Table $\underline{4.12}$
 
 Parameter estimates of sixteen fractional ARMA $(p, q)$ models of the standardized first differences of the Trier oak tree ring widths;
 
-| Model | $d$ |  | $\phi_{1}$ |  | $\phi_{2}$ |  | $\phi_{3}$ | $\theta_{1}$ |  | $\theta_{2}$ | $\theta_{3}$ |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| $(0, d, 1)$ | -0.47 |  |  |  |  |  |  | -0.19 |  |  |  |
-|  | $(-11.31)$ |  |  |  |  |  |  | $(-3.82)$ |  |  |  |
-| $(0, d, 2)$ | -0.54 |  |  |  |  |  |  | -0.13 |  | 0.09 |  |
-|  | $(-12.34)$ |  |  |  |  |  |  | $(-2.37)$ | ( | $2.54)$ |  |
-| $(0, d, 3)$ | -0.49 |  |  |  |  |  |  | -0.19 |  | 0.08 | -0.06 |
-|  | $(-7.34)$ |  |  |  |  |  |  | $(-2.59)$ | ( | $2.16)$ | $(-1.55)$ |
-| $(1, d, 0)$ | -0.48 |  | -0.21 |  |  |  |  |  |  |  |  |
-|  | $(-14.11)$ |  | $-4.98)$ |  |  |  |  |  |  |  |  |
-| $(1, d, 1)$ | -0.50 |  | -0.41 |  |  |  |  | 0.24 |  |  |  |
-|  | $(-14.73)$ |  | $-3.10)$ |  |  |  |  | $(1.56)$ |  |  |  |
-| $(1, d, 2)$ | -0.53 |  | -0.24 |  |  |  |  | 0.10 |  | 0.06 |  |
-|  | $(-11.76)$ | ( | $-1.06)$ |  |  |  |  | $(0.47)$ | ( | $0.99)$ |  |
-| $(1, d, 3)$ | -0.29 |  | 0.57 |  |  |  |  | -0.96 |  | 0.25 | -0.12 |
-|  | $(-1.76)$ | ( | $4.07)$ |  |  |  |  | $(-4.76)$ | ( | $2.82)$ | $(-3.01)$ |
-| $(2, d, 0)$ | -0.52 |  | -0.15 |  | 0.06 |  |  |  |  |  |  |
-|  | $(-11.73)$ | ( | $-2.83)$ | ( | $1.57)$ |  |  |  |  |  |  |
-| $(2, d, 1)$ | -0.52 |  | -0.21 |  | 0.05 |  |  | 0.05 |  |  |  |
-|  | $(-11.49)$ | ( | $-0.64)$ | ( | $0.74)$ |  |  | $(0.17)$ |  |  |  |
-| $(2, d, 2)$ | -0.54 |  | -0.67 |  | -0.38 |  |  | 0.54 |  | 0.39 |  |
-|  | $(-13.72)$ | ( | $-1.69)$ | ( | $-2.20)$ |  |  | $(1.45)$ | ( | $2.36)$ |  |
-| $(2, d, 3)$ | -0.49 |  | -0.21 |  | -0.60 |  |  | 0.03 |  | 0.64 | -0.14 |
-|  | $(-9.99)$ | ( | $-0.80)$ | ( | $-3.23)$ |  |  | $(0.10)$ | ( | $4.10)$ | $(-2.12)$ |
-| $(3, d, 0)$ | -0.52 |  | -0.16 |  | 0.06 |  | -0.01 |  |  |  |  |
-|  | $(-10.42)$ | ( | $-2.76)$ | ( | 1.30) | ( | $-0.29)$ |  |  |  |  |
-| $(3, d, 1)$ | -0.24 |  | 0.43 |  | 0.21 |  | -0.03 | -0.86 |  |  |  |
-|  | $(-1.37)$ | ( | $3.24)$ | ( | $5.51)$ | ( | $-0.66)$ | $(-13.45)$ |  |  |  |
-| $(3, d, 2)$ | -0.32 |  | 1.49 |  | -0.31 |  | -0.22 | -1.86 |  | 0.88 |  |
-|  | $(-2.94)$ | ( | $9.40)$ | ( | $-1.98)$ | ( | $-6.00)$ | $(-25.06)$ | ( | 12.58) |  |
-| $(3, d, 3)$ | -0.38 |  | 1.44 |  | -0.15 |  | -0.31 | -1.74 |  | 0.62 | 0.13 |
-|  | $(-3.37)$ | ( | $9.00)$ | ( | $-0.64)$ | ( | $-2.54)$ | $(-9.97)$ | ( | $1.86)$ | $(0.80)$ |
+| Model | $d$ | $\phi_{1}$ | $\phi_{2}$ | $\phi_{3}$ | $\theta_{1}$ | $\theta_{2}$ | $\theta_{3}$ |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| $(0,d,1)$ | $\underset{(-11.31)}{-0.47}$ |  |  |  | $\underset{(-3.82)}{-0.19}$ |  |  |
+| $(0,d,2)$ | $\underset{(-12.34)}{-0.54}$ |  |  |  | $\underset{(-2.37)}{-0.13}$ | $\underset{(2.54)}{0.09}$ |  |
+| $(0,d,3)$ | $\underset{(-7.34)}{-0.49}$ |  |  |  | $\underset{(-2.59)}{-0.19}$ | $\underset{(2.16)}{0.08}$ | $\underset{(-1.55)}{-0.06}$ |
+| $(1,d,0)$ | $\underset{(-14.11)}{-0.48}$ | $\underset{(-4.98)}{-0.21}$ |  |  |  |  |  |
+| $(1,d,1)$ | $\underset{(-14.73)}{-0.50}$ | $\underset{(-3.10)}{-0.41}$ |  |  | $\underset{(1.56)}{0.24}$ |  |  |
+| $(1,d,2)$ | $\underset{(-11.76)}{-0.53}$ | $\underset{(-1.06)}{-0.24}$ |  |  | $\underset{(0.47)}{0.10}$ | $\underset{(0.99)}{0.06}$ |  |
+| $(1,d,3)$ | $\underset{(-1.76)}{-0.29}$ | $\underset{(4.07)}{0.57}$ |  |  | $\underset{(-4.76)}{-0.96}$ | $\underset{(2.82)}{0.25}$ | $\underset{(-3.01)}{-0.12}$ |
+| $(2,d,0)$ | $\underset{(-11.73)}{-0.52}$ | $\underset{(-2.83)}{-0.15}$ | $\underset{(1.57)}{0.06}$ |  |  |  |  |
+| $(2,d,1)$ | $\underset{(-11.49)}{-0.52}$ | $\underset{(-0.64)}{-0.21}$ | $\underset{(0.74)}{0.05}$ |  | $\underset{(0.17)}{0.05}$ |  |  |
+| $(2,d,2)$ | $\underset{(-13.72)}{-0.54}$ | $\underset{(-1.69)}{-0.67}$ | $\underset{(-2.20)}{-0.38}$ |  | $\underset{(1.45)}{0.54}$ | $\underset{(2.36)}{0.39}$ |  |
+| $(2,d,3)$ | $\underset{(-9.99)}{-0.49}$ | $\underset{(-0.80)}{-0.21}$ | $\underset{(-3.23)}{-0.60}$ |  | $\underset{(0.10)}{0.03}$ | $\underset{(4.10)}{0.64}$ | $\underset{(-2.12)}{-0.14}$ |
+| $(3,d,0)$ | $\underset{(-10.42)}{-0.52}$ | $\underset{(-2.76)}{-0.16}$ | $\underset{(1.30)}{0.06}$ | $\underset{(-0.29)}{-0.01}$ |  |  |  |
+| $(3,d,1)$ | $\underset{(-1.37)}{-0.24}$ | $\underset{(3.24)}{0.43}$ | $\underset{(5.51)}{0.21}$ | $\underset{(-0.66)}{-0.03}$ | $\underset{(-13.45)}{-0.86}$ |  |  |
+| $(3,d,2)$ | $\underset{(-2.94)}{-0.32}$ | $\underset{(9.40)}{1.49}$ | $\underset{(-1.98)}{-0.31}$ | $\underset{(-6.00)}{-0.22}$ | $\underset{(-25.06)}{-1.86}$ | $\underset{(12.58)}{0.88}$ |  |
+| $(3,d,3)$ | $\underset{(-3.37)}{-0.38}$ | $\underset{(9.00)}{1.44}$ | $\underset{(-0.64)}{-0.15}$ | $\underset{(-2.54)}{-0.31}$ | $\underset{(-9.97)}{-1.74}$ | $\underset{(1.86)}{0.62}$ | $\underset{(0.80)}{0.13}$ |
 
 $t$-statistics between parentheses
 
@@ -747,7 +688,7 @@ In table 4.13 we have tabulated the results from the application of the Geweke a
 According to the SIC criterion an optimal short-memory autoregressive order for the mean-corrected series $y_{t}$ is determined. The optimal order turned out to be one for $\alpha=0.5$ or $\alpha=0.55$ and two for $\alpha=0.6$. The short-memory behavior of the estimated autoregressive models is not too high. According to the SIC values the fractional $A R(2,0.52)$ model is superior:
 
 $$
-\left(1+\underset{(4.35)(-1.13)}{\left.0.18 L-0.05 L^{2}\right)}(1-L)^{0.52}{ }_{(5.72)} y_{t}=\varepsilon_{t}\right.
+(1 + \underset{(4.35)}{0.18 L} - \underset{(-1.13)}{0.05 L^2}) (1 - L)^\underset{(5.72)}{0.52} \Delta y_{t} = \varepsilon_{t}
 $$
 
 Table 4.13
@@ -767,10 +708,7 @@ Although not reported here we also performed the GPH procedure on the first diff
 As the ADF tests revealed that the Trier series is stationary we applied the Yule-Walker equations to $y_{t}$. The SIC optimal model is
 
 $$
-\begin{aligned}
-& \left(1-0.34 L-0.28 L^{2}-0.05 L^{3}-0.02 L^{4}-0.09 L^{5}-0.07 L^{6}\right) y_{t}=\varepsilon_{t} \\
-& (-4.94)(-5.12)(-0.96)(-0.34)(-1.81)(-1.32)
-\end{aligned}
+(1 - \underset{(-4.94)}{0.34 L} - \underset{(-5.12)}{0.28 L^2} - \underset{(-0.96)}{0.05 L^3} - \underset{(-0.34)}{0.02 L^4} - \underset{(-1.81) }{0.09 L^5} - \underset{(-1.32)}{0.07 L^6}) y_{t} = \varepsilon_{t}
 $$
 
 where the estimated residual variance is 425.78. For the first differences an $A R(15)$ model was found to be SIC optimal.
@@ -780,12 +718,8 @@ where the estimated residual variance is 425.78. For the first differences an $A
 As no stationarity is required in order to perform ordinary least squares we we estimated $A R$ models for $y_{t}$. The SIC optimal model turned out to be
 
 $$
-\begin{aligned}
-& \left(1-0.34 L-0.28 L^{2}-0.05 L^{3}-0.01 L^{4}-0.09 L^{5}-0.07 L^{6}\right) y_{t}=\varepsilon_{t} \\
-& (-11.39)(-9.03)(-1.47)(-0.36)(-2.92)(-2.37)
-\end{aligned}
+(1 - \underset{(-11.39)}{0.34 L} - \underset{(-9.03)}{0.28 L^2} - \underset{(-1.47)}{0.05 L^3} - \underset{(-0.36)}{0.01 L^4} - \underset{(-2.92) }{0.09 L^5} - \underset{(-2.37)}{0.07 L^6}) y_{t} = \varepsilon_{t}
 $$
-
 where the estimated residual variance is 422.96 . The coefficients very much resemble those of the Yule-Walker estimated model for $y_{t}$. The OLS coefficients are more often significantly different from zero however, at a five percent significance level.
 
 ### The choice of an optimal model {.unnumbered .unlisted}
