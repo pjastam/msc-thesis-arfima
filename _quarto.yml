@@ -1,0 +1,31 @@
+project:
+  type: book
+  preview:
+    port: 2024
+
+book:
+  title: "Univariate Fractionally Integrated Time Series Modeling"
+  author: "Piet Stam"
+  date: "2024-02-28"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - tsmodels.qmd
+    - estimation.qmd
+    - applications.qmd
+    - conclusions.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    cap-location: top
+  pdf:
+    documentclass: scrreprt
+
+execute: 
+  warning: false
+  echo: false
+

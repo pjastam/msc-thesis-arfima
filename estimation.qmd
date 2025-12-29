@@ -1,0 +1,162 @@
+# Estimation of time series models
+
+In this chapter we present four techniques for estimation of the models discussed before. The emphasis will be on the performance of these techniques with respect to models of fractionally integrated processes. In particular, the first three techniques to get an estimate of the fractional order of integration require a specification of the autoregressive and moving-average structure of the process. Application of the fourth technique as presented in Section 3.3 gives a parameter estimate irrespective of this model structure. This makes it possible to direct the estimate of the integration parameter for long-run modeling purposes only.
+
+The first two estimation techniques which will be discussed in Section 1 lead to estimates of autoregressive and/or moving-average parameters only, i.e. the parameter of integration is supposed to be given. In Section 2 a maximum likelihood estimation technique is discussed which takes into account all parameters simultaneously. The Geweke and Porter-Hudak (1983) two-stage estimation technique gives an estimation of the parameter of integration *d* at the first stage (Section 3). The remaining $ARMA$ parameters are estimated at the second stage (Yule-Walker, OLS, ML).
+
+## YULE-WALKER AND ORDINARY LEAST SQUARES ESTIMATION
+
+Given a stationary process $y$ we can estimate an autoregressive model without moving-average parameters by using the Yule-Walker equations (see Section 2.1.3); substitution of the sample autocovariances (or autocorrelations) then gives the estimates of the finite order autoregressive parameters $a_{k, p}$. The same methodology can be applied when we have to estimate an ARMA model. Box and Jenkins (1976) present Yule-Walker equations where both autoregressive and moving-average parameters are taken into account. McLeod (1975) presented an algorithm suitable for the machine calculation of the solution to these equations.[^29] It should be noted that here the quality of the autoregressive and moving-average estimates depends on the quality of the estimated autocorrelations as well.
+
+An alternative method to estimate autoregressive models is the ordinary least-squares technique, the advantage of which is that using this technique under non-stationarity is justified as well. Unit root tests are not necessary as we can model the realization in levels.
+
+## MAXIMUM LIKELIHOOD ESTIMATION
+
+A third methodology is called maximum likelihood and is based on the joint probability density function (p.d.f.) of the process $y$, which has to be stationary once more. The joint probability density function of the process $y$ as in equation (2.1.1) can be written as
+
+$$
+\begin{equation*}
+f\left(y_{1}, y_{2}, \ldots, y_{T} \mid \Psi\right)=\prod_{t=0}^{T-1} f\left(y_{T-t} \mid Y_{T-t-1}, \Psi\right) \tag{1}
+\end{equation*}
+$$
+
+where $Y_{t}=\left(y_{t}, y_{t-1}, \ldots, y_{1}\right)$ is the information available up to period $t$ and $f\left(y_{1} \mid Y_{0}\right)=f\left(y_{1}\right)$ by definition. The vector of parameters is defined as
+
+$$
+\Psi^{\prime}=\left(\phi_{1}, \ldots, \phi_{p}, \theta_{1}, \ldots, \theta_{q}, \sigma_{\varepsilon}^{2}\right)
+$$
+
+in case of ARMA processes. If we deal with fractionally integrated ARMA processes this vector reads
+
+$$
+\Psi^{\prime}=\left(d, \phi_{1}, \ldots, \phi_{p}, \theta_{1}, \ldots, \theta_{q}, \sigma_{\varepsilon}^{2}\right)
+$$
+
+If the observations become available we can calculate the value of the function $f$, given some vector of parameters $\boldsymbol{\Psi}$. If other parameter values lead to an increase in the value of the function $f$ these values can be seen as more adequate. This is the principle of maximum likelihood: the function $f$ is reinterpreted as the [likelihood function]{.underline} $L\left(\Psi \mid Y_{T}\right)$ and has to be maximized for a unique vector of parameters.
+
+If $y$ is a process that has $p$ autoregressive components, the joint probability density function (1) can be written as
+
+$$
+f\left(y_{1}, y_{2}, \ldots, y_{T} \mid \Psi\right)=f\left(Y_{p}\right) \cdot \prod_{t=p+1}^{T-1} f\left(y_{T-t} \mid Y_{T-t-1}\right)
+$$
+
+where $f\left(Y_{p}\right)$ is the joint probability density function of the first $p$ observations. Depending on the decision to ignore $f\left(Y_{p}\right)$ or not, the [conditional]{.underline} and [exact]{.underline} log-likelihood functions follow from
+
+$$
+\ln f\left(y_{1}, y_{2}, \ldots, y_{T} \mid \Psi\right)=\sum_{t=p+1}^{T-1} \ln f\left(y_{T-t} \mid Y_{T-t-1}\right)
+$$
+
+and
+
+$$
+\ln f\left(y_{1}, y_{2}, \ldots, y_{T} \mid \Psi\right)=\ln f\left(Y_{p}\right)+\sum_{t=p+1}^{T-1} \ln f\left(y_{T-t} \mid Y_{T-t-1}\right)
+$$
+
+respectively. As exact maximum likelihood procedures turn out to be superior to conditional ones they are preferred.
+
+Exact maximum likelihood requires [specification of the function $f\left(Y_{p}\right)_{=}$]{.underline}. Given our earlier experience (see Section 2.4), however, there appears to be a maximum likelihood concept that does not suffer from this problem with starting-up values. Under the normality assumption the p.d.f. of the zero mean process $y$ equals
+
+$$
+f\left(y_{1}, y_{2}, \ldots, y_{T} \mid \Psi\right)=(2 \pi)^{-T / 2}|Q|^{-1 / 2} \exp \left\{-\frac{1}{2} y^{\prime} Q^{-1} y\right\}
+$$
+
+where $Q$ is the variance-autocovariance matrix of the process. Normalizing this matrix with respect to the variance of the process, i.e. writing $Q=\gamma_{y}(0) \cdot Q_{1}$, we obtain
+
+$$
+f\left(y_{1}, y_{2}, \ldots, y_{T} \mid \Psi\right)=(2 \pi)^{-T / 2}\left|\gamma_{y}(0) Q_{1}\right|^{-1 / 2} \exp \left\{-\frac{1}{2 \gamma_{y}(0)} y^{\prime} Q_{1}^{-1} y\right\}
+$$
+
+The matrix $Q$, and thus $\gamma_{y}(0)$ and the normalized variance-autocovariance matrix $Q_{1}$, are determined by the vector of parameters $\boldsymbol{\Psi}$. The inverse and determinant of the matrix $Q_{1}$ are obtained by solving the Levinson-DurbinWhittle recursion formulas (see appendix B) as $Q_{1}^{-1}=A \Sigma^{-1} A^{\prime}$ and $\left|\Sigma^{2}\right|$, respectively. The matrices $A$ and $\Sigma$ are defined as in (2.4.2) and (2.4.3), respectively.
+
+Substitution, taking logarithms and finally multiplying through by -2 we obtain
+
+$$
+\begin{align*}
+& -2 \cdot \ln f\left(y_{1}, y_{2}, \ldots, y_{T} \mid \Psi\right)=  \tag{2}\\
+& =T \cdot \ln (2 \pi)+T \cdot \ln \left(\gamma_{y}(0)\right)+\left|\Sigma^{2}\right|+y^{\prime} A \Sigma^{-1} A^{\prime} y / \gamma_{y}(0) \\
+& =T \cdot \ln (2 \pi)+T \cdot \ln \left(\gamma_{y}(0)\right)+\sum_{t=1}^{T} \sigma_{t-1}^{2}+\sum_{t=1}^{T}\left(y_{t}-y_{t-1,1}\right)^{2} /\left(\sigma_{t-1}^{2} \gamma_{y}(0)\right)
+\end{align*}
+$$
+
+where $y_{t-1,1}$ equals the right-hand side of equation (2.1.7). The function $f\left(Y_{t} \mid \Psi\right)$ is reinterpreted as the [likelihood function]{.underline} $L\left(\Psi \mid Y_{T}\right)$ and has to be maximized with respect to $\Psi$ as soon as the observations become available. Given a numerical optimization procedure we can find the optimal vector of parameters $\boldsymbol{\Psi}$.
+
+The second expression of $-2 \ln f\left(Y_{t} \mid \Psi\right)$ in (2) is termed the prediction error decomposition form of the likelihood (see e.g. Harvey 1989). Note that the prediction error $\left(y_{t}-y_{t-1,1}\right), \sigma_{t-1}^{2}$ and the variance of the process $\gamma_{y}(0)$ are determined by the autoregressive and moving-average parameters and the residual variance $\sigma_{\varepsilon}^{2}$.
+
+## TWO-STAGE SEMI PARAMETRIC ESTIMATION
+
+In their article Geweke and Porter-Hudak discuss two so-called 'long memory' models, that is the 'simple fractional Gaussian noise' and the 'simple integrated (or fractionally differenced) series'. They show the equivalence of both types of models. These models are called 'long memory' models because the spectrum is infinite at a frequency (not necessarily zero). Both models are generalized by postmultiplying their spectral densities with $f_{u}(\lambda)$, the spectral density of a 'short memory' process with $ARMA$ representation. A two-stage procedure is proposed to model 'general integrated series': (1) An estimator of the 'long memory' parameter of fractional integration of the process, $d$, is obtained as the coefficient in the linear regression of the $\log$ periodogram of the process on that of a deterministic process. This regression is based on the low-frequency ordinates of the periodogram and the parameter $d$ is an estimate of the slope of the spectral density. (2) Then an $ARMA$ representation of the transformed series is estimated at the second stage.
+
+Because the integration parameter $d$ does not depend on the actual $ARMA$ representation parameters, the estimator $\hat{d}$ is called semi-parametric. There are however estimation procedures that give more efficient estimators than the two-stage procedure, *if the assumed model structure is right*. These methods are maximum likelihood methods, either applied in the time or in the frequency domain. The estimator of $d$ is no longer semi-parametric, because one specifies the full model in a finite number of parameters.
+
+The most important theorem in the Geweke and Porter-Hudak article is the following one:
+
+*Theorem (Geweke and Porter-Hudak 1983, theorem 2, p. 227):*
+
+*Suppose* $\left\{y_{t}\right\}$ *is a general integrated linear process, with* $d<0$*.*[^30] Let $I_{y}\left(\lambda_{j, T}\right)$ *denote the periodogram of* $\left\{y_{t}\right\}$ *at the harmonic frequencies* $\lambda_{j, T}=2 \pi j / T$ *in a sample of size T. Let* $b_{1, T}$ *denote the ordinary least squares estimator of* $\beta_{1}$ *in the regression equation*
+
+$$
+\begin{equation*}
+\ln I_{y}\left(\lambda_{j, T}\right)=\beta_{0}+\beta_{1} \cdot \ln \left\{4 \sin ^{2}\left(\lambda_{j, T} / 2\right)\right\}+u_{j, T} \tag{3}
+\end{equation*}
+$$
+
+*where* $j=1, \ldots, n$*.*
+
+*Then there exists a function* $z(T)$*, which will have the properties* $\lim _{T \rightarrow \infty} z(T)=\infty$ *and* $\lim _{T \rightarrow \infty} z(T) / T=0$*, such that*
+
+(i) *if* $n=z(T)$*, then plim* $b_{1}=-d$
+
+(ii) *if* $\lim _{T \rightarrow \infty}(\ln T)^{2} / z(T)=0$*, then* $\left(b_{1}+d\right) /\left\{\hat{var}\left(b_{1}\right)\right\}^{\frac{1}{2}} \xrightarrow{\text{D}} N(0,1)$
+
+*where* $\operatorname{\hat{var}}\left(b_{1}\right)$ *is the usual least squares estimator of* $\operatorname{var}\left(b_{1}\right)$*.*
+
+From the theorem it follows that there exists a function $z($.$)$, that depends on the length $T$ of the time-series, such that estimation of equation (3) for $n=z(T)$ periodogram ordinates gives a consistent estimator of $d$. Asymptotic normality is assured, given an additional regularity condition.
+
+From equation (2.3.3) it can be seen that the second regressor in equation (3) is the $\log$ of the pseudo spectrum of a fractionally integrated series $y_{t}$. To come from equation (2.3.3) at equation (3), take logarithms of both sides and add and subtract $\ln \left\{g_{y}(1 / 2 \pi)\right\}$, the spectrum of the ARMA part of the process at zero. Evaluation at the harmonic frequencies $\lambda_{j, T}$ as defined in the theorem gives
+
+$$
+\ln f_{y}\left(\lambda_{j, T}\right)=\ln g_{y}(1)-d \cdot \ln \left\{4 \sin ^{2}\left(\lambda_{j, T} / 2\right)\right\}+\ln \left\{g_{y}\left(\exp \left\{-i \lambda_{j, T}\right\}\right) / g_{y}(1)\right\}
+$$
+
+When we restrict attention to the low-frequency ordinates near zero, say, $\lambda_{j, T}$ where $j \leq K \ll T$, the last term can be dropped as negligible [^31]. To make the equation operational, add the $\log$ periodogram at ordinate $\lambda_{j, T}$, say, $I_{y}\left(\lambda_{j, T}\right)$, to both sides of the equation and rearrange to obtain
+
+$$
+\ln I_{y}\left(\lambda_{j, T}\right)=\ln g_{y}(1)-d \cdot \ln \left\{4 \sin ^{2}\left(\lambda_{j, T} / 2\right)\right\}+\ln \left\{I_{y}\left(\lambda_{j, T}\right) / f_{y}\left(\lambda_{j, T}\right)\right\}
+$$
+
+This is equation (3). The residuals $u_{j, T}$ are reflected by the third term at the right-hand side of the above equation. At the periodogram points where $g_{y}\left(\exp \left\{-i \lambda_{j, T}\right\}\right) \approx g_{y}(1)$ we are left with the spectrum of the long memory component.
+
+The two-stage semi-parametric spectral estimation procedure that is proposed by Geweke and Porter-Hudak consists of the following two steps
+
+(a) finding an estimate $\hat{d}$ of the parameter $d$ as a result of the regression as described in (3) and transforming the data by the filter $(1-L)^{\hat{d}}$ in the frequency domain;
+
+(b) estimating the parameters of the remaining $ARMA$ part of the process in the usual way in the time domain.
+
+The second-stage $ARMA$ parameters are consistent, but their asymptotic distribution is unknown.
+
+### Unit root tests {.unnumbered .unlisted}
+
+Diebold and Nerlove (1990) conclude that the potential usefulness of the results of the first-stage $d$ estimate as a unit-root test is obvious. First, the first-stage $d$ estimate is asymptotically normal when $d=1$, but also when $0<d<1$. This differs sharply from the nonstandard distribution theory required for least-squares estimates of unit-roots. Second, estimation and testing of $d$ proceeds independently of the (generally infinite dimensional) nuisance "parameter" $B(z)=\phi^{-1}(z) \theta(z)$, freeing the investigator from (frequently dubious) assumptions regarding the form of the data-generating process.
+
+## THE CHOICE OF AN OPTIMAL MODEL
+
+In this thesis, the choice of a criterion function to find an optimal model depends on the structure of the estimated models. If the models are estimated by the same estimation technique but the autoregressive and/or moving-average polynomial orders $p$ and $q$ are different, two optimal models are chosen: one by the Akaike criterion $(A I C)$ and one by the Schwartz criterion (SIC) which read
+
+$$
+\begin{aligned}
+& A I C=2 . \ln f-2 \cdot k / T \\
+& S I C=2 . \ln f-\ln T . k / T
+\end{aligned}
+$$
+
+where $k$ denotes the number of elements of the vector of parameters $\boldsymbol{\Psi}$. In order to have a maximization problem as object in the empirical part of this thesis we computed the negative values of $AIC$ and $SIC$. According to Judge (1985) $AIC$ asymptotically overestimates the autoregressive order with positive probability, given a finite order $AR$ process; an estimator of the $AR$ order based on $AIC$ will therefore not be consistent. $SIC$ does give consistent estimators in this case.
+
+If the $AIC$ and $SIC$ criteria lead to different optimal models, we subsequently have to choose between these according to some device. If the [optimal model]{.underline} out of several models of the same type is [not unique]{.underline} or the [models are not of the same type]{.underline}, the following forecasting device is used to make a unique choice possible: the square root of the mean squared in-sample forecast errors, i.e. the minimum sum of squared residuals. The model for which this criterion is minimal is called optimal. This strategy amounts to maximizing the $R^{2}$. For example, the forecasting device is applied if we have four different optimal models as a consequence of the four estimation techniques proposed in the previous sections. [^32]
+
+[^29]: The definition of $b_{k}$ in McLeod (1975) should read $b_{k}=\Sigma_{i=k}^{q}-\theta_{i} c_{i-k}$.
+
+[^30]: *As shown before, the assumption* $d<0$ implies that we are dealing with a short memory stationary process.
+
+[^31]: Geweke and Porter-Hudak (1983) propose to use the rule $z(T)=T^{\alpha}$, where $\alpha=0.55$ or $\alpha=0.6$, based on Monte Carlo simulations.
+
+[^32]: Contrary to the procedure presented here, Sowell (1992a) applies the $AIC$ and $SIC$ criteria functions to make a choice between fractional and non-fractional $ARMA$ and fractional $ARMA$ models.
